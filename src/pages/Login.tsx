@@ -13,8 +13,12 @@ export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
+  const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
+  const [showTerms, setShowTerms] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(false)
 
   useEffect(() => {
     if (user && !loading) {
@@ -25,6 +29,7 @@ export function Login() {
   useEffect(() => {
     setError(null)
     setSuccessMessage('')
+    setAgreeToTerms(false)
   }, [isSignUp, setError])
 
   const handleGoogleLogin = async () => {
@@ -33,6 +38,12 @@ export function Login() {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (isSignUp && !agreeToTerms) {
+      setError('You must agree to the Terms of Service and Privacy Policy')
+      return
+    }
+
     setSubmitting(true)
     setSuccessMessage('')
     setError(null)
@@ -45,6 +56,7 @@ export function Login() {
           setEmail('')
           setPassword('')
           setFullName('')
+          setAgreeToTerms(false)
         }
       }
     } else {
@@ -81,7 +93,7 @@ export function Login() {
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8 sm:mb-10">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-6">
             <div className="relative">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 opacity-50 blur-xl" />
@@ -108,7 +120,7 @@ export function Login() {
           <div className="relative p-6 sm:p-8">
             {/* Error Message */}
             {error && (
-              <div className="mb-5 flex items-center gap-3 rounded-xl border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/[0.06] p-3.5 sm:p-4">
+              <div className="mb-5 flex items-center gap-3 rounded-xl border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/[0.06] p-3.5">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-red-100 dark:bg-red-500/10">
                   <svg className="h-4 w-4 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
@@ -120,7 +132,7 @@ export function Login() {
 
             {/* Success Message */}
             {successMessage && (
-              <div className="mb-5 flex items-center gap-3 rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/[0.06] p-3.5 sm:p-4">
+              <div className="mb-5 flex items-center gap-3 rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/[0.06] p-3.5">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-500/10">
                   <svg className="h-4 w-4 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -131,7 +143,7 @@ export function Login() {
             )}
 
             {/* Email/Password Form */}
-            <form onSubmit={handleEmailSubmit} className="space-y-4 mb-6">
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
               {isSignUp && (
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Full Name</label>
@@ -171,9 +183,51 @@ export function Login() {
                   <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
                 )}
               </div>
+
+              {/* Remember Me - only on login */}
+              {!isSignUp && (
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-50 dark:bg-white/[0.04]"
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+                  </label>
+                  <button type="button" className="text-sm text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 transition-colors">
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+
+              {/* Terms Agreement - only on signup */}
+              {isSignUp && (
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    required
+                    className="w-4 h-4 mt-0.5 rounded border-gray-300 dark:border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-50 dark:bg-white/[0.04]"
+                  />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    I agree to the{' '}
+                    <button type="button" onClick={() => setShowTerms(true)} className="text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 underline underline-offset-2">
+                      Terms of Service
+                    </button>
+                    {' '}and{' '}
+                    <button type="button" onClick={() => setShowPrivacy(true)} className="text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 underline underline-offset-2">
+                      Privacy Policy
+                    </button>
+                  </p>
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || (isSignUp && !agreeToTerms)}
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {submitting ? (
@@ -191,7 +245,7 @@ export function Login() {
             </form>
 
             {/* Divider */}
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 my-6">
               <div className="h-px flex-1 bg-gray-200 dark:bg-white/[0.06]" />
               <span className="text-[11px] font-medium uppercase tracking-widest text-gray-400 dark:text-gray-600">or</span>
               <div className="h-px flex-1 bg-gray-200 dark:bg-white/[0.06]" />
@@ -201,16 +255,16 @@ export function Login() {
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="group relative w-full overflow-hidden rounded-xl bg-white dark:bg-white py-3.5 sm:py-4 px-5 font-semibold text-gray-800 shadow-lg shadow-white/5 transition-all duration-300 hover:shadow-xl hover:shadow-white/10 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="group relative w-full overflow-hidden rounded-xl bg-white dark:bg-white py-3.5 px-5 font-semibold text-gray-800 shadow-lg shadow-white/5 transition-all duration-300 hover:shadow-xl hover:shadow-white/10 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <span className="relative z-10 flex items-center justify-center gap-3">
-                <svg className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                <span className="text-sm sm:text-base">Continue with Google</span>
+                <span className="text-sm">Continue with Google</span>
               </span>
             </button>
 
@@ -223,35 +277,119 @@ export function Login() {
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </button>
             </div>
-
-            {/* Features */}
-            <div className="mt-6 sm:mt-7 space-y-3">
-              {[
-                { icon: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z', text: 'Secure authentication with email confirmation' },
-                { icon: 'M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z', text: 'No fake emails allowed' },
-                { icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z', text: 'Access your dashboard instantly' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-gray-500 text-xs sm:text-sm">
-                  <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-500/[0.08] ring-1 ring-emerald-500/20">
-                    <svg className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                    </svg>
-                  </div>
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="mt-6 sm:mt-8 text-center text-[11px] text-gray-500 dark:text-gray-600 px-2">
-          By signing in, you agree to our{' '}
-          <a href="#" className="text-purple-500 dark:text-purple-400/80 hover:text-purple-600 dark:hover:text-purple-300 transition-colors underline underline-offset-2 decoration-purple-500/30 dark:decoration-purple-400/30">Terms of Service</a>
+        <p className="mt-6 text-center text-[11px] text-gray-500 dark:text-gray-600 px-2">
+          By continuing, you agree to our{' '}
+          <button onClick={() => setShowTerms(true)} className="text-purple-500 dark:text-purple-400/80 hover:text-purple-600 dark:hover:text-purple-300 transition-colors underline underline-offset-2 decoration-purple-500/30 dark:decoration-purple-400/30">Terms of Service</button>
           {' '}and{' '}
-          <a href="#" className="text-purple-500 dark:text-purple-400/80 hover:text-purple-600 dark:hover:text-purple-300 transition-colors underline underline-offset-2 decoration-purple-500/30 dark:decoration-purple-400/30">Privacy Policy</a>
+          <button onClick={() => setShowPrivacy(true)} className="text-purple-500 dark:text-purple-400/80 hover:text-purple-600 dark:hover:text-purple-300 transition-colors underline underline-offset-2 decoration-purple-500/30 dark:decoration-purple-400/30">Privacy Policy</button>
         </p>
       </div>
+
+      {/* Terms of Service Modal */}
+      {showTerms && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl max-h-[80vh] bg-white dark:bg-[#141420] rounded-2xl border border-gray-200 dark:border-white/[0.08] shadow-2xl overflow-hidden">
+            <div className="sticky top-0 flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-[#1a1a2e]">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Terms of Service</h2>
+              <button onClick={() => setShowTerms(false)} className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-white/[0.06] transition-colors">
+                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[calc(80vh-80px)]">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing and using this application, you accept and agree to be bound by the terms and provision of this agreement.</p>
+
+                <h3>2. Use License</h3>
+                <p>Permission is granted to temporarily use this application for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.</p>
+
+                <h3>3. User Account</h3>
+                <p>To access certain features, you may be required to create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+
+                <h3>4. Privacy</h3>
+                <p>Your use of this application is also governed by our Privacy Policy, which is incorporated into these Terms by reference.</p>
+
+                <h3>5. Prohibited Uses</h3>
+                <p>You may not use this application for any unlawful purpose or to solicit the performance of any illegal activity or other conduct which infringes the rights of others.</p>
+
+                <h3>6. Termination</h3>
+                <p>We may terminate or suspend your account and access to the application immediately, without prior notice, for conduct that we determine, in our sole discretion, violates these Terms or is harmful to other users, us, or third parties, or for any other reason.</p>
+
+                <h3>7. Changes to Terms</h3>
+                <p>We reserve the right to modify these Terms at any time. Continued use of the application after any such changes shall constitute your consent to such changes.</p>
+
+                <h3>8. Contact</h3>
+                <p>If you have any questions about these Terms, please contact us through the application support channels.</p>
+              </div>
+            </div>
+            <div className="sticky bottom-0 p-4 border-t border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-[#1a1a2e]">
+              <button onClick={() => setShowTerms(false)} className="w-full py-2.5 rounded-xl bg-purple-500 text-white font-medium hover:bg-purple-600 transition-colors">
+                I Understand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Policy Modal */}
+      {showPrivacy && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl max-h-[80vh] bg-white dark:bg-[#141420] rounded-2xl border border-gray-200 dark:border-white/[0.08] shadow-2xl overflow-hidden">
+            <div className="sticky top-0 flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-[#1a1a2e]">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Privacy Policy</h2>
+              <button onClick={() => setShowPrivacy(false)} className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-white/[0.06] transition-colors">
+                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[calc(80vh-80px)]">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <h3>1. Information We Collect</h3>
+                <p>We collect information you provide directly to us, such as when you create an account, update your profile, or contact us for support. This may include your name, email address, and profile picture.</p>
+
+                <h3>2. How We Use Your Information</h3>
+                <p>We use the information we collect to provide, maintain, and improve our services, to process transactions, to send you technical notices and support messages, and to communicate with you about products, services, and events.</p>
+
+                <h3>3. Information Sharing</h3>
+                <p>We do not sell your personal information. We may share your information with third-party service providers who perform services on our behalf, such as hosting, analytics, and customer support.</p>
+
+                <h3>4. Data Security</h3>
+                <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+
+                <h3>5. Data Retention</h3>
+                <p>We retain your personal information for as long as your account is active or as needed to provide you services. We will also retain your information as necessary to comply with legal obligations.</p>
+
+                <h3>6. Your Rights</h3>
+                <p>You have the right to access, correct, or delete your personal information. You may also have the right to port your data and to restrict or object to certain processing activities.</p>
+
+                <h3>7. Cookies</h3>
+                <p>We use cookies and similar technologies to maintain your session and improve your experience. You can control cookies through your browser settings.</p>
+
+                <h3>8. Children's Privacy</h3>
+                <p>Our application is not directed to children under 13, and we do not knowingly collect personal information from children under 13.</p>
+
+                <h3>9. Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the effective date.</p>
+
+                <h3>10. Contact Us</h3>
+                <p>If you have any questions about this Privacy Policy, please contact us through the application support channels.</p>
+              </div>
+            </div>
+            <div className="sticky bottom-0 p-4 border-t border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-[#1a1a2e]">
+              <button onClick={() => setShowPrivacy(false)} className="w-full py-2.5 rounded-xl bg-purple-500 text-white font-medium hover:bg-purple-600 transition-colors">
+                I Understand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
