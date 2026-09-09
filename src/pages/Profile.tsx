@@ -74,27 +74,27 @@ export function Profile() {
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] relative overflow-hidden transition-colors">
+      {/* Ambient background - only visible in dark mode */}
+      <div className="pointer-events-none absolute inset-0 dark:block hidden">
         <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-600/8 blur-[120px]"></div>
         <div className="absolute top-1/3 -right-20 h-[400px] w-[400px] rounded-full bg-cyan-500/6 blur-[100px]"></div>
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0a0a0f]/80 backdrop-blur-2xl">
+      <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-white/[0.06] bg-gray-50/80 dark:bg-[#0a0a0f]/80 backdrop-blur-2xl transition-colors">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <button
               onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
               Back
             </button>
-            <h1 className="text-lg font-semibold text-white">Edit Profile</h1>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Edit Profile</h1>
             <div className="w-16"></div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export function Profile() {
 
       {/* Content */}
       <main className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
+        <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 sm:p-8 transition-colors">
           {/* Avatar Section */}
           <div className="flex flex-col items-center mb-8">
             <input
@@ -120,12 +120,12 @@ export function Profile() {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 opacity-40 blur-lg" />
               {avatarUrl ? (
                 <img
-                  className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-2xl object-cover ring-2 ring-white/10"
+                  className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-2xl object-cover ring-2 ring-gray-200 dark:ring-white/10"
                   src={avatarUrl}
                   alt={displayName}
                 />
               ) : (
-                <div className="relative flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 text-3xl sm:text-4xl font-bold text-white ring-2 ring-white/10">
+                <div className="relative flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 text-3xl sm:text-4xl font-bold text-white ring-2 ring-gray-200 dark:ring-white/10">
                   {initials}
                 </div>
               )}
@@ -149,44 +149,44 @@ export function Profile() {
           {/* Form Fields */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Full Name</label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-colors"
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-colors"
                 placeholder="Enter your name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Email</label>
               <input
                 type="email"
                 value={email || ''}
                 disabled
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-gray-500 cursor-not-allowed"
+                className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.04] text-gray-500 cursor-not-allowed"
               />
-              <p className="text-xs text-gray-600 mt-1">Email cannot be changed</p>
+              <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Provider</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Provider</label>
               <input
                 type="text"
                 value="Google OAuth"
                 disabled
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-gray-500 cursor-not-allowed"
+                className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.04] text-gray-500 cursor-not-allowed"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Member Since</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Member Since</label>
               <input
                 type="text"
                 value={new Date(user?.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 disabled
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-gray-500 cursor-not-allowed"
+                className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.04] text-gray-500 cursor-not-allowed"
               />
             </div>
           </div>

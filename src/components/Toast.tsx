@@ -58,8 +58,8 @@ function Toast({ id, type, title, message, onDismiss }: ToastProps) {
   return (
     <div
       className={`
-        pointer-events-auto w-full max-w-sm overflow-hidden rounded-xl border border-white/[0.08]
-        bg-[#141420]/95 backdrop-blur-xl shadow-2xl shadow-black/40
+        pointer-events-auto w-full max-w-sm overflow-hidden rounded-xl border border-gray-200 dark:border-white/[0.08]
+        bg-white dark:bg-[#141420]/95 backdrop-blur-xl shadow-2xl shadow-black/10 dark:shadow-black/40
         transform transition-all duration-300 ease-out
         ${isVisible && !isLeaving ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
       `}
@@ -70,10 +70,10 @@ function Toast({ id, type, title, message, onDismiss }: ToastProps) {
           <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${config.iconBg} ring-1 ${config.ring}`}>
             <svg
               className={`h-5 w-5 ${
-                type === 'success' ? 'text-emerald-400' :
-                type === 'error' ? 'text-red-400' :
-                type === 'warning' ? 'text-amber-400' :
-                'text-sky-400'
+                type === 'success' ? 'text-emerald-500 dark:text-emerald-400' :
+                type === 'error' ? 'text-red-500 dark:text-red-400' :
+                type === 'warning' ? 'text-amber-500 dark:text-amber-400' :
+                'text-sky-500 dark:text-sky-400'
               }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -84,14 +84,14 @@ function Toast({ id, type, title, message, onDismiss }: ToastProps) {
             </svg>
           </div>
           <div className="min-w-0 flex-1 pt-0.5">
-            <p className="text-sm font-medium text-white">{title}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{title}</p>
             {message && (
-              <p className="mt-1 text-sm text-gray-400">{message}</p>
+              <p className="mt-1 text-sm text-gray-500">{message}</p>
             )}
           </div>
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 rounded-lg p-1 text-gray-500 transition-colors hover:bg-white/[0.06] hover:text-white"
+            className="flex-shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-white/[0.06] hover:text-gray-600 dark:hover:text-white"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

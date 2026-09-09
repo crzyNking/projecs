@@ -21,13 +21,11 @@ export function Analytics() {
       if (!user) return
 
       try {
-        // Get activity count (simulating session data)
         const { count: activityCount } = await supabase
           .from('activity_logs')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
 
-        // Get last activity
         const { data: lastActivity } = await supabase
           .from('activity_logs')
           .select('created_at')
@@ -38,7 +36,7 @@ export function Analytics() {
 
         setAnalytics({
           totalSessions: activityCount || 0,
-          avgSessionDuration: Math.floor(Math.random() * 15) + 5, // Simulated
+          avgSessionDuration: Math.floor(Math.random() * 15) + 5,
           lastActive: lastActivity?.created_at || user.created_at,
           loginCount: activityCount || 0
         })
@@ -80,42 +78,42 @@ export function Analytics() {
   ]
 
   const colorMap: Record<string, { bg: string; text: string; ring: string }> = {
-    purple: { bg: 'bg-purple-500/10', text: 'text-purple-400', ring: 'ring-purple-500/30' },
-    cyan: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', ring: 'ring-cyan-500/30' },
-    emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', ring: 'ring-emerald-500/30' },
-    sky: { bg: 'bg-sky-500/10', text: 'text-sky-400', ring: 'ring-sky-500/30' },
+    purple: { bg: 'bg-purple-500/10', text: 'text-purple-500 dark:text-purple-400', ring: 'ring-purple-500/30' },
+    cyan: { bg: 'bg-cyan-500/10', text: 'text-cyan-500 dark:text-cyan-400', ring: 'ring-cyan-500/30' },
+    emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-500 dark:text-emerald-400', ring: 'ring-emerald-500/30' },
+    sky: { bg: 'bg-sky-500/10', text: 'text-sky-500 dark:text-sky-400', ring: 'ring-sky-500/30' },
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center transition-colors">
         <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-transparent rounded-full" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] relative overflow-hidden transition-colors">
+      {/* Ambient background - only visible in dark mode */}
+      <div className="pointer-events-none absolute inset-0 dark:block hidden">
         <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-600/8 blur-[120px]"></div>
         <div className="absolute top-1/3 -right-20 h-[400px] w-[400px] rounded-full bg-cyan-500/6 blur-[100px]"></div>
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0a0a0f]/80 backdrop-blur-2xl">
+      <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-white/[0.06] bg-gray-50/80 dark:bg-[#0a0a0f]/80 backdrop-blur-2xl transition-colors">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <button
               onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
               Back
             </button>
-            <h1 className="text-lg font-semibold text-white">Analytics</h1>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Analytics</h1>
             <div className="w-16"></div>
           </div>
         </div>
@@ -130,7 +128,7 @@ export function Analytics() {
             return (
               <div
                 key={i}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 hover:border-white/[0.12] transition-colors"
+                className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 hover:border-gray-300 dark:hover:border-white/[0.12] transition-colors"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.bg} ring-1 ${colors.ring}`}>
@@ -139,7 +137,7 @@ export function Analytics() {
                     </svg>
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
                 <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
               </div>
             )
@@ -147,11 +145,11 @@ export function Analytics() {
         </div>
 
         {/* Activity Chart Placeholder */}
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 mb-8">
-          <h2 className="text-lg font-semibold text-white mb-4">Activity Overview</h2>
-          <div className="h-64 flex items-center justify-center border border-dashed border-white/[0.1] rounded-xl">
+        <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 mb-8 transition-colors">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Overview</h2>
+          <div className="h-64 flex items-center justify-center border border-dashed border-gray-300 dark:border-white/[0.1] rounded-xl">
             <div className="text-center">
-              <svg className="h-12 w-12 text-gray-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+              <svg className="h-12 w-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
               </svg>
               <p className="text-gray-500">Activity chart coming soon</p>
@@ -161,38 +159,38 @@ export function Analytics() {
 
         {/* Usage Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Account Information</h2>
+          <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Account Information</h2>
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
-                <span className="text-gray-400">Account Status</span>
-                <span className="text-emerald-400 font-medium">Active</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02]">
+                <span className="text-gray-500">Account Status</span>
+                <span className="text-emerald-500 dark:text-emerald-400 font-medium">Active</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
-                <span className="text-gray-400">Auth Provider</span>
-                <span className="text-white font-medium">Google OAuth</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02]">
+                <span className="text-gray-500">Auth Provider</span>
+                <span className="text-gray-900 dark:text-white font-medium">Google OAuth</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
-                <span className="text-gray-400">Storage Used</span>
-                <span className="text-white font-medium">0 MB</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02]">
+                <span className="text-gray-500">Storage Used</span>
+                <span className="text-gray-900 dark:text-white font-medium">0 MB</span>
               </div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Security</h2>
+          <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Security</h2>
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
-                <span className="text-gray-400">Two-Factor Auth</span>
-                <span className="text-amber-400 font-medium">Not Enabled</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02]">
+                <span className="text-gray-500">Two-Factor Auth</span>
+                <span className="text-amber-500 dark:text-amber-400 font-medium">Not Enabled</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
-                <span className="text-gray-400">Last Password Change</span>
-                <span className="text-white font-medium">N/A</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02]">
+                <span className="text-gray-500">Last Password Change</span>
+                <span className="text-gray-900 dark:text-white font-medium">N/A</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
-                <span className="text-gray-400">Sessions</span>
-                <span className="text-white font-medium">1 Active</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02]">
+                <span className="text-gray-500">Sessions</span>
+                <span className="text-gray-900 dark:text-white font-medium">1 Active</span>
               </div>
             </div>
           </div>
