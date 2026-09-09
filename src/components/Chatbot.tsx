@@ -75,7 +75,7 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'openrouter/free',
+          model: 'poolside/laguna-s-2.1:free',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
@@ -141,7 +141,7 @@ export function Chatbot() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
-                    <p className="text-xs text-white/70">Powered by OpenRouter</p>
+                    <p className="text-xs text-white/70">Powered by KnowsMore</p>
                   </div>
                 </div>
                 <button
