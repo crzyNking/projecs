@@ -75,17 +75,17 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'google/gemma-4-31b-it:free',
+          model: 'thinkingmachines/inkling:free',
           messages: conversationHistory,
         }),
       })
 
+      const data = await response.json()
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null)
-        throw new Error(errorData?.error?.message || 'Failed to get response')
+        throw new Error(data?.error?.message || `HTTP ${response.status}`)
       }
 
-      const data = await response.json()
       const reply = data.choices?.[0]?.message?.content || 'No response generated.'
 
       addMessage({ role: 'assistant', content: reply })
