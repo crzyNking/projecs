@@ -33,12 +33,16 @@ export function Chatbot() {
     setIsLoading(true)
 
     try {
-      const conversationHistory = messages
-        .filter((m) => m.role !== 'system')
-        .map((m) => ({
-          role: m.role,
-          content: m.content,
-        }))
+      const systemMessage = messages.find((m) => m.role === 'system')
+      const conversationHistory = [
+        ...(systemMessage ? [{ role: 'system', content: systemMessage.content }] : []),
+        ...messages
+          .filter((m) => m.role === 'user' || m.role === 'assistant')
+          .map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+      ]
 
       conversationHistory.push({ role: 'user', content: userMessage })
 
