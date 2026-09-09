@@ -20,48 +20,39 @@ interface ChatState {
   loadChatHistory: (userId: string) => Promise<void>
 }
 
-export const WEBSITE_KNOWLEDGE = `You are KnowsMore, the AI assistant for this web application. You know everything about this website and can help users with any questions.
+export const WEBSITE_KNOWLEDGE = `You are KnowsMore, the AI assistant for this web application. You help users navigate and understand the app.
+
+IMPORTANT RULES - TO REDUCE HALLUCINATION:
+- ONLY answer based on the information provided below about this website
+- If you don't know something about this website, say "I don't have information about that"
+- NEVER make up features, pages, or functionality that isn't listed below
+- If a user asks about something not covered here, tell them to check the relevant page in the app
+- Keep answers short and helpful
+- If you're unsure, ask the user to clarify
 
 ABOUT THIS WEBSITE:
-This is a modern SaaS-style user dashboard and account management platform built with React, TypeScript, Tailwind CSS, and Supabase.
+This is a user dashboard platform with authentication, profile management, and activity tracking.
 
-FEATURES:
-1. AUTHENTICATION: Users can sign up/login via Google OAuth or Email/Password. Email confirmation is required for email sign-ups. Real-time email verification detection automatically signs users in after confirmation.
+PAGES AND FEATURES:
+1. LOGIN PAGE (/login): Sign in with Google OAuth or Email/Password. Email sign-up requires confirmation. Has password show/hide toggle, remember me, and Terms/Privacy modals.
 
-2. DASHBOARD: Shows welcome banner, 3 stat cards (Account Status, Auth Provider, Member Since), profile card with avatar, quick actions grid (Analytics, Reports, Settings, Profile), and recent activity feed.
+2. DASHBOARD (/dashboard): Welcome banner with user name. Shows 3 stat cards (Account Status, Auth Provider, Member Since). Profile card with avatar and details. Quick actions to Analytics, Reports, Settings, Profile. Recent activity feed.
 
-3. PROFILE: Users can upload/change their avatar (max 5MB, images only), edit their full name. Email cannot be changed. Avatar uploads go to Supabase Storage.
+3. PROFILE (/profile): Upload/change avatar (images only, max 5MB). Edit full name. Email is display-only. Save/cancel buttons.
 
-4. SETTINGS: Theme switching (Dark/Light/System), notification toggles (Email, Push, Marketing), and account management link.
+4. SETTINGS (/settings): Theme switcher (Dark/Light/System). Notification toggles (Email, Push, Marketing). Link to edit profile.
 
-5. ANALYTICS: Shows total activities, avg session duration, last active time, member duration. Has activity chart placeholder and security info (2FA status, sessions).
+5. ANALYTICS (/analytics): Total activities count. Avg session duration. Last active time. Member duration days. Activity chart (coming soon). Security info.
 
-6. REPORTS: Displays Account Activity Summary, Security Report, and Monthly Usage Report with status badges.
+6. REPORTS (/reports): Account Activity Summary report. Security Report. Monthly Usage Report. Each has status (completed/pending/scheduled).
 
-7. AI CHATBOT (KnowsMore): Floating chat button on every page, powered by MiMo V2.5 via OpenRouter. Supports conversation history.
+7. AI CHATBOT: This is you! Floating button opens chat. You answer questions about the app. Chat history saves for logged-in users.
 
-TECH STACK:
-- Frontend: React 19, TypeScript, Vite 8, Tailwind CSS 4
-- Backend: Supabase (PostgreSQL, Auth, Storage, RLS)
-- State: Zustand stores (auth, activity, chat, notification, preferences)
-- Deployment: Vercel
+TECH: React, TypeScript, Tailwind CSS, Supabase, deployed on Vercel.
 
-DATABASE TABLES:
-- profiles: User profile data (id, email, full_name, avatar_url, timestamps)
-- activity_logs: Audit trail of user actions (action, details JSONB, created_at)
-- user_preferences: Theme and notification settings
+If users ask how to do something, guide them to the right page. If they report a bug, suggest refreshing or checking settings.`
 
-UNIQUE FEATURES:
-- Real-time email verification with auto sign-in
-- Activity audit logging for all user actions
-- Automatic profile/preferences creation on signup via database triggers
-- Row-Level Security (RLS) on all tables
-- Premium glass-morphism UI with purple-to-cyan gradients
-- Custom branded email templates
-
-Always be helpful, friendly, and knowledgeable. If users ask about features, explain them. If they need help, guide them. If they report issues, suggest solutions.`
-
-const getWelcomeMessages = (): Message[] => [
+export const getWelcomeMessages = (): Message[] => [
   {
     id: 'system',
     role: 'system',
@@ -99,52 +90,63 @@ export const useChatStore = create<ChatState>((set, get) => ({
   clearMessages: () => set({ messages: getWelcomeMessages() }),
 
   saveChatHistory: async (userId: string) => {
-    const { messages } = get()
-    const userMessages = messages.filter((m) => m.role !== 'system')
+    try {
+      const { messages } = get()
+      const chatMessages = messages.filter((m) => m.role !== 'system')
 
-    const { error } = await supabase
-      .from('chat_history')
-      .upsert({
-        user_id: userId,
-        messages: userMessages,
-        updated_at: new Date().toISOString(),
-      })
+      if (chatMessages.length <= 1) return
 
-    if (error) {
-      console.error('Error saving chat history:', error)
+      const { error } = await supabase
+        .from('chat_history')
+        .upsert({
+          user_id: userId,
+          messages: chatMessages,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id' })
+
+      if (error) {
+        console.error('Error saving chat history:', error)
+      }
+    } catch (err) {
+      console.error('Error saving chat history:', err)
     }
   },
 
   loadChatHistory: async (userId: string) => {
-    const { data, error } = await supabase
-      .from('chat_history')
-      .select('messages')
-      .eq('user_id', userId)
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('chat_history')
+        .select('messages')
+        .eq('user_id', userId)
+        .single()
 
-    if (error || !data) {
-      set({ messages: getWelcomeMessages() })
-      return
-    }
+      if (error || !data) {
+        set({ messages: getWelcomeMessages() })
+        return
+      }
 
-    const savedMessages = (data.messages as Array<{ id: string; role: string; content: string; timestamp: string }>).map(
-      (m) => ({
-        ...m,
-        role: m.role as 'user' | 'assistant',
-        timestamp: new Date(m.timestamp),
+      const savedMessages = (data.messages as Array<{ id: string; role: string; content: string; timestamp: string }>).map(
+        (m) => ({
+          ...m,
+          role: m.role as 'user' | 'assistant',
+          timestamp: new Date(m.timestamp),
+        })
+      )
+
+      set({
+        messages: [
+          {
+            id: 'system',
+            role: 'system',
+            content: WEBSITE_KNOWLEDGE,
+            timestamp: new Date(),
+          },
+          ...savedMessages,
+        ],
       })
-    )
-
-    set({
-      messages: [
-        {
-          id: 'system',
-          role: 'system',
-          content: WEBSITE_KNOWLEDGE,
-          timestamp: new Date(),
-        },
-        ...savedMessages,
-      ],
-    })
+    } catch (err) {
+      console.error('Error loading chat history:', err)
+      set({ messages: getWelcomeMessages() })
+    }
   },
 }))

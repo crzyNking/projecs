@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useChatStore } from '../store/chatStore'
+import { useChatStore, getWelcomeMessages } from '../store/chatStore'
 import { useAuthStore } from '../store/authStore'
 
 const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
@@ -25,6 +25,8 @@ export function Chatbot() {
   useEffect(() => {
     if (user) {
       loadChatHistory(user.id)
+    } else {
+      useChatStore.setState({ messages: getWelcomeMessages() })
     }
   }, [user, loadChatHistory])
 
@@ -107,10 +109,10 @@ export function Chatbot() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl shadow-lg transition-all duration-300 flex items-center justify-center ${
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl shadow-lg transition-all duration-300 flex items-center justify-center overflow-hidden ${
           isOpen
             ? 'bg-gray-800 dark:bg-gray-700 shadow-gray-800/25 dark:shadow-black/30 rotate-90'
-            : 'bg-gradient-to-r from-purple-500 to-cyan-500 shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-105 active:scale-95'
+            : 'shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-105 active:scale-95'
         }`}
       >
         {isOpen ? (
@@ -118,9 +120,7 @@ export function Chatbot() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         ) : (
-          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-          </svg>
+          <img src="https://static.wikia.nocookie.net/wreckitralph/images/2/2d/Knowsmore.png/revision/latest?cb=20190204230437" alt="KnowsMore" className="w-full h-full object-cover" />
         )}
       </button>
 
