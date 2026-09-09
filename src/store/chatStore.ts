@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { supabase } from '../lib/supabase'
 
 export interface Message {
   id: string
@@ -15,6 +16,8 @@ interface ChatState {
   setIsLoading: (loading: boolean) => void
   setIsOpen: (open: boolean) => void
   clearMessages: () => void
+  saveChatHistory: (userId: string) => Promise<void>
+  loadChatHistory: (userId: string) => Promise<void>
 }
 
 export const WEBSITE_KNOWLEDGE = `You are KnowsMore, the AI assistant for this web application. You know everything about this website and can help users with any questions.
@@ -58,21 +61,23 @@ UNIQUE FEATURES:
 
 Always be helpful, friendly, and knowledgeable. If users ask about features, explain them. If they need help, guide them. If they report issues, suggest solutions.`
 
-export const useChatStore = create<ChatState>((set) => ({
-  messages: [
-    {
-      id: 'system',
-      role: 'system',
-      content: WEBSITE_KNOWLEDGE,
-      timestamp: new Date(),
-    },
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content: "Hi! I'm KnowsMore, your AI assistant. I know everything about this website and can help you with any questions about your account, features, or how to use the app. How can I help you today?",
-      timestamp: new Date(),
-    },
-  ],
+const getWelcomeMessages = (): Message[] => [
+  {
+    id: 'system',
+    role: 'system',
+    content: WEBSITE_KNOWLEDGE,
+    timestamp: new Date(),
+  },
+  {
+    id: 'welcome',
+    role: 'assistant',
+    content: "Hi! I'm KnowsMore, your AI assistant. I know everything about this website and can help you with any questions about your account, features, or how to use the app. How can I help you today?",
+    timestamp: new Date(),
+  },
+]
+
+export const useChatStore = create<ChatState>((set, get) => ({
+  messages: getWelcomeMessages(),
   isLoading: false,
   isOpen: false,
 
@@ -91,7 +96,45 @@ export const useChatStore = create<ChatState>((set) => ({
   setIsLoading: (loading) => set({ isLoading: loading }),
   setIsOpen: (open) => set({ isOpen: open }),
 
-  clearMessages: () =>
+  clearMessages: () => set({ messages: getWelcomeMessages() }),
+
+  saveChatHistory: async (userId: string) => {
+    const { messages } = get()
+    const userMessages = messages.filter((m) => m.role !== 'system')
+
+    const { error } = await supabase
+      .from('chat_history')
+      .upsert({
+        user_id: userId,
+        messages: userMessages,
+        updated_at: new Date().toISOString(),
+      })
+
+    if (error) {
+      console.error('Error saving chat history:', error)
+    }
+  },
+
+  loadChatHistory: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('chat_history')
+      .select('messages')
+      .eq('user_id', userId)
+      .single()
+
+    if (error || !data) {
+      set({ messages: getWelcomeMessages() })
+      return
+    }
+
+    const savedMessages = (data.messages as Array<{ id: string; role: string; content: string; timestamp: string }>).map(
+      (m) => ({
+        ...m,
+        role: m.role as 'user' | 'assistant',
+        timestamp: new Date(m.timestamp),
+      })
+    )
+
     set({
       messages: [
         {
@@ -100,12 +143,8 @@ export const useChatStore = create<ChatState>((set) => ({
           content: WEBSITE_KNOWLEDGE,
           timestamp: new Date(),
         },
-        {
-          id: 'welcome',
-          role: 'assistant',
-          content: "Hi! I'm KnowsMore, your AI assistant. I know everything about this website and can help you with any questions about your account, features, or how to use the app. How can I help you today?",
-          timestamp: new Date(),
-        },
+        ...savedMessages,
       ],
-    }),
+    })
+  },
 }))

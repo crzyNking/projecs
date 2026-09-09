@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
+import { useAuthStore } from '../store/authStore'
 
 const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
 
 export function Chatbot() {
-  const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
+  const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen, saveChatHistory, loadChatHistory } = useChatStore()
+  const { user } = useAuthStore()
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const lastMessageCount = useRef(messages.length)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -18,6 +21,19 @@ export function Chatbot() {
       setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [isOpen])
+
+  useEffect(() => {
+    if (user) {
+      loadChatHistory(user.id)
+    }
+  }, [user, loadChatHistory])
+
+  useEffect(() => {
+    if (user && messages.length > lastMessageCount.current && messages.some((m) => m.role === 'user')) {
+      saveChatHistory(user.id)
+    }
+    lastMessageCount.current = messages.length
+  }, [messages, user, saveChatHistory])
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
@@ -140,7 +156,7 @@ export function Chatbot() {
 
             {/* Messages */}
             <div className="h-[350px] overflow-y-auto px-5 py-4 space-y-4">
-              {messages.map((msg) => (
+              {messages.filter((m) => m.role !== 'system').map((msg) => (
                 <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] ${msg.role === 'user' ? 'order-1' : 'order-1'}`}>
                     {msg.role === 'assistant' && (
