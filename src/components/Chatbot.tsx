@@ -26,33 +26,17 @@ export function Chatbot() {
     setIsLoading(true)
 
     try {
-      const conversationHistory = messages
-        .filter((m) => m.role !== 'system')
-        .map((m) => ({
-          role: m.role,
-          content: m.content,
-        }))
-
-      conversationHistory.push({ role: 'user', content: userMessage })
-
-      const response = await fetch('https://text.pollinations.ai/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: conversationHistory,
-          model: 'openai',
-          seed: Math.floor(Math.random() * 10000),
-        }),
+      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(userMessage)}`, {
+        method: 'GET',
+        headers: { 'Accept': 'text/plain' },
       })
 
       if (!response.ok) {
-        throw new Error('Failed to get response. Please try again.')
+        throw new Error('Failed to get response')
       }
 
       const reply = await response.text()
-      const cleanReply = reply || 'No response generated.'
-
-      addMessage({ role: 'assistant', content: cleanReply })
+      addMessage({ role: 'assistant', content: reply || 'No response generated.' })
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Something went wrong'
       addMessage({ role: 'assistant', content: `Error: ${message}` })
