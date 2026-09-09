@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { supabase } from '../lib/supabase'
 
 export function Login() {
   const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, error, setError } = useAuthStore()
@@ -24,6 +25,7 @@ export function Login() {
   const [pendingEmail, setPendingEmail] = useState('')
   const [resending, setResending] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
+  const [verifying, setVerifying] = useState(false)
 
   useEffect(() => {
     if (user && !loading) {
@@ -43,6 +45,31 @@ export function Login() {
       return () => clearTimeout(timer)
     }
   }, [resendCooldown])
+
+  useEffect(() => {
+    if (!emailPending) return
+
+    setVerifying(true)
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        setVerifying(true)
+        await new Promise(r => setTimeout(r, 800))
+        navigate(from, { replace: true })
+      }
+    })
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setVerifying(true)
+        navigate(from, { replace: true })
+      } else {
+        setVerifying(false)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [emailPending, navigate, from])
 
   const handleGoogleLogin = async () => {
     await signInWithGoogle()
@@ -125,48 +152,83 @@ export function Login() {
             <div className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl" />
 
             <div className="relative p-8 sm:p-10 text-center">
-              <div className="relative mx-auto mb-8 w-24 h-24">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 blur-xl animate-pulse" />
-                <div className="relative w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                  </svg>
-                </div>
-              </div>
+              {verifying ? (
+                <>
+                  <div className="relative mx-auto mb-8 w-24 h-24">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 blur-xl animate-pulse" />
+                    <div className="relative w-full h-full rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                      <svg className="w-10 h-10 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </div>
+                  </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3">
-                Check your email
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-2">
-                We sent a confirmation link to
-              </p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-white/[0.06] rounded-lg px-4 py-2.5 mb-6 break-all">
-                {pendingEmail}
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-                Click the link in the email to verify your account and continue.
-              </p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                    Email verified!
+                  </h1>
+                  <p className="text-gray-500 dark:text-gray-400 mb-8">
+                    Signing you in automatically...
+                  </p>
 
-              <button
-                onClick={() => {
-                  setEmailPending(false)
-                  setPendingEmail('')
-                }}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.01] active:scale-[0.99]"
-              >
-                Back to Sign In
-              </button>
+                  <div className="flex items-center justify-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Redirecting to dashboard</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="relative mx-auto mb-8 w-24 h-24">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 blur-xl animate-pulse" />
+                    <div className="relative w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                      <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                      </svg>
+                    </div>
+                  </div>
 
-              <div className="mt-6">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Didn't receive the email?</p>
-                <button
-                  onClick={handleResendEmail}
-                  disabled={resendCooldown > 0 || resending}
-                  className="text-sm font-medium text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
-                >
-                  {resending ? 'Sending...' : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend email'}
-                </button>
-              </div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                    Check your email
+                  </h1>
+                  <p className="text-gray-500 dark:text-gray-400 mb-2">
+                    We sent a confirmation link to
+                  </p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-white/[0.06] rounded-lg px-4 py-2.5 mb-6 break-all">
+                    {pendingEmail}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    Click the link in the email to verify your account.
+                  </p>
+
+                  <div className="flex items-center justify-center gap-2 mb-8 p-3 rounded-xl bg-purple-50 dark:bg-purple-500/[0.06] border border-purple-200 dark:border-purple-500/20">
+                    <svg className="w-4 h-4 text-purple-500 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                    </svg>
+                    <span className="text-sm font-medium text-purple-600 dark:text-purple-400">Waiting for confirmation...</span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setEmailPending(false)
+                      setPendingEmail('')
+                    }}
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    Back to Sign In
+                  </button>
+
+                  <div className="mt-6">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Didn't receive the email?</p>
+                    <button
+                      onClick={handleResendEmail}
+                      disabled={resendCooldown > 0 || resending}
+                      className="text-sm font-medium text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {resending ? 'Sending...' : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend email'}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
