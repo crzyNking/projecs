@@ -133,10 +133,8 @@ export function Chatbot() {
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
               <div className="relative flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                    </svg>
+                  <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/20">
+                    <img src="https://static.wikia.nocookie.net/wreckitralph/images/2/2d/Knowsmore.png/revision/latest?cb=20190204230437" alt="KnowsMore" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
@@ -161,12 +159,10 @@ export function Chatbot() {
                   <div className={`max-w-[85%] ${msg.role === 'user' ? 'order-1' : 'order-1'}`}>
                     {msg.role === 'assistant' && (
                       <div className="flex items-center gap-1.5 mb-1.5">
-                        <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
-                          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25" />
-                          </svg>
+                        <div className="w-5 h-5 rounded-md overflow-hidden">
+                          <img src="https://static.wikia.nocookie.net/wreckitralph/images/2/2d/Knowsmore.png/revision/latest?cb=20190204230437" alt="AI" className="w-full h-full object-cover" />
                         </div>
-                        <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500">AI</span>
+                        <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500">KnowsMore</span>
                       </div>
                     )}
                     <div
@@ -186,12 +182,10 @@ export function Chatbot() {
                 <div className="flex justify-start">
                   <div className="max-w-[85%]">
                     <div className="flex items-center gap-1.5 mb-1.5">
-                      <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
-                        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25" />
-                        </svg>
+                      <div className="w-5 h-5 rounded-md overflow-hidden">
+                        <img src="https://static.wikia.nocookie.net/wreckitralph/images/2/2d/Knowsmore.png/revision/latest?cb=20190204230437" alt="AI" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500">AI</span>
+                      <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500">KnowsMore</span>
                     </div>
                     <div className="px-4 py-3 rounded-2xl rounded-bl-md bg-gray-100 dark:bg-white/[0.06]">
                       <div className="flex gap-1.5">
