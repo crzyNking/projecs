@@ -22,7 +22,7 @@ interface ChatState {
 
 const STORAGE_KEY = 'gemini_api_key'
 
-export const useChatStore = create<ChatState>((set, get) => ({
+export const useChatStore = create<ChatState>((set) => ({
   messages: [
     {
       id: 'welcome',
