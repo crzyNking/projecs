@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { useChatStore, getWelcomeMessages } from '../store/chatStore'
+import { useChatStore, getWelcomeMessages, getSystemPrompt } from '../store/chatStore'
 import { useAuthStore } from '../store/authStore'
 
 const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
 
 export function Chatbot() {
-  const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen, saveChatHistory, loadChatHistory } = useChatStore()
+  const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen, saveChatHistory, loadChatHistory, userData, fetchUserData } = useChatStore()
   const { user } = useAuthStore()
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -24,11 +24,13 @@ export function Chatbot() {
 
   useEffect(() => {
     if (user) {
-      loadChatHistory(user.id)
+      fetchUserData(user.id).then(() => {
+        loadChatHistory(user.id)
+      })
     } else {
-      useChatStore.setState({ messages: getWelcomeMessages() })
+      useChatStore.setState({ messages: getWelcomeMessages(), userData: null })
     }
-  }, [user, loadChatHistory])
+  }, [user, loadChatHistory, fetchUserData])
 
   useEffect(() => {
     if (user && messages.length > lastMessageCount.current && messages.some((m) => m.role === 'user')) {
@@ -51,9 +53,9 @@ export function Chatbot() {
     setIsLoading(true)
 
     try {
-      const systemMessage = messages.find((m) => m.role === 'system')
+      const systemPrompt = getSystemPrompt(userData)
       const conversationHistory = [
-        ...(systemMessage ? [{ role: 'system', content: systemMessage.content }] : []),
+        { role: 'system', content: systemPrompt },
         ...messages
           .filter((m) => m.role === 'user' || m.role === 'assistant')
           .map((m) => ({

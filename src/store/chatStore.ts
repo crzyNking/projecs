@@ -8,19 +8,58 @@ export interface Message {
   timestamp: Date
 }
 
+interface UserData {
+  profile: {
+    full_name: string | null
+    email: string | null
+    avatar_url: string | null
+    created_at: string
+  } | null
+  activityCount: number
+  recentActivity: Array<{ action: string; created_at: string }>
+  preferences: {
+    theme: string
+    email_notifications: boolean
+    push_notifications: boolean
+  } | null
+}
+
 interface ChatState {
   messages: Message[]
   isLoading: boolean
   isOpen: boolean
+  userData: UserData | null
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void
   setIsLoading: (loading: boolean) => void
   setIsOpen: (open: boolean) => void
   clearMessages: () => void
   saveChatHistory: (userId: string) => Promise<void>
   loadChatHistory: (userId: string) => Promise<void>
+  fetchUserData: (userId: string) => Promise<void>
 }
 
-export const WEBSITE_KNOWLEDGE = `You are KnowsMore, the AI assistant for this web application. You help users navigate and understand the app.
+export const getSystemPrompt = (userData?: UserData | null): string => {
+  let userContext = ''
+
+  if (userData?.profile) {
+    const p = userData.profile
+    const memberSince = new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+
+    userContext = `
+
+CURRENT LOGGED-IN USER DATA (use this to answer questions about their account):
+- Name: ${p.full_name || 'Not set'}
+- Email: ${p.email}
+- Member since: ${memberSince}
+- Total activities: ${userData.activityCount}
+- Recent activities: ${userData.recentActivity.slice(0, 5).map((a) => `${a.action} on ${new Date(a.created_at).toLocaleDateString()}`).join(', ') || 'None yet'}
+- Theme preference: ${userData.preferences?.theme || 'System'}
+- Email notifications: ${userData.preferences?.email_notifications ? 'Enabled' : 'Disabled'}
+- Push notifications: ${userData.preferences?.push_notifications ? 'Enabled' : 'Disabled'}
+- Avatar: ${p.avatar_url ? 'Uploaded' : 'Not set'}`
+  }
+
+  return `You are KnowsMore, the AI assistant for this web application. You help users navigate and understand the app.
 
 IMPORTANT RULES - TO REDUCE HALLUCINATION:
 - ONLY answer based on the information provided below about this website
@@ -29,6 +68,7 @@ IMPORTANT RULES - TO REDUCE HALLUCINATION:
 - If a user asks about something not covered here, tell them to check the relevant page in the app
 - Keep answers short and helpful
 - If you're unsure, ask the user to clarify
+- When user data is provided below, use it to answer questions about their account, activity, and settings
 
 ABOUT THIS WEBSITE:
 This is a user dashboard platform with authentication, profile management, and activity tracking.
@@ -48,15 +88,16 @@ PAGES AND FEATURES:
 
 7. AI CHATBOT: This is you! Floating button opens chat. You answer questions about the app. Chat history saves for logged-in users.
 
-TECH: React, TypeScript, Tailwind CSS, Supabase, deployed on Vercel.
+TECH: React, TypeScript, Tailwind CSS, Supabase, deployed on Vercel.${userContext}
 
 If users ask how to do something, guide them to the right page. If they report a bug, suggest refreshing or checking settings.`
+}
 
-export const getWelcomeMessages = (): Message[] => [
+export const getWelcomeMessages = (userData?: UserData | null): Message[] => [
   {
     id: 'system',
     role: 'system',
-    content: WEBSITE_KNOWLEDGE,
+    content: getSystemPrompt(userData),
     timestamp: new Date(),
   },
   {
@@ -71,6 +112,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messages: getWelcomeMessages(),
   isLoading: false,
   isOpen: false,
+  userData: null,
 
   addMessage: (message) =>
     set((state) => ({
@@ -87,7 +129,35 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setIsLoading: (loading) => set({ isLoading: loading }),
   setIsOpen: (open) => set({ isOpen: open }),
 
-  clearMessages: () => set({ messages: getWelcomeMessages() }),
+  clearMessages: () => set({ messages: getWelcomeMessages(), userData: null }),
+
+  fetchUserData: async (userId: string) => {
+    try {
+      const [profileRes, activityRes, prefsRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userId).single(),
+        supabase.from('activity_logs').select('action, created_at').eq('user_id', userId).order('created_at', { ascending: false }).limit(10),
+        supabase.from('user_preferences').select('theme, email_notifications, push_notifications').eq('user_id', userId).single(),
+      ])
+
+      const userData: UserData = {
+        profile: profileRes.data,
+        activityCount: 0,
+        recentActivity: activityRes.data || [],
+        preferences: prefsRes.data,
+      }
+
+      const { count } = await supabase
+        .from('activity_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+
+      userData.activityCount = count || 0
+
+      set({ userData })
+    } catch (err) {
+      console.error('Error fetching user data:', err)
+    }
+  },
 
   saveChatHistory: async (userId: string) => {
     try {
@@ -121,7 +191,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         .single()
 
       if (error || !data) {
-        set({ messages: getWelcomeMessages() })
+        const { userData } = get()
+        set({ messages: getWelcomeMessages(userData) })
         return
       }
 
@@ -133,12 +204,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
         })
       )
 
+      const { userData } = get()
       set({
         messages: [
           {
             id: 'system',
             role: 'system',
-            content: WEBSITE_KNOWLEDGE,
+            content: getSystemPrompt(userData),
             timestamp: new Date(),
           },
           ...savedMessages,
