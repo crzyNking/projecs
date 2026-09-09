@@ -51,7 +51,7 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'google/gemma-2-9b-it:free',
+          model: 'xiaomi/mimo-v2.5',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
