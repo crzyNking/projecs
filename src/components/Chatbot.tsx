@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
 
+const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
+
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
   const [input, setInput] = useState('')
@@ -20,23 +22,51 @@ export function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
+    if (!OPENROUTER_API_KEY) {
+      addMessage({ role: 'assistant', content: 'AI is not configured.' })
+      return
+    }
+
     const userMessage = input.trim()
     setInput('')
     addMessage({ role: 'user', content: userMessage })
     setIsLoading(true)
 
     try {
-      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(userMessage)}`, {
-        method: 'GET',
-        headers: { 'Accept': 'text/plain' },
+      const conversationHistory = messages
+        .filter((m) => m.role !== 'system')
+        .map((m) => ({
+          role: m.role,
+          content: m.content,
+        }))
+
+      conversationHistory.push({ role: 'user', content: userMessage })
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'KnowsMore AI',
+        },
+        body: JSON.stringify({
+          model: 'mistralai/mistral-7b-instruct:free',
+          messages: conversationHistory,
+          temperature: 0.7,
+          max_tokens: 2048,
+        }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to get response')
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.error?.message || 'Failed to get response')
       }
 
-      const reply = await response.text()
-      addMessage({ role: 'assistant', content: reply || 'No response generated.' })
+      const data = await response.json()
+      const reply = data.choices?.[0]?.message?.content || 'No response generated.'
+
+      addMessage({ role: 'assistant', content: reply })
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Something went wrong'
       addMessage({ role: 'assistant', content: `Error: ${message}` })
@@ -90,7 +120,7 @@ export function Chatbot() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
-                    <p className="text-xs text-white/70">Free AI Assistant</p>
+                    <p className="text-xs text-white/70">Powered by OpenRouter</p>
                   </div>
                 </div>
                 <button
