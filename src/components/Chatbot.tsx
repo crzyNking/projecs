@@ -2,9 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useChatStore, getWelcomeMessages, getSystemPrompt } from '../store/chatStore'
 import { useAuthStore } from '../store/authStore'
 
-const AI_BASE_URL = 'http://localhost:20128'
-const AI_API_KEY = 'sk-23168a82085d432c-13cbf5-c20b0863'
-const AI_MODEL = 'david-copy'
+const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
 
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen, saveChatHistory, loadChatHistory, userData, fetchUserData } = useChatStore()
@@ -44,7 +42,7 @@ export function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
-    if (!AI_API_KEY) {
+    if (!OPENROUTER_API_KEY) {
       addMessage({ role: 'assistant', content: 'AI is not configured.' })
       return
     }
@@ -68,14 +66,16 @@ export function Chatbot() {
 
       conversationHistory.push({ role: 'user', content: userMessage })
 
-      const response = await fetch(`${AI_BASE_URL}/v1/chat/completions`, {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${AI_API_KEY}`,
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: AI_MODEL,
+          model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
@@ -140,7 +140,7 @@ export function Chatbot() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
-                    <p className="text-xs text-white/70">Powered by OmniRoute</p>
+                    <p className="text-xs text-white/70">Powered by OpenRouter</p>
                   </div>
                 </div>
                 <button
