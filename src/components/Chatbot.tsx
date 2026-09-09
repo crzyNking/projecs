@@ -75,7 +75,7 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+          model: 'openrouter/free',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
@@ -88,6 +88,7 @@ export function Chatbot() {
       }
 
       const data = await response.json()
+      console.log('AI Response:', data)
       const reply = data.choices?.[0]?.message?.content || 'No response generated.'
 
       addMessage({ role: 'assistant', content: reply })
