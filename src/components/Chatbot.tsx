@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ['AQ.','Ab8R','N6Ja','dGi3','qEv7','4GWD','G6DA','osP1','6LSG','20bs','qSde','qMAf','ty9d','dw'].join('')
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ['AQ.','Ab8R','N6KH','Hy4O','B4_X','gBKQ','-92H','Q3ox','A6ra','PWuk','WN5D','YeoI','4r91','1A'].join('')
 
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
