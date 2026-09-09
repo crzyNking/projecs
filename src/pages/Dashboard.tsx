@@ -2,13 +2,11 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useActivityStore } from '../store/activityStore'
-import { useNotification } from '../hooks/useNotification'
 
 export function Dashboard() {
   const { user, profile, signOut } = useAuthStore()
   const { activities, fetchActivities } = useActivityStore()
   const navigate = useNavigate()
-  const notify = useNotification()
   const [showDropdown, setShowDropdown] = useState(false)
 
   useEffect(() => {

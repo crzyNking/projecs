@@ -36,11 +36,6 @@ export function Analytics() {
           .limit(1)
           .single()
 
-        // Calculate days since account creation
-        const createdAt = new Date(user.created_at)
-        const now = new Date()
-        const daysSinceCreation = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24))
-
         setAnalytics({
           totalSessions: activityCount || 0,
           avgSessionDuration: Math.floor(Math.random() * 15) + 5, // Simulated
