@@ -1,13 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { useActivityStore } from '../store/activityStore'
 import { useNotification } from '../hooks/useNotification'
 
 export function Dashboard() {
   const { user, profile, signOut } = useAuthStore()
+  const { activities, fetchActivities } = useActivityStore()
   const navigate = useNavigate()
   const notify = useNotification()
   const [showDropdown, setShowDropdown] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      fetchActivities(user.id, 5)
+    }
+  }, [user, fetchActivities])
 
   const handleSignOut = async () => {
     await signOut()
@@ -34,34 +42,51 @@ export function Dashboard() {
 
   const quickActions = [
     {
-      label: 'Success',
-      iconPath: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-      gradient: 'from-emerald-500/20 to-green-500/20',
-      iconColor: 'text-emerald-400',
-      onClick: () => notify.success({ title: 'Success!', message: 'Your changes have been saved.' })
+      label: 'Analytics',
+      iconPath: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z',
+      gradient: 'from-purple-500/20 to-violet-500/20',
+      iconColor: 'text-purple-400',
+      onClick: () => navigate('/analytics')
     },
     {
-      label: 'Error',
-      iconPath: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z',
-      gradient: 'from-red-500/20 to-rose-500/20',
-      iconColor: 'text-red-400',
-      onClick: () => notify.error({ title: 'Error', message: 'Something went wrong. Please try again.' })
+      label: 'Reports',
+      iconPath: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z',
+      gradient: 'from-cyan-500/20 to-blue-500/20',
+      iconColor: 'text-cyan-400',
+      onClick: () => navigate('/reports')
     },
     {
-      label: 'Warning',
-      iconPath: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+      label: 'Settings',
+      iconPath: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z',
       gradient: 'from-amber-500/20 to-orange-500/20',
       iconColor: 'text-amber-400',
-      onClick: () => notify.warning({ title: 'Warning', message: 'Your session will expire soon.' })
+      onClick: () => navigate('/settings')
     },
     {
-      label: 'Info',
-      iconPath: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-      gradient: 'from-sky-500/20 to-blue-500/20',
-      iconColor: 'text-sky-400',
-      onClick: () => notify.info({ title: 'New Feature', message: 'Check out our latest updates!' })
+      label: 'Profile',
+      iconPath: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
+      gradient: 'from-emerald-500/20 to-green-500/20',
+      iconColor: 'text-emerald-400',
+      onClick: () => navigate('/profile')
     },
   ]
+
+  const getActivityIcon = (action: string) => {
+    if (action.includes('sign_in') || action.includes('login')) {
+      return { icon: 'M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z', color: 'emerald' }
+    }
+    if (action.includes('avatar')) {
+      return { icon: 'M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z', color: 'violet' }
+    }
+    if (action.includes('profile')) {
+      return { icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z', color: 'sky' }
+    }
+    return { icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', color: 'emerald' }
+  }
+
+  const formatActivityAction = (action: string) => {
+    return action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
@@ -129,13 +154,19 @@ export function Dashboard() {
                       </div>
                     </div>
                     <div className="p-1.5">
-                      <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-400 transition-colors hover:bg-white/[0.06] hover:text-white">
+                      <button
+                        onClick={() => { navigate('/profile'); setShowDropdown(false); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+                      >
                         <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                         </svg>
                         Profile
                       </button>
-                      <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-400 transition-colors hover:bg-white/[0.06] hover:text-white">
+                      <button
+                        onClick={() => { navigate('/settings'); setShowDropdown(false); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+                      >
                         <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -209,7 +240,10 @@ export function Dashboard() {
               </h3>
 
               <div className="flex flex-col items-center text-center">
-                <div className="relative mb-4">
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="relative mb-4 group cursor-pointer"
+                >
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 opacity-40 blur-lg" />
                   {avatarUrl ? (
                     <img className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover ring-2 ring-white/10" src={avatarUrl} alt={displayName} />
@@ -218,7 +252,14 @@ export function Dashboard() {
                       {initials}
                     </div>
                   )}
-                </div>
+                  <div className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                    </svg>
+                  </div>
+                </button>
+                <p className="text-xs text-gray-500 mb-2 -mt-2">Click to edit</p>
                 <h4 className="text-lg sm:text-xl font-semibold text-white">{displayName}</h4>
                 <p className="mt-1 text-sm text-gray-500 break-all">{email}</p>
                 <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 ring-1 ring-emerald-500/20">
@@ -280,29 +321,29 @@ export function Dashboard() {
                 Recent Activity
               </h3>
               <div className="space-y-1">
-                {[
-                  { title: 'Signed in with Google', sub: 'Just now', iconPath: 'M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z', color: 'emerald' },
-                  { title: 'Profile created', sub: 'Account initialized', iconPath: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z', color: 'violet' },
-                  { title: 'Security verified', sub: 'OAuth 2.0 authentication', iconPath: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', color: 'sky' },
-                ].map((item, i) => {
-                  const itemColor = colorMap[item.color]
-                  return (
-                    <div key={i} className="group flex items-center gap-3.5 rounded-xl p-3 transition-colors hover:bg-white/[0.04]">
-                      <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${itemColor.bg} ring-1 ${itemColor.ring}`}>
-                        <svg className={`h-4 w-4 ${itemColor.text}`} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d={item.iconPath} />
-                        </svg>
+                {activities.length > 0 ? (
+                  activities.map((activity, i) => {
+                    const activityStyle = getActivityIcon(activity.action)
+                    const itemColor = colorMap[activityStyle.color]
+                    return (
+                      <div key={i} className="group flex items-center gap-3.5 rounded-xl p-3 transition-colors hover:bg-white/[0.04]">
+                        <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${itemColor.bg} ring-1 ${itemColor.ring}`}>
+                          <svg className={`h-4 w-4 ${itemColor.text}`} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d={activityStyle.icon} />
+                          </svg>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-white">{formatActivityAction(activity.action)}</p>
+                          <p className="text-xs text-gray-500">{new Date(activity.created_at).toLocaleString()}</p>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-white">{item.title}</p>
-                        <p className="text-xs text-gray-500">{item.sub}</p>
-                      </div>
-                      <svg className="h-4 w-4 flex-shrink-0 text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </div>
-                  )
-                })}
+                    )
+                  })
+                ) : (
+                  <div className="text-center py-6 text-gray-500">
+                    <p className="text-sm">No activity yet</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

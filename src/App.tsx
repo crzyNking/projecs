@@ -5,6 +5,10 @@ import { ToastContainer } from './components/Toast'
 import { Login } from './pages/Login'
 import { AuthCallback } from './pages/AuthCallback'
 import { Dashboard } from './pages/Dashboard'
+import { Settings } from './pages/Settings'
+import { Profile } from './pages/Profile'
+import { Analytics } from './pages/Analytics'
+import { Reports } from './pages/Reports'
 
 function App() {
   return (
@@ -19,6 +23,38 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
               </ProtectedRoute>
             }
           />

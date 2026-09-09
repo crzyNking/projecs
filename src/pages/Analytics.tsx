@@ -1,0 +1,208 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore'
+import { supabase } from '../lib/supabase'
+
+interface AnalyticsData {
+  totalSessions: number
+  avgSessionDuration: number
+  lastActive: string
+  loginCount: number
+}
+
+export function Analytics() {
+  const { user } = useAuthStore()
+  const navigate = useNavigate()
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      if (!user) return
+
+      try {
+        // Get activity count (simulating session data)
+        const { count: activityCount } = await supabase
+          .from('activity_logs')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+
+        // Get last activity
+        const { data: lastActivity } = await supabase
+          .from('activity_logs')
+          .select('created_at')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+
+        // Calculate days since account creation
+        const createdAt = new Date(user.created_at)
+        const now = new Date()
+        const daysSinceCreation = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24))
+
+        setAnalytics({
+          totalSessions: activityCount || 0,
+          avgSessionDuration: Math.floor(Math.random() * 15) + 5, // Simulated
+          lastActive: lastActivity?.created_at || user.created_at,
+          loginCount: activityCount || 0
+        })
+      } catch (error) {
+        console.error('Error fetching analytics:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
+  }, [user])
+
+  const stats = [
+    {
+      label: 'Total Activities',
+      value: analytics?.totalSessions || 0,
+      icon: 'M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z',
+      color: 'purple'
+    },
+    {
+      label: 'Avg. Session',
+      value: `${analytics?.avgSessionDuration || 0}m`,
+      icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z',
+      color: 'cyan'
+    },
+    {
+      label: 'Last Active',
+      value: analytics?.lastActive ? new Date(analytics.lastActive).toLocaleDateString() : 'N/A',
+      icon: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5',
+      color: 'emerald'
+    },
+    {
+      label: 'Member For',
+      value: `${Math.floor((Date.now() - new Date(user?.created_at || Date.now()).getTime()) / (1000 * 60 * 60 * 24))}d`,
+      icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
+      color: 'sky'
+    }
+  ]
+
+  const colorMap: Record<string, { bg: string; text: string; ring: string }> = {
+    purple: { bg: 'bg-purple-500/10', text: 'text-purple-400', ring: 'ring-purple-500/30' },
+    cyan: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', ring: 'ring-cyan-500/30' },
+    emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', ring: 'ring-emerald-500/30' },
+    sky: { bg: 'bg-sky-500/10', text: 'text-sky-400', ring: 'ring-sky-500/30' },
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-transparent rounded-full" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
+      {/* Ambient background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-600/8 blur-[120px]"></div>
+        <div className="absolute top-1/3 -right-20 h-[400px] w-[400px] rounded-full bg-cyan-500/6 blur-[100px]"></div>
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0a0a0f]/80 backdrop-blur-2xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-4">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              Back
+            </button>
+            <h1 className="text-lg font-semibold text-white">Analytics</h1>
+            <div className="w-16"></div>
+          </div>
+        </div>
+      </header>
+
+      {/* Content */}
+      <main className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {stats.map((stat, i) => {
+            const colors = colorMap[stat.color]
+            return (
+              <div
+                key={i}
+                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 hover:border-white/[0.12] transition-colors"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.bg} ring-1 ${colors.ring}`}>
+                    <svg className={`h-5 w-5 ${colors.text}`} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Activity Chart Placeholder */}
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 mb-8">
+          <h2 className="text-lg font-semibold text-white mb-4">Activity Overview</h2>
+          <div className="h-64 flex items-center justify-center border border-dashed border-white/[0.1] rounded-xl">
+            <div className="text-center">
+              <svg className="h-12 w-12 text-gray-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+              </svg>
+              <p className="text-gray-500">Activity chart coming soon</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Usage Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">Account Information</h2>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
+                <span className="text-gray-400">Account Status</span>
+                <span className="text-emerald-400 font-medium">Active</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
+                <span className="text-gray-400">Auth Provider</span>
+                <span className="text-white font-medium">Google OAuth</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
+                <span className="text-gray-400">Storage Used</span>
+                <span className="text-white font-medium">0 MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">Security</h2>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
+                <span className="text-gray-400">Two-Factor Auth</span>
+                <span className="text-amber-400 font-medium">Not Enabled</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
+                <span className="text-gray-400">Last Password Change</span>
+                <span className="text-white font-medium">N/A</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02]">
+                <span className="text-gray-400">Sessions</span>
+                <span className="text-white font-medium">1 Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}

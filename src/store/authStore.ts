@@ -25,6 +25,7 @@ interface AuthState {
   fetchProfile: (userId: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
+  uploadAvatar: (file: File) => Promise<string | null>
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -73,6 +74,55 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: null, session: null, profile: null })
     } catch (error) {
       set({ error: error instanceof Error ? error.message : 'Failed to sign out' })
+    }
+  },
+  uploadAvatar: async (file: File): Promise<string | null> => {
+    const userId = (await supabase.auth.getUser()).data.user?.id
+    if (!userId) {
+      set({ error: 'Not authenticated' })
+      return null
+    }
+
+    try {
+      // Create unique file name
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${userId}/avatar.${fileExt}`
+
+      // Delete existing avatar if any
+      await supabase.storage.from('avatars').remove([fileName])
+
+      // Upload new avatar
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+
+      // Add cache-busting query param
+      const avatarUrl = `${publicUrl}?t=${Date.now()}`
+
+      // Update profile in database
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+        .eq('id', userId)
+
+      if (updateError) throw updateError
+
+      // Update local state
+      set((state) => ({
+        profile: state.profile ? { ...state.profile, avatar_url: avatarUrl } : null
+      }))
+
+      return avatarUrl
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to upload avatar' })
+      return null
     }
   },
 }))
