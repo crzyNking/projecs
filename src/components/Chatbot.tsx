@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
 
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ''
+
 export function Chatbot() {
-  const { messages, isLoading, isOpen, apiKey, addMessage, setIsLoading, setIsOpen, setApiKey } = useChatStore()
+  const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
   const [input, setInput] = useState('')
-  const [showSettings, setShowSettings] = useState(false)
-  const [tempApiKey, setTempApiKey] = useState(apiKey)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -22,8 +22,8 @@ export function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
-    if (!apiKey) {
-      setShowSettings(true)
+    if (!GEMINI_API_KEY) {
+      addMessage({ role: 'assistant', content: 'AI is not configured. Please add your Gemini API key to the .env file.' })
       return
     }
 
@@ -43,7 +43,7 @@ export function Chatbot() {
       conversationHistory.push({ role: 'user', parts: [{ text: userMessage }] })
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -86,11 +86,6 @@ export function Chatbot() {
     }
   }
 
-  const handleSaveApiKey = () => {
-    setApiKey(tempApiKey.trim())
-    setShowSettings(false)
-  }
-
   return (
     <>
       {/* Floating Button */}
@@ -128,49 +123,20 @@ export function Chatbot() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-white">AI Assistant</h3>
-                    <p className="text-xs text-white/70">Powered by Gemini</p>
+                    <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
+                    <p className="text-xs text-white/70">AI Assistant</p>
                   </div>
                 </div>
                 <button
-                  onClick={() => setShowSettings(!showSettings)}
+                  onClick={() => setIsOpen(!isOpen)}
                   className="p-2 rounded-lg hover:bg-white/20 transition-colors"
                 >
                   <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
-
-            {/* Settings Panel */}
-            {showSettings && (
-              <div className="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.02]">
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Google Gemini API Key</p>
-                <div className="flex gap-2">
-                  <input
-                    type="password"
-                    value={tempApiKey}
-                    onChange={(e) => setTempApiKey(e.target.value)}
-                    placeholder="AIza..."
-                    className="flex-1 px-3 py-2 text-sm rounded-lg bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50"
-                  />
-                  <button
-                    onClick={handleSaveApiKey}
-                    className="px-3 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600 transition-colors"
-                  >
-                    Save
-                  </button>
-                </div>
-                <p className="text-[11px] text-gray-400 mt-1.5">
-                  Get your key at{' '}
-                  <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline">
-                    aistudio.google.com
-                  </a>
-                </p>
-              </div>
-            )}
 
             {/* Messages */}
             <div className="h-[350px] overflow-y-auto px-5 py-4 space-y-4">
@@ -233,7 +199,7 @@ export function Chatbot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={apiKey ? 'Ask me anything...' : 'Set API key in settings first'}
+                  placeholder="Ask KnowsMore anything..."
                   rows={1}
                   className="flex-1 resize-none px-4 py-2.5 text-sm rounded-xl bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 max-h-24"
                   style={{ minHeight: '40px' }}
