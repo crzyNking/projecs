@@ -51,7 +51,7 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'mistralai/mistral-7b-instruct:free',
+          model: 'meta-llama/llama-3.1-8b-instruct:free',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
