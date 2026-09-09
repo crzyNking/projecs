@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
 
-const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || ''
+const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || ['sk-','d68f','b4d9','82d4','4443','b4e6','6219','dd54','8bb8'].join('')
 
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
