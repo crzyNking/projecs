@@ -75,7 +75,7 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-chat-v3-0324:free',
+          model: 'nvidia/nemotron-3-super-120b-a12b:free',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
