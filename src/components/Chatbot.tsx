@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ''
+const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || ''
 
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
@@ -22,8 +22,8 @@ export function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
-    if (!GEMINI_API_KEY) {
-      addMessage({ role: 'assistant', content: 'AI is not configured. Please add your Gemini API key to the .env file.' })
+    if (!DEEPSEEK_API_KEY) {
+      addMessage({ role: 'assistant', content: 'AI is not configured. Please add your DeepSeek API key to the .env file.' })
       return
     }
 
@@ -36,39 +36,36 @@ export function Chatbot() {
       const conversationHistory = messages
         .filter((m) => m.role !== 'system')
         .map((m) => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }],
+          role: m.role,
+          content: m.content,
         }))
 
-      conversationHistory.push({ role: 'user', parts: [{ text: userMessage }] })
+      conversationHistory.push({ role: 'user', content: userMessage })
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: conversationHistory,
-            generationConfig: {
-              temperature: 0.7,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 2048,
-            },
-          }),
-        }
-      )
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: conversationHistory,
+          temperature: 0.7,
+          max_tokens: 2048,
+        }),
+      })
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null)
-        if (response.status === 400 || response.status === 403) {
-          throw new Error('Invalid API key. Please check your Gemini API key in settings.')
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Invalid API key. Please check your DeepSeek API key in .env file.')
         }
         throw new Error(errorData?.error?.message || 'Failed to get response')
       }
 
       const data = await response.json()
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.'
+      const reply = data.choices?.[0]?.message?.content || 'No response generated.'
 
       addMessage({ role: 'assistant', content: reply })
     } catch (error) {
@@ -124,7 +121,7 @@ export function Chatbot() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
-                    <p className="text-xs text-white/70">AI Assistant</p>
+                    <p className="text-xs text-white/70">Powered by DeepSeek</p>
                   </div>
                 </div>
                 <button
