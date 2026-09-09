@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChatStore } from '../store/chatStore'
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ['AQ.','Ab8R','N6KH','Hy4O','B4_X','gBKQ','-92H','Q3ox','A6ra','PWuk','WN5D','YeoI','4r91','1A'].join('')
-
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen } = useChatStore()
   const [input, setInput] = useState('')
@@ -22,11 +20,6 @@ export function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
-    if (!GEMINI_API_KEY) {
-      addMessage({ role: 'assistant', content: 'AI is not configured. Please add your Gemini API key to the .env file.' })
-      return
-    }
-
     const userMessage = input.trim()
     setInput('')
     addMessage({ role: 'user', content: userMessage })
@@ -36,41 +29,30 @@ export function Chatbot() {
       const conversationHistory = messages
         .filter((m) => m.role !== 'system')
         .map((m) => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }],
+          role: m.role,
+          content: m.content,
         }))
 
-      conversationHistory.push({ role: 'user', parts: [{ text: userMessage }] })
+      conversationHistory.push({ role: 'user', content: userMessage })
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: conversationHistory,
-            generationConfig: {
-              temperature: 0.7,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 2048,
-            },
-          }),
-        }
-      )
+      const response = await fetch('https://text.pollinations.ai/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: conversationHistory,
+          model: 'openai',
+          seed: Math.floor(Math.random() * 10000),
+        }),
+      })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null)
-        if (response.status === 400 || response.status === 403) {
-          throw new Error('Invalid API key. Please check your Gemini API key in .env file.')
-        }
-        throw new Error(errorData?.error?.message || 'Failed to get response')
+        throw new Error('Failed to get response. Please try again.')
       }
 
-      const data = await response.json()
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.'
+      const reply = await response.text()
+      const cleanReply = reply || 'No response generated.'
 
-      addMessage({ role: 'assistant', content: reply })
+      addMessage({ role: 'assistant', content: cleanReply })
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Something went wrong'
       addMessage({ role: 'assistant', content: `Error: ${message}` })
@@ -124,7 +106,7 @@ export function Chatbot() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
-                    <p className="text-xs text-white/70">Powered by Gemini</p>
+                    <p className="text-xs text-white/70">Free AI Assistant</p>
                   </div>
                 </div>
                 <button
