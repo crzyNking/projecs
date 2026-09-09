@@ -77,8 +77,6 @@ export function Chatbot() {
         body: JSON.stringify({
           model: 'poolside/laguna-s-2.1:free',
           messages: conversationHistory,
-          temperature: 0.7,
-          max_tokens: 2048,
         }),
       })
 
@@ -88,7 +86,6 @@ export function Chatbot() {
       }
 
       const data = await response.json()
-      console.log('AI Response:', data)
       const reply = data.choices?.[0]?.message?.content || 'No response generated.'
 
       addMessage({ role: 'assistant', content: reply })
