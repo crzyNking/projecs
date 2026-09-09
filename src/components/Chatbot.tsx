@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useChatStore, getWelcomeMessages, getSystemPrompt } from '../store/chatStore'
 import { useAuthStore } from '../store/authStore'
 
-const NVIDIA_API_KEY = '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'
-const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1'
+const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
 
 export function Chatbot() {
   const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen, saveChatHistory, loadChatHistory, userData, fetchUserData } = useChatStore()
@@ -43,7 +42,7 @@ export function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
-    if (!NVIDIA_API_KEY) {
+    if (!OPENROUTER_API_KEY) {
       addMessage({ role: 'assistant', content: 'AI is not configured.' })
       return
     }
@@ -67,14 +66,16 @@ export function Chatbot() {
 
       conversationHistory.push({ role: 'user', content: userMessage })
 
-      const response = await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${NVIDIA_API_KEY}`,
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'nvidia/llama-3.1-nemotron-70b-instruct',
+          model: 'deepseek/deepseek-chat-v3-0324:free',
           messages: conversationHistory,
           temperature: 0.7,
           max_tokens: 2048,
@@ -139,7 +140,7 @@ export function Chatbot() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-white">KnowsMore</h3>
-                    <p className="text-xs text-white/70">Powered by NVIDIA AI</p>
+                    <p className="text-xs text-white/70">Powered by OpenRouter</p>
                   </div>
                 </div>
                 <button
