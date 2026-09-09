@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { usePreferencesStore, type Theme } from '../store/preferencesStore'
 import { useActivityStore } from '../store/activityStore'
 import { useNotification } from '../hooks/useNotification'
+import { useChatStore } from '../store/chatStore'
 
 export function Settings() {
   const { user } = useAuthStore()
@@ -11,6 +12,8 @@ export function Settings() {
   const { logActivity } = useActivityStore()
   const notify = useNotification()
   const navigate = useNavigate()
+  const { apiKey, setApiKey } = useChatStore()
+  const [geminiApiKey, setGeminiApiKey] = useState(apiKey)
 
   useEffect(() => {
     if (user) {
@@ -30,6 +33,14 @@ export function Settings() {
     await updatePreferences(user.id, { [key]: value })
     await logActivity(user.id, 'preference_updated', { key, value })
     notify.success({ title: 'Preference updated', message: 'Your settings have been saved' })
+  }
+
+  const handleSaveApiKey = async () => {
+    setApiKey(geminiApiKey.trim())
+    if (user) {
+      await logActivity(user.id, 'api_key_updated', { provider: 'gemini' })
+    }
+    notify.success({ title: 'API key saved', message: 'Gemini API key has been updated' })
   }
 
   const themes: { value: Theme; label: string; description: string }[] = [
@@ -133,6 +144,40 @@ export function Settings() {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* AI Settings Section */}
+          <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">AI Assistant</h2>
+            <p className="text-sm text-gray-500 mb-6">Configure the AI chatbot powered by Google Gemini</p>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Gemini API Key</label>
+                <div className="flex gap-3">
+                  <input
+                    type="password"
+                    value={geminiApiKey}
+                    onChange={(e) => setGeminiApiKey(e.target.value)}
+                    placeholder="AIza..."
+                    className="flex-1 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-colors"
+                  />
+                  <button
+                    onClick={handleSaveApiKey}
+                    disabled={geminiApiKey === apiKey}
+                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-sm font-semibold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    Save
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  Get your free API key at{' '}
+                  <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 underline underline-offset-2">
+                    aistudio.google.com/apikey
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
 
