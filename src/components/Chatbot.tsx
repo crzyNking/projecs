@@ -75,7 +75,7 @@ export function Chatbot() {
           'X-Title': 'KnowsMore AI',
         },
         body: JSON.stringify({
-          model: 'thinkingmachines/inkling:free',
+          model: 'google/gemma-4-26b-a4b-it:free',
           messages: conversationHistory,
         }),
       })
