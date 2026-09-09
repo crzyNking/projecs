@@ -59,6 +59,8 @@ export function Login() {
           setFullName('')
           setAgreeToTerms(false)
         }
+      } else {
+        setError(result.message)
       }
     } else {
       const success = await signInWithEmail(email, password)

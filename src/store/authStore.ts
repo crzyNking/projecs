@@ -102,27 +102,34 @@ export const useAuthStore = create<AuthState>((set) => ({
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
+
+      console.log('Supabase signUp response:', { data, error })
+
       if (error) throw error
 
       if (data.user) {
-        // Check if email confirmation is required
+        // Check if email already exists (no identities means email was already registered)
         if (data.user.identities?.length === 0) {
           return { success: false, message: 'An account with this email already exists.' }
         }
 
-        // If email confirmation is enabled, user will need to confirm
+        // Check how many identities - if only 1, this is a new user
+        const identityCount = data.user.identities?.length ?? 0
+        console.log('User identities count:', identityCount)
+
         if (data.session) {
-          // Email confirmation is disabled, user is signed in
+          // Email confirmation is disabled, user is signed in immediately
           set({ user: data.user, session: data.session })
           await useAuthStore.getState().fetchProfile(data.user.id)
           return { success: true, message: 'Account created successfully!' }
         } else {
-          // Email confirmation is enabled
+          // Email confirmation is enabled - email was sent
           return { success: true, message: 'Please check your email to confirm your account.' }
         }
       }
       return { success: false, message: 'Failed to create account' }
     } catch (error) {
+      console.error('Sign up error:', error)
       const message = error instanceof Error ? error.message : 'Failed to sign up'
       set({ error: message })
       return { success: false, message }
