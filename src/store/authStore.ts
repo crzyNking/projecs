@@ -24,6 +24,8 @@ interface AuthState {
   setError: (error: string | null) => void
   fetchProfile: (userId: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
+  signInWithEmail: (email: string, password: string) => Promise<boolean>
+  signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{ success: boolean; message: string }>
   signOut: () => Promise<void>
   uploadAvatar: (file: File) => Promise<string | null>
 }
@@ -67,6 +69,65 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ error: error instanceof Error ? error.message : 'Failed to sign in' })
     }
   },
+  signInWithEmail: async (email: string, password: string): Promise<boolean> => {
+    set({ error: null })
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) throw error
+
+      if (data.user && data.session) {
+        set({ user: data.user, session: data.session })
+        await useAuthStore.getState().fetchProfile(data.user.id)
+        return true
+      }
+      return false
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to sign in' })
+      return false
+    }
+  },
+  signUpWithEmail: async (email: string, password: string, fullName: string): Promise<{ success: boolean; message: string }> => {
+    set({ error: null })
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+
+      if (data.user) {
+        // Check if email confirmation is required
+        if (data.user.identities?.length === 0) {
+          return { success: false, message: 'An account with this email already exists.' }
+        }
+
+        // If email confirmation is enabled, user will need to confirm
+        if (data.session) {
+          // Email confirmation is disabled, user is signed in
+          set({ user: data.user, session: data.session })
+          await useAuthStore.getState().fetchProfile(data.user.id)
+          return { success: true, message: 'Account created successfully!' }
+        } else {
+          // Email confirmation is enabled
+          return { success: true, message: 'Please check your email to confirm your account.' }
+        }
+      }
+      return { success: false, message: 'Failed to create account' }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to sign up'
+      set({ error: message })
+      return { success: false, message }
+    }
+  },
   signOut: async () => {
     try {
       const { error } = await supabase.auth.signOut()
@@ -84,29 +145,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
 
     try {
-      // Create unique file name
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}/avatar.${fileExt}`
 
-      // Delete existing avatar if any
       await supabase.storage.from('avatars').remove([fileName])
 
-      // Upload new avatar
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { upsert: true })
 
       if (uploadError) throw uploadError
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName)
 
-      // Add cache-busting query param
       const avatarUrl = `${publicUrl}?t=${Date.now()}`
 
-      // Update profile in database
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: avatarUrl, updated_at: new Date().toISOString() })
@@ -114,7 +169,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       if (updateError) throw updateError
 
-      // Update local state
       set((state) => ({
         profile: state.profile ? { ...state.profile, avatar_url: avatarUrl } : null
       }))
