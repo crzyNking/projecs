@@ -10,8 +10,8 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
-      <div className="flex items-center justify-between px-4 py-3 md:px-10 md:py-3.5">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0">
+      <div className="relative flex items-center justify-between px-4 py-3 md:px-10 md:py-3.5">
+        <Link to="/" className="flex items-center gap-2.5 shrink-0 z-10">
           <img src={CEC_LOGO} alt="CEC Logo" className="w-9 h-9 md:w-[42px] md:h-[42px] rounded-full object-cover bg-white" />
           <div>
             <div className="text-sm md:text-[15px] font-bold tracking-wide">Cebu Eastern College</div>
@@ -19,7 +19,7 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="hidden md:flex gap-8 items-center">
+        <nav className="hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2">
           <Link to="/" className={`text-[13.5px] font-normal transition-colors ${isActive('/') ? 'text-white border-b-2 border-white pb-1' : 'text-[#cbd5e1] hover:text-white'}`}>Home</Link>
           <Link to="/programs" className={`text-[13.5px] font-normal transition-colors ${isActive('/programs') || isActive('/senior-high') ? 'text-white border-b-2 border-white pb-1' : 'text-[#cbd5e1] hover:text-white'}`}>
             Programs
@@ -39,7 +39,7 @@ export default function Header() {
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-all"
+          className="md:hidden p-2 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-all z-10"
           aria-label="Toggle menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

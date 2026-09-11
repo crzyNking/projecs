@@ -277,15 +277,26 @@ export function Home() {
 
             {authTab === 'login' && (
               <form onSubmit={handleAuthSubmit} className="flex flex-col gap-3.5">
-                <input
-                  type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="ID Number"
-                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
-                />
                 <div className="relative">
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                  </svg>
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="ID Number"
+                    className="w-full pl-10 pr-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                  />
+                </div>
+                <div className="relative">
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                  </svg>
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                  </svg>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
@@ -293,7 +304,7 @@ export function Home() {
                     required
                     minLength={6}
                     placeholder="Password"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                    className="w-full pr-10 pl-10 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
                   />
                   <button
                     type="button"
@@ -351,31 +362,49 @@ export function Home() {
 
             {authTab === 'signup' && (
               <form onSubmit={handleAuthSubmit} className="flex flex-col gap-3.5">
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  placeholder="Full Name"
-                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
-                />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Email Address"
-                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
-                />
-                <input
-                  type="text"
-                  value={idNumber}
-                  onChange={(e) => setIdNumber(e.target.value)}
-                  required
-                  placeholder="ID Number"
-                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
-                />
                 <div className="relative">
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                  </svg>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    placeholder="Full Name"
+                    className="w-full pl-10 pr-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                  />
+                </div>
+                <div className="relative">
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                  </svg>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="Email Address"
+                    className="w-full pl-10 pr-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                  />
+                </div>
+                <div className="relative">
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
+                  </svg>
+                  <input
+                    type="text"
+                    value={idNumber}
+                    onChange={(e) => setIdNumber(e.target.value)}
+                    required
+                    placeholder="ID Number"
+                    className="w-full pl-10 pr-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                  />
+                </div>
+                <div className="relative">
+                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                  </svg>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
@@ -383,7 +412,7 @@ export function Home() {
                     required
                     minLength={6}
                     placeholder="Password"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                    className="w-full pr-10 pl-10 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
                   />
                   <button
                     type="button"
