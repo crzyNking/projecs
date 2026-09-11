@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
@@ -131,13 +131,27 @@ export function Home() {
         {/* Centered Nav */}
         <nav className="hidden md:flex gap-8 items-center justify-self-center" style={{ gridColumn: 2 }}>
           <a href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors underline decoration-white underline-offset-4">Home</a>
-          {['Programs', 'Services', 'Enrollment', 'About'].map((item) => (
-            <a key={item} href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
-              {item}
-              <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </a>
+          {[
+            { label: 'Programs', to: '/programs' },
+            { label: 'Services' },
+            { label: 'Enrollment' },
+            { label: 'About' },
+          ].map((item) => (
+            item.to ? (
+              <Link key={item.label} to={item.to} className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
+                {item.label}
+                <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </Link>
+            ) : (
+              <a key={item.label} href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
+                {item.label}
+                <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </a>
+            )
           ))}
         </nav>
 
@@ -160,7 +174,8 @@ export function Home() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#0b1f40] px-4 pb-4 border-b border-white/10">
           <a href="#" className="block text-sm text-white py-2 px-3 rounded-lg bg-white/10">Home</a>
-          {['Programs', 'Services', 'Enrollment', 'About'].map((item) => (
+          <Link to="/programs" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-[#cbd5e1] hover:text-white py-2 px-3 rounded-lg hover:bg-white/10 transition-all">Programs</Link>
+          {['Services', 'Enrollment', 'About'].map((item) => (
             <a key={item} href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2 px-3 rounded-lg hover:bg-white/10 transition-all">
               {item}
             </a>
