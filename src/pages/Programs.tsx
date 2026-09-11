@@ -173,10 +173,8 @@ export default function Programs() {
       <section className="py-[60px] px-10 bg-[#eef2ff]">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-[60px]">
           <div className="flex-shrink-0 flex justify-center">
-            <div className="w-[180px] h-[180px] rounded-full border-[8px] double border-[#1e3a8a] outline outline-4 outline-[#1e3a8a] outline-offset-4 flex flex-col items-center justify-center text-center p-2.5 bg-white text-[#1e3a8a] shadow-[0_10px_25px_rgba(30,58,138,0.15)]">
-              <span className="text-[11px] font-black tracking-wider uppercase">Cebu Eastern</span>
-              <span className="text-[22px] font-bold text-[#dc2626] my-0.5">東方</span>
-              <span className="text-[10px] font-bold">College</span>
+            <div className="w-[180px] h-[180px] rounded-full border-[8px] double border-[#1e3a8a] outline outline-4 outline-[#1e3a8a] outline-offset-4 flex items-center justify-center bg-white shadow-[0_10px_25px_rgba(30,58,138,0.15)] overflow-hidden">
+              <img src="https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=T7FHL7sLSNCiXGhkW0vhjQ&_nc_ss=7b2a8&oh=00_AQI1SDJmlIOsaIvvnnSwpKTUAkyzqsUZ09hixPLnGRg6aA&oe=6AA9B10C" alt="CEC Seal" className="w-[180px] h-[180px] rounded-full object-cover" />
             </div>
           </div>
 
