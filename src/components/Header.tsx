@@ -14,6 +14,8 @@ export default function Header() {
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
 
+  const isProgramsActive = isActive('/senior-high')
+
   const closePrograms = useCallback(() => setProgramsOpen(false), [])
   const closeEnrollment = useCallback(() => setEnrollmentOpen(false), [])
 
@@ -78,7 +80,7 @@ export default function Header() {
           <div ref={programsRef} className="relative">
             <button
               onClick={() => { setProgramsOpen(!programsOpen); setEnrollmentOpen(false) }}
-              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${programsOpen ? activeClass : inactiveClass}`}
+              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${(programsOpen || isProgramsActive) ? activeClass : inactiveClass}`}
             >
               Programs
               <svg className={`w-2.5 h-2.5 opacity-60 transition-transform duration-200 ${programsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
