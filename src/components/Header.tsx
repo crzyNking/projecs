@@ -11,6 +11,8 @@ export default function Header() {
   const [enrollmentOpen, setEnrollmentOpen] = useState(false)
   const programsRef = useRef<HTMLDivElement>(null)
   const enrollmentRef = useRef<HTMLDivElement>(null)
+  const programsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const enrollmentTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
 
@@ -19,25 +21,25 @@ export default function Header() {
   const closePrograms = useCallback(() => setProgramsOpen(false), [])
   const closeEnrollment = useCallback(() => setEnrollmentOpen(false), [])
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (programsRef.current && !programsRef.current.contains(e.target as Node)) {
-        setProgramsOpen(false)
-      }
-    }
-    if (programsOpen) document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [programsOpen])
+  const openPrograms = useCallback(() => {
+    if (programsTimer.current) clearTimeout(programsTimer.current)
+    setProgramsOpen(true)
+    setEnrollmentOpen(false)
+  }, [])
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (enrollmentRef.current && !enrollmentRef.current.contains(e.target as Node)) {
-        setEnrollmentOpen(false)
-      }
-    }
-    if (enrollmentOpen) document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [enrollmentOpen])
+  const delayClosePrograms = useCallback(() => {
+    programsTimer.current = setTimeout(() => setProgramsOpen(false), 150)
+  }, [])
+
+  const openEnrollment = useCallback(() => {
+    if (enrollmentTimer.current) clearTimeout(enrollmentTimer.current)
+    setEnrollmentOpen(true)
+    setProgramsOpen(false)
+  }, [])
+
+  const delayCloseEnrollment = useCallback(() => {
+    enrollmentTimer.current = setTimeout(() => setEnrollmentOpen(false), 150)
+  }, [])
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -56,6 +58,13 @@ export default function Header() {
     setMobileOpen(false)
   }, [location.pathname])
 
+  useEffect(() => {
+    return () => {
+      if (programsTimer.current) clearTimeout(programsTimer.current)
+      if (enrollmentTimer.current) clearTimeout(enrollmentTimer.current)
+    }
+  }, [])
+
   const activeClass = 'text-white border-b-2 border-white pb-1'
   const inactiveClass = 'text-[#cbd5e1] hover:text-white'
 
@@ -71,15 +80,13 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2">
-          {/* Home */}
           <Link to="/" className={`text-[13.5px] font-normal transition-colors ${isActive('/') ? activeClass : inactiveClass}`}>
             Home
           </Link>
 
-          {/* Programs dropdown */}
-          <div ref={programsRef} className="relative">
+          {/* Programs dropdown - hover */}
+          <div ref={programsRef} className="relative" onMouseEnter={openPrograms} onMouseLeave={delayClosePrograms}>
             <button
-              onClick={() => { setProgramsOpen(!programsOpen); setEnrollmentOpen(false) }}
               className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${(programsOpen || isProgramsActive) ? activeClass : inactiveClass}`}
             >
               Programs
@@ -90,10 +97,9 @@ export default function Header() {
             <ProgramsDropdown open={programsOpen} onClose={closePrograms} />
           </div>
 
-          {/* Enrollment dropdown */}
-          <div ref={enrollmentRef} className="relative">
+          {/* Enrollment dropdown - hover */}
+          <div ref={enrollmentRef} className="relative" onMouseEnter={openEnrollment} onMouseLeave={delayCloseEnrollment}>
             <button
-              onClick={() => { setEnrollmentOpen(!enrollmentOpen); setProgramsOpen(false) }}
               className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${enrollmentOpen ? activeClass : inactiveClass}`}
             >
               Enrollment
@@ -104,12 +110,10 @@ export default function Header() {
             <EnrollmentDropdown open={enrollmentOpen} onClose={closeEnrollment} />
           </div>
 
-          {/* Services - plain link */}
           <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
             Services
           </a>
 
-          {/* About - plain link */}
           <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
             About
           </a>
