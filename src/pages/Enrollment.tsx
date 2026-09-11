@@ -1,0 +1,116 @@
+import { Link } from 'react-router-dom'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
+
+const k12Levels = [
+  { title: 'Kindergarten', description: 'Ages 3-5 • Foundational learning through play-based curriculum', path: '/enrollment/kindergarten' },
+  { title: 'Elementary', description: 'Grades 1-6 • Building strong academic foundations', path: '/enrollment/elementary' },
+  { title: 'Junior High', description: 'Grades 7-10 • Comprehensive secondary education', path: '/enrollment/junior-high' },
+  { title: 'Senior High', description: 'Grades 11-12 • Specialized tracks and strands', path: '/enrollment/senior-high' },
+]
+
+const collegePrograms = [
+  'Bachelor of Elementary Education',
+  'Bachelor of Secondary Education',
+  'Bachelor of Science in Business Administration',
+  'Bachelor of Science in Accountancy',
+  'Bachelor of Science in Computer Science',
+  'Bachelor of Science in Information Technology',
+  'Bachelor of Arts in Communication',
+  'Bachelor of Science in Psychology',
+]
+
+export default function Enrollment() {
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#0b1f40] to-[#111d45] text-white pt-28 pb-16 md:pt-36 md:pb-24">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-[#002366] rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-20 w-96 h-96 bg-[#0047ab] rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-[1100px] mx-auto px-4 md:px-10 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+            </svg>
+            <span className="text-xs font-medium">Enroll Now</span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">Start Your Journey at CEC</h1>
+          <p className="text-base md:text-lg text-blue-200 max-w-2xl mx-auto">
+            Choose the program that fits your educational goals. From kindergarten to college, we have programs designed to help you succeed.
+          </p>
+        </div>
+      </section>
+
+      {/* K-12 + College Grid */}
+      <section className="max-w-[1100px] mx-auto px-4 md:px-10 py-12 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {/* K-12 Programs - Left Column */}
+          <div className="md:col-span-2 space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-[#002366] rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                </svg>
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold text-[#0a1628]">K-12 Programs</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {k12Levels.map((level) => (
+                <Link
+                  key={level.title}
+                  to={level.path}
+                  className="group block bg-white border border-gray-200 rounded-xl p-5 hover:border-[#002366]/30 hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-base font-bold text-[#0a1628] group-hover:text-[#002366] transition-colors">{level.title}</h3>
+                    <svg className="w-5 h-5 text-gray-400 group-hover:text-[#002366] group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-gray-500 leading-relaxed">{level.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* College Programs - Right Column */}
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-[#002366] rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+                </svg>
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold text-[#0a1628]">College</h2>
+            </div>
+            <Link
+              to="/enrollment/college"
+              className="group block bg-gradient-to-br from-[#0b1f40] to-[#002366] text-white rounded-xl p-5 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-base font-bold">Enroll in College</h3>
+                <svg className="w-5 h-5 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </div>
+              <ul className="space-y-1.5">
+                {collegePrograms.map((prog) => (
+                  <li key={prog} className="text-[11px] text-blue-200 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-white rounded-full mt-1.5 shrink-0" />
+                    {prog}
+                  </li>
+                ))}
+              </ul>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  )
+}

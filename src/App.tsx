@@ -6,6 +6,12 @@ import { Chatbot } from './components/Chatbot'
 import { Home } from './pages/Home'
 import Programs from './pages/Programs'
 import SeniorHigh from './pages/SeniorHigh'
+import Enrollment from './pages/Enrollment'
+import KindergartenEnrollment from './pages/enrollment/KindergartenEnrollment'
+import ElementaryEnrollment from './pages/enrollment/ElementaryEnrollment'
+import JuniorHighEnrollment from './pages/enrollment/JuniorHighEnrollment'
+import SeniorHighEnrollment from './pages/enrollment/SeniorHighEnrollment'
+import CollegeEnrollment from './pages/enrollment/CollegeEnrollment'
 import { AuthCallback } from './pages/AuthCallback'
 import { Dashboard } from './pages/Dashboard'
 import { Settings } from './pages/Settings'
@@ -23,6 +29,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/senior-high" element={<SeniorHigh />} />
+          <Route path="/enrollment" element={<Enrollment />} />
+          <Route path="/enrollment/kindergarten" element={<KindergartenEnrollment />} />
+          <Route path="/enrollment/elementary" element={<ElementaryEnrollment />} />
+          <Route path="/enrollment/junior-high" element={<JuniorHighEnrollment />} />
+          <Route path="/enrollment/senior-high" element={<SeniorHighEnrollment />} />
+          <Route path="/enrollment/college" element={<CollegeEnrollment />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"

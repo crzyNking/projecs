@@ -27,7 +27,13 @@ export default function Header() {
               <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
             </svg>
           </Link>
-          {['Services', 'Enrollment', 'About'].map((item) => (
+          <Link to="/enrollment" className={`text-[13.5px] font-normal transition-colors ${isActive('/enrollment') || location.pathname.startsWith('/enrollment') ? 'text-white border-b-2 border-white pb-1' : 'text-[#cbd5e1] hover:text-white'}`}>
+            Enrollment
+            <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </Link>
+          {['Services', 'About'].map((item) => (
             <a key={item} href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
               {item}
               <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -56,7 +62,8 @@ export default function Header() {
         <nav className="md:hidden bg-[#0b1f40] px-4 pb-4 border-t border-white/5">
           <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>Home</Link>
           <Link to="/programs" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/programs') || isActive('/senior-high') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>Programs</Link>
-          {['Services', 'Enrollment', 'About'].map((item) => (
+          <Link to="/enrollment" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/enrollment') || location.pathname.startsWith('/enrollment') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>Enrollment</Link>
+          {['Services', 'About'].map((item) => (
             <a key={item} href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
               {item}
             </a>
