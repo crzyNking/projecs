@@ -9,25 +9,25 @@ const k12Programs = [
   {
     title: 'Kindergarten',
     desc: 'The Kindergarten Department of CEC provides a supportive environment that fosters early growth, creativity, and basic skills for young learners.',
-    path: '/enrollment/kindergarten',
+    path: '/senior-high',
     img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600&auto=format&fit=crop',
   },
   {
     title: 'Elementary',
     desc: 'The Elementary Department nurtures young minds with strong values, foundational academic skills, and lifelong learning habits.',
-    path: '/enrollment/elementary',
+    path: '/senior-high',
     img: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=600&auto=format&fit=crop',
   },
   {
     title: 'Junior High School',
     desc: 'Offering dynamic programs designed to strengthen critical thinking, character, and personal development in preparation for higher education.',
-    path: '/enrollment/junior-high',
+    path: '/senior-high',
     img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=600&auto=format&fit=crop',
   },
   {
     title: 'Senior High School',
     desc: 'Provides specialized academic tracks and practical training to effectively prepare students for college and future careers.',
-    path: '/enrollment/senior-high',
+    path: '/senior-high',
     img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=600&auto=format&fit=crop',
   },
 ]
@@ -165,7 +165,7 @@ export default function ProgramsDropdown({ open, onClose }: ProgramsDropdownProp
               {collegePrograms.map((prog) => (
                 <button
                   key={prog.name}
-                  onClick={() => handleClick('/enrollment/college')}
+                  onClick={() => handleClick('/senior-high')}
                   className="group flex items-center gap-3.5 bg-[#dce4ed] rounded-xl py-2 pr-4 pl-2 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
                 >
                   <div className="w-[44px] h-[44px] bg-[#c4d2e2] rounded-[10px] flex items-center justify-center shrink-0">
