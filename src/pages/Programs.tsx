@@ -144,23 +144,24 @@ export default function Programs() {
       </section>
 
       {/* Academic Excellence */}
-      <section className="py-[50px] px-10 bg-[#f8fafc] text-center">
-        <h2 className="text-[26px] font-extrabold text-[#0f172a] mb-1.5">Academic Excellence</h2>
-        <p className="text-[13px] text-[#64748b] mb-[35px]">Comprehensive educational programs designed to nurture future leaders.</p>
+      <section className="py-[60px] px-10 bg-[#f8fafc] text-center">
+        <h2 className="text-[26px] font-extrabold text-[#002366] mb-2">Academic Excellence</h2>
+        <p className="text-[13px] text-[#64748b] mb-[45px]">Comprehensive educational programs designed to nurture future leaders.</p>
 
-        <div className="grid sm:grid-cols-3 gap-6 max-w-[1100px] mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1100px] mx-auto">
           {academicCards.map((card) => (
-            <div key={card.title} className="bg-white rounded-lg p-[25px_20px] text-left border border-[#e2e8f0] shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between">
-              <div>
-                <div className="w-9 h-9 rounded-full bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center text-sm mb-4">
-                  {card.icon}
-                </div>
-                <h3 className="text-[15px] font-bold text-[#1e293b] mb-2">{card.title}</h3>
-                <p className="text-[12px] text-[#64748b] leading-[1.5] mb-5">{card.desc}</p>
+            <div
+              key={card.title}
+              className="bg-white rounded-lg p-[30px_25px] text-left border border-[#e2e8f0] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03)] flex flex-col hover:shadow-lg transition-shadow"
+            >
+              <div className="w-9 h-9 rounded-full bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center text-sm mb-5">
+                {card.icon}
               </div>
-              <a href="#" className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#1d4ed8] hover:underline">
+              <h3 className="text-base font-bold text-[#1e293b] mb-3">{card.title}</h3>
+              <p className="text-[12.5px] text-[#64748b] leading-relaxed mb-5 flex-grow">{card.desc}</p>
+              <a href="#" className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#1d4ed8] hover:underline">
                 Learn More
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </a>
@@ -169,32 +170,37 @@ export default function Programs() {
         </div>
       </section>
 
-      {/* Heritage & Mission */}
-      <section className="py-[60px] px-10 bg-[#eef2ff]">
-        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-[60px]">
-          <div className="flex-shrink-0 flex justify-center">
-            <div className="w-[180px] h-[180px] rounded-full border-[8px] double border-[#1e3a8a] outline outline-4 outline-[#1e3a8a] outline-offset-4 flex items-center justify-center bg-white shadow-[0_10px_25px_rgba(30,58,138,0.15)] overflow-hidden">
-              <img src="https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=T7FHL7sLSNCiXGhkW0vhjQ&_nc_ss=7b2a8&oh=00_AQI1SDJmlIOsaIvvnnSwpKTUAkyzqsUZ09hixPLnGRg6aA&oe=6AA9B10C" alt="CEC Seal" className="w-[180px] h-[180px] rounded-full object-cover" />
-            </div>
+      {/* Heritage Section */}
+      <section className="py-[70px] px-10 bg-[#f1f5f9]">
+        <div className="max-w-[1050px] mx-auto flex flex-col lg:flex-row items-center gap-[60px]">
+          <div className="flex-shrink-0 flex justify-center items-center lg:w-[260px]">
+            <img
+              src={CEC_LOGO}
+              alt="CEC Seal"
+              className="w-full max-w-[240px] h-auto object-contain mix-blend-multiply transition-transform hover:scale-[1.03]"
+            />
           </div>
 
-          <div>
-            <h2 className="text-[24px] font-extrabold text-[#0f172a] mb-3">Our Heritage & Mission</h2>
-            <p className="text-[13px] text-[#475569] leading-[1.6] mb-6">
+          <div className="flex-1 text-center lg:text-left">
+            <h2 className="text-[26px] font-extrabold text-[#002366] mb-4">Our Heritage & Mission</h2>
+            <p className="text-[13px] text-[#64748b] leading-relaxed mb-[30px]">
               Founded in 1915, Cebu Eastern College has stood as a pillar of academic excellence in Cebu City. We remain committed to our founding principle: delivering top-tier, quality education that is accessible and affordable to all aspiring minds.
             </p>
-            <div className="grid grid-cols-2 gap-5">
+
+            <div className="grid sm:grid-cols-2 gap-5">
               {[
-                { title: 'Affordable Tuition', desc: 'Quality education without the heavy financial burden.', icon: 'M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' },
-                { title: 'Diverse Community', desc: 'A welcoming environment for students from all backgrounds.', icon: 'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z' },
+                { title: 'Affordable Tuition', desc: 'Quality education without the heavy financial burden.' },
+                { title: 'Diverse Community', desc: 'A welcoming environment for students from all backgrounds.' },
               ].map((f) => (
-                <div key={f.title} className="flex gap-2.5 items-start">
-                  <svg className="w-4 h-4 text-[#1e3a8a] mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d={f.icon} />
-                  </svg>
-                  <div>
-                    <h4 className="text-[14px] font-bold text-[#1e293b] mb-0.5">{f.title}</h4>
-                    <p className="text-[11px] text-[#64748b] leading-[1.4]">{f.desc}</p>
+                <div key={f.title} className="flex items-start gap-3">
+                  <div className="mt-0.5 text-[#1d4ed8]">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-left">
+                    <h4 className="text-sm font-bold text-[#1e293b] mb-1">{f.title}</h4>
+                    <p className="text-[11.5px] text-[#64748b] leading-snug">{f.desc}</p>
                   </div>
                 </div>
               ))}
