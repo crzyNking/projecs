@@ -121,29 +121,31 @@ export function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-[60px] px-4 text-center text-white" style={{ background: 'linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop) center/cover no-repeat' }}>
-        <p className="text-[#eab308] text-[38px] font-semibold tracking-[8px] mb-[30px]">
+      <section
+        className="relative py-10 px-4 sm:py-16 text-center text-white"
+        style={{ background: "linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop) center/cover no-repeat" }}
+      >
+        <p className="text-[#eab308] text-2xl sm:text-4xl md:text-[38px] font-semibold tracking-[4px] sm:tracking-[8px] mb-6 sm:mb-[30px]">
           宿務 東方 學院
         </p>
 
-        {/* Glass Hero Card */}
-        <div className="max-w-[820px] mx-auto rounded-xl p-[45px_50px] shadow-[0_20px_40px_rgba(0,0,0,0.35)] outline outline-1 outline-offset-[-8px] outline-white/15" style={{ background: 'linear-gradient(135deg, rgba(8, 30, 92, 0.88) 0%, rgba(13, 44, 128, 0.88) 100%)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
-          <h1 className="text-[32px] font-extrabold leading-[1.25] mb-5">
+        <div className="max-w-[820px] mx-auto rounded-xl p-6 sm:p-10 md:p-[45px_50px] shadow-[0_20px_40px_rgba(0,0,0,0.35)] outline outline-1 outline-offset-[-8px] outline-white/15 bg-[rgba(8,30,92,0.88)] border border-white/20 backdrop-blur-[12px]">
+          <h1 className="text-2xl sm:text-3xl md:text-[32px] font-extrabold leading-[1.25] mb-4 sm:mb-5">
             Excellence in Education<br />since 1915
           </h1>
-          <p className="text-[13.5px] text-[#cbd5e1] max-w-[580px] mx-auto mb-[30px] leading-relaxed">
+          <p className="text-xs sm:text-[13.5px] text-[#cbd5e1] max-w-[580px] mx-auto mb-6 sm:mb-[30px] leading-relaxed">
             Be part of the Easternian Community, where quality education is less expensive. Join Cebu City's premier institution for holistic development.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-3 sm:gap-4">
             <button
               onClick={() => openAuth('login')}
-              className="px-8 py-2 rounded-md text-[12px] font-semibold bg-[#1d4ed8] text-white hover:bg-[#1e40af] transition-all"
+              className="px-5 sm:px-8 py-2 rounded-md text-xs sm:text-[12px] font-semibold bg-[#1d4ed8] text-white hover:bg-[#1e40af] transition-all"
             >
               Log In
             </button>
             <button
               onClick={() => openAuth('signup')}
-              className="px-8 py-2 rounded-md text-[12px] font-semibold bg-transparent text-white border border-white/70 hover:bg-white/10 transition-all"
+              className="px-5 sm:px-8 py-2 rounded-md text-xs sm:text-[12px] font-semibold bg-transparent text-white border border-white/70 hover:bg-white/10 transition-all"
             >
               Sign Up
             </button>
@@ -152,15 +154,15 @@ export function Home() {
       </section>
 
       {/* Academic Excellence */}
-      <section className="py-[60px] px-10 bg-[#f8fafc] text-center">
-        <h2 className="text-[26px] font-extrabold text-[#002366] mb-2">Academic Excellence</h2>
-        <p className="text-[13px] text-[#64748b] mb-[45px]">Comprehensive educational programs designed to nurture future leaders.</p>
+      <section className="py-10 sm:py-[60px] px-4 sm:px-10 bg-[#f8fafc] text-center">
+        <h2 className="text-xl sm:text-[26px] font-extrabold text-[#002366] mb-2">Academic Excellence</h2>
+        <p className="text-xs sm:text-[13px] text-[#64748b] mb-8 sm:mb-[45px]">Comprehensive educational programs designed to nurture future leaders.</p>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1100px] mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-[1100px] mx-auto">
           {academicCards.map((card) => (
             <div
               key={card.title}
-              className="bg-white rounded-lg p-[30px_25px] text-left border border-[#e2e8f0] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03)] flex flex-col hover:shadow-lg transition-shadow"
+              className="bg-white rounded-lg p-6 sm:p-[30px_25px] text-left border border-[#e2e8f0] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03)] flex flex-col hover:shadow-lg transition-shadow"
             >
               <div className="w-9 h-9 rounded-full bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center text-sm mb-5">
                 {card.icon}
@@ -179,23 +181,24 @@ export function Home() {
       </section>
 
       {/* Heritage Section */}
-      <section className="py-[70px] px-10 bg-[#f1f5f9]">
-        <div className="max-w-[1050px] mx-auto flex flex-col lg:flex-row items-center gap-[60px]">
-          <div className="flex-shrink-0 flex justify-center items-center lg:w-[260px]">
+      <section className="py-10 sm:py-[70px] px-4 sm:px-10 bg-[#f1f5f9]">
+        <div className="max-w-[1050px] mx-auto flex flex-col lg:flex-row items-center gap-8 sm:gap-[60px]">
+          <div className="shrink-0 flex justify-center items-center w-full lg:w-[260px]">
             <img
               src={CEC_LOGO}
               alt="CEC Seal"
-              className="w-full max-w-[240px] h-auto object-contain mix-blend-multiply transition-transform hover:scale-[1.03]"
+              className="w-full max-w-[200px] sm:max-w-[240px] h-auto object-contain mix-blend-multiply transition-transform hover:scale-[1.03]"
+              loading="lazy"
             />
           </div>
 
           <div className="flex-1 text-center lg:text-left">
-            <h2 className="text-[26px] font-extrabold text-[#002366] mb-4">Our Heritage & Mission</h2>
-            <p className="text-[13px] text-[#64748b] leading-relaxed mb-[30px]">
+            <h2 className="text-xl sm:text-[26px] font-extrabold text-[#002366] mb-4">Our Heritage & Mission</h2>
+            <p className="text-xs sm:text-[13px] text-[#64748b] leading-relaxed mb-6 sm:mb-[30px]">
               Founded in 1915, Cebu Eastern College has stood as a pillar of academic excellence in Cebu City. We remain committed to our founding principle: delivering top-tier, quality education that is accessible and affordable to all aspiring minds.
             </p>
 
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {features.map((f) => (
                 <div key={f.title} className="flex items-start gap-3">
                   <div className="mt-0.5 text-[#1d4ed8]">
@@ -215,9 +218,9 @@ export function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[#002366] text-white text-center py-[60px] px-4">
-        <h2 className="text-[32px] font-extrabold mb-3.5">Join the Easternian<br />Community</h2>
-        <p className="text-[13.5px] text-[#cbd5e1] mb-[25px]">Begin your journey towards academic excellence and personal growth today.</p>
+      <section className="bg-[#002366] text-white text-center py-10 sm:py-[60px] px-4">
+        <h2 className="text-2xl sm:text-[32px] font-extrabold mb-3.5">Join the Easternian<br />Community</h2>
+        <p className="text-xs sm:text-[13.5px] text-[#cbd5e1] mb-6 sm:mb-[25px]">Begin your journey towards academic excellence and personal growth today.</p>
         <button
           onClick={() => openAuth('signup')}
           className="bg-white text-[#002366] border-none py-2.5 px-6 rounded-md text-[13px] font-bold hover:bg-[#f1f5f9] transition-all"
@@ -232,26 +235,22 @@ export function Home() {
       {authModal.open && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={closeAuth} style={{ background: 'rgba(3, 8, 20, 0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
           <div
-            className="relative w-full max-w-[420px] rounded-2xl p-[35px_30px] text-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)]"
+            className="relative w-full max-w-[420px] rounded-2xl p-6 sm:p-[35px_30px] text-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] bg-[rgba(13,33,84,0.92)] border border-white/20 backdrop-blur-[20px]"
             onClick={(e) => e.stopPropagation()}
-            style={{ background: 'rgba(13, 33, 84, 0.92)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
           >
-            {/* Close button */}
             <button
               onClick={closeAuth}
-              className="absolute top-4 right-5 text-[20px] text-[#94a3b8] hover:text-white transition-colors bg-transparent border-none cursor-pointer"
+              className="absolute top-4 right-5 text-xl text-[#94a3b8] hover:text-white transition-colors bg-transparent border-none cursor-pointer"
             >
               &times;
             </button>
 
-            {/* Header */}
             <div className="text-center mb-6">
-              <img src={CEC_LOGO} alt="CEC" className="w-[65px] h-[65px] rounded-full mx-auto mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.3)]" />
-              <h3 className="text-xl font-semibold">Cebu Eastern College</h3>
+              <img src={CEC_LOGO} alt="CEC" className="w-14 h-14 sm:w-[65px] sm:h-[65px] rounded-full mx-auto mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.3)]" />
+              <h3 className="text-lg sm:text-xl font-semibold">Cebu Eastern College</h3>
             </div>
 
-            {/* Tab Toggle */}
-            <div className="flex rounded-lg p-[3px] mb-6" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
+            <div className="flex rounded-lg p-[3px] mb-6 bg-white/[0.08] border border-white/[0.15]">
               {(['login', 'signup'] as const).map((tab) => (
                 <button
                   key={tab}
@@ -267,33 +266,25 @@ export function Home() {
               ))}
             </div>
 
-            {/* Error */}
             {error && (
               <div className="mb-4 flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
-                <svg className="w-4 h-4 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
                 <p className="text-sm text-red-300">{error}</p>
               </div>
             )}
 
-            {/* Login Form */}
             {authTab === 'login' && (
               <form onSubmit={handleAuthSubmit} className="flex flex-col gap-3.5">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="ID Number"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8]"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
-                  />
-                  <svg className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
-                  </svg>
-                </div>
+                <input
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="ID Number"
+                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                />
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -302,13 +293,12 @@ export function Home() {
                     required
                     minLength={6}
                     placeholder="Password"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8]"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
+                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none text-[#94a3b8] hover:text-white cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none text-[#94a3b8] hover:text-white cursor-pointer p-0"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                       {showPassword ? (
@@ -320,7 +310,7 @@ export function Home() {
                   </button>
                 </div>
                 <div className="text-right -mt-1">
-                  <button type="button" className="text-[11px] text-[#cbd5e1] hover:underline bg-transparent border-none cursor-pointer">
+                  <button type="button" className="text-[11px] text-[#cbd5e1] hover:underline bg-transparent border-none cursor-pointer p-0">
                     Forgot Password?
                   </button>
                 </div>
@@ -333,7 +323,7 @@ export function Home() {
                 </button>
                 <div className="text-center text-[11.5px] text-[#cbd5e1] mt-4">
                   Don't have an Account?{' '}
-                  <button type="button" onClick={() => setAuthTab('signup')} className="bg-transparent border-none text-white font-semibold underline cursor-pointer">
+                  <button type="button" onClick={() => setAuthTab('signup')} className="bg-transparent border-none text-white font-semibold underline cursor-pointer p-0">
                     Sign Up
                   </button>
                 </div>
@@ -346,8 +336,7 @@ export function Home() {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-medium text-[#cbd5e1] disabled:opacity-50 cursor-pointer transition-all"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
+                  className="w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-medium text-[#cbd5e1] disabled:opacity-50 cursor-pointer transition-all bg-white/[0.07] border border-white/20"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -360,51 +349,32 @@ export function Home() {
               </form>
             )}
 
-            {/* Signup Form */}
             {authTab === 'signup' && (
               <form onSubmit={handleAuthSubmit} className="flex flex-col gap-3.5">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                    placeholder="Full Name"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8]"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
-                  />
-                  <svg className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                  </svg>
-                </div>
-                <div className="relative">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="Email Address"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8]"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
-                  />
-                  <svg className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                  </svg>
-                </div>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={idNumber}
-                    onChange={(e) => setIdNumber(e.target.value)}
-                    required
-                    placeholder="ID Number"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8]"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
-                  />
-                  <svg className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
-                  </svg>
-                </div>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  placeholder="Full Name"
+                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Email Address"
+                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                />
+                <input
+                  type="text"
+                  value={idNumber}
+                  onChange={(e) => setIdNumber(e.target.value)}
+                  required
+                  placeholder="ID Number"
+                  className="w-full px-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
+                />
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -413,13 +383,12 @@ export function Home() {
                     required
                     minLength={6}
                     placeholder="Password"
-                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8]"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
+                    className="w-full pr-10 pl-3.5 py-3 rounded-lg text-white text-[13px] outline-none transition-colors placeholder-[#94a3b8] bg-white/[0.07] border border-white/20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none text-[#94a3b8] hover:text-white cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none text-[#94a3b8] hover:text-white cursor-pointer p-0"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                       {showPassword ? (
@@ -439,7 +408,7 @@ export function Home() {
                 </button>
                 <div className="text-center text-[11.5px] text-[#cbd5e1] mt-4">
                   Already have an Account?{' '}
-                  <button type="button" onClick={() => setAuthTab('login')} className="bg-transparent border-none text-white font-semibold underline cursor-pointer">
+                  <button type="button" onClick={() => setAuthTab('login')} className="bg-transparent border-none text-white font-semibold underline cursor-pointer p-0">
                     Log In
                   </button>
                 </div>
@@ -452,8 +421,7 @@ export function Home() {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-medium text-[#cbd5e1] disabled:opacity-50 cursor-pointer transition-all"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)' }}
+                  className="w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-medium text-[#cbd5e1] disabled:opacity-50 cursor-pointer transition-all bg-white/[0.07] border border-white/20"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
