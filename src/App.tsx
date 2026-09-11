@@ -5,6 +5,7 @@ import { ToastContainer } from './components/Toast'
 import { Chatbot } from './components/Chatbot'
 import { Home } from './pages/Home'
 import Programs from './pages/Programs'
+import SeniorHigh from './pages/SeniorHigh'
 import { AuthCallback } from './pages/AuthCallback'
 import { Dashboard } from './pages/Dashboard'
 import { Settings } from './pages/Settings'
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<Programs />} />
+          <Route path="/senior-high" element={<SeniorHigh />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"
