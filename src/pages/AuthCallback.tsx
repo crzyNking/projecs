@@ -18,7 +18,7 @@ export function AuthCallback() {
       if (errorParam) {
         setError(errorDescription || errorParam)
         setStatus('Authentication failed')
-        setTimeout(() => navigate('/login'), 3000)
+        setTimeout(() => navigate('/'), 3000)
         return
       }
 
@@ -36,16 +36,16 @@ export function AuthCallback() {
           setTimeout(() => navigate('/dashboard', { replace: true }), 500)
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Authentication failed')
-          setStatus('Redirecting to login...')
-          setTimeout(() => navigate('/login'), 3000)
+          setStatus('Redirecting...')
+          setTimeout(() => navigate('/'), 3000)
         }
       } else {
         setStatus('Checking session...')
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error || !session) {
           setError('No session found. Please try signing in again.')
-          setStatus('Redirecting to login...')
-          setTimeout(() => navigate('/login'), 3000)
+          setStatus('Redirecting...')
+          setTimeout(() => navigate('/'), 3000)
         } else {
           setStatus('Success! Redirecting...')
           setTimeout(() => navigate('/dashboard', { replace: true }), 500)
@@ -78,7 +78,7 @@ export function AuthCallback() {
               <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
               <div className="flex items-center justify-center gap-2 text-gray-400 dark:text-gray-500 text-sm">
                 <div className="w-4 h-4 border-2 border-gray-400 dark:border-gray-500 border-t-transparent rounded-full animate-spin"></div>
-                <span>Redirecting to login...</span>
+                <span>Redirecting...</span>
               </div>
             </>
           ) : (
