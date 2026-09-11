@@ -1,17 +1,31 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import ProgramsDropdown from './ProgramsDropdown'
 import EnrollmentDropdown from './EnrollmentDropdown'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [programsOpen, setProgramsOpen] = useState(false)
   const [enrollmentOpen, setEnrollmentOpen] = useState(false)
+  const programsRef = useRef<HTMLDivElement>(null)
   const enrollmentRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
 
+  const closePrograms = useCallback(() => setProgramsOpen(false), [])
   const closeEnrollment = useCallback(() => setEnrollmentOpen(false), [])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (programsRef.current && !programsRef.current.contains(e.target as Node)) {
+        setProgramsOpen(false)
+      }
+    }
+    if (programsOpen) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [programsOpen])
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -25,13 +39,17 @@ export default function Header() {
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setEnrollmentOpen(false)
+      if (e.key === 'Escape') {
+        setProgramsOpen(false)
+        setEnrollmentOpen(false)
+      }
     }
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [])
 
   useEffect(() => {
+    setProgramsOpen(false)
     setEnrollmentOpen(false)
     setMobileOpen(false)
   }, [location.pathname])
@@ -51,18 +69,29 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2">
+          {/* Home */}
           <Link to="/" className={`text-[13.5px] font-normal transition-colors ${isActive('/') ? activeClass : inactiveClass}`}>
             Home
           </Link>
 
-          <Link to="/senior-high" className={`text-[13.5px] font-normal transition-colors ${isActive('/senior-high') ? activeClass : inactiveClass}`}>
-            Programs
-          </Link>
+          {/* Programs dropdown */}
+          <div ref={programsRef} className="relative">
+            <button
+              onClick={() => { setProgramsOpen(!programsOpen); setEnrollmentOpen(false) }}
+              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${programsOpen ? activeClass : inactiveClass}`}
+            >
+              Programs
+              <svg className={`w-2.5 h-2.5 opacity-60 transition-transform duration-200 ${programsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            <ProgramsDropdown open={programsOpen} onClose={closePrograms} />
+          </div>
 
           {/* Enrollment dropdown */}
           <div ref={enrollmentRef} className="relative">
             <button
-              onClick={() => setEnrollmentOpen(!enrollmentOpen)}
+              onClick={() => { setEnrollmentOpen(!enrollmentOpen); setProgramsOpen(false) }}
               className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${enrollmentOpen ? activeClass : inactiveClass}`}
             >
               Enrollment
@@ -73,10 +102,12 @@ export default function Header() {
             <EnrollmentDropdown open={enrollmentOpen} onClose={closeEnrollment} />
           </div>
 
+          {/* Services - plain link */}
           <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
             Services
           </a>
 
+          {/* About - plain link */}
           <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
             About
           </a>
@@ -102,9 +133,9 @@ export default function Header() {
           <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
             Home
           </Link>
-          <Link to="/senior-high" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/senior-high') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+          <button onClick={() => { setMobileOpen(false); setProgramsOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
             Programs
-          </Link>
+          </button>
           <button onClick={() => { setMobileOpen(false); setEnrollmentOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
             Enrollment
           </button>
