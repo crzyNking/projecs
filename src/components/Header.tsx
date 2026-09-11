@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import EnrollmentDropdown from './EnrollmentDropdown'
 
@@ -10,6 +10,9 @@ export default function Header() {
   const enrollmentRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
+  const isEnrollmentActive = location.pathname.startsWith('/enrollment/')
+
+  const closeEnrollment = useCallback(() => setEnrollmentOpen(false), [])
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -22,6 +25,21 @@ export default function Header() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [enrollmentOpen])
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setEnrollmentOpen(false)
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [])
+
+  useEffect(() => {
+    setEnrollmentOpen(false)
+    setMobileOpen(false)
+  }, [location.pathname])
+
+  const enrollmentActiveClass = isEnrollmentActive ? 'text-white border-b-2 border-white pb-1' : enrollmentOpen ? 'text-white' : 'text-[#cbd5e1] hover:text-white'
 
   return (
     <header className="sticky top-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
@@ -47,14 +65,14 @@ export default function Header() {
           <div ref={enrollmentRef} className="relative">
             <button
               onClick={() => setEnrollmentOpen(!enrollmentOpen)}
-              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${enrollmentOpen ? 'text-white' : 'text-[#cbd5e1] hover:text-white'}`}
+              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${enrollmentActiveClass} ${isEnrollmentActive ? '' : ''}`}
             >
               Enrollment
-              <svg className={`w-2.5 h-2.5 opacity-60 transition-transform ${enrollmentOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg className={`w-2.5 h-2.5 opacity-60 transition-transform duration-200 ${enrollmentOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
-            <EnrollmentDropdown open={enrollmentOpen} onClose={() => setEnrollmentOpen(false)} />
+            <EnrollmentDropdown open={enrollmentOpen} onClose={closeEnrollment} />
           </div>
 
           {['Services', 'About'].map((item) => (
@@ -86,7 +104,7 @@ export default function Header() {
         <nav className="md:hidden bg-[#0b1f40] px-4 pb-4 border-t border-white/5">
           <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>Home</Link>
           <Link to="/programs" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/programs') || isActive('/senior-high') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>Programs</Link>
-          <button onClick={() => { setMobileOpen(false); setEnrollmentOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
+          <button onClick={() => { setMobileOpen(false); setEnrollmentOpen(true) }} className={`block w-full text-left text-sm py-2.5 px-3 rounded-lg transition-all cursor-pointer ${isEnrollmentActive ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
             Enrollment
           </button>
           {['Services', 'About'].map((item) => (
