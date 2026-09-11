@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastContainer } from './components/Toast'
 import { Chatbot } from './components/Chatbot'
 import { Home } from './pages/Home'
+import Programs from './pages/Programs'
 import SeniorHigh from './pages/SeniorHigh'
 import KindergartenEnrollment from './pages/enrollment/KindergartenEnrollment'
 import ElementaryEnrollment from './pages/enrollment/ElementaryEnrollment'
@@ -25,6 +26,7 @@ function App() {
         <Chatbot />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/programs" element={<Programs />} />
           <Route path="/senior-high" element={<SeniorHigh />} />
           <Route path="/enrollment/kindergarten" element={<KindergartenEnrollment />} />
           <Route path="/enrollment/elementary" element={<ElementaryEnrollment />} />
