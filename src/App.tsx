@@ -10,7 +10,6 @@ import { Settings } from './pages/Settings'
 import { Profile } from './pages/Profile'
 import { Analytics } from './pages/Analytics'
 import { Reports } from './pages/Reports'
-import { Home } from './pages/Home'
 
 function App() {
   return (
@@ -61,8 +60,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
