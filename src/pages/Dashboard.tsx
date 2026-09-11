@@ -17,7 +17,7 @@ export function Dashboard() {
 
   const handleSignOut = async () => {
     await signOut()
-    navigate('/login', { replace: true })
+    navigate('/', { replace: true })
   }
 
   const userMetadata = user?.user_metadata
