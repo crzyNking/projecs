@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastContainer } from './components/Toast'
 import { Chatbot } from './components/Chatbot'
 import { Home } from './pages/Home'
+import Programs from './pages/Programs'
 import { AuthCallback } from './pages/AuthCallback'
 import { Dashboard } from './pages/Dashboard'
 import { Settings } from './pages/Settings'
@@ -19,6 +20,7 @@ function App() {
         <Chatbot />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/programs" element={<Programs />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"

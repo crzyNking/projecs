@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
@@ -131,13 +131,27 @@ export function Home() {
         {/* Centered Nav */}
         <nav className="hidden md:flex gap-8 items-center justify-self-center" style={{ gridColumn: 2 }}>
           <a href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors underline decoration-white underline-offset-4">Home</a>
-          {['Programs', 'Services', 'Enrollment', 'About'].map((item) => (
-            <a key={item} href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
-              {item}
-              <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </a>
+          {[
+            { label: 'Programs', to: '/programs' },
+            { label: 'Services' },
+            { label: 'Enrollment' },
+            { label: 'About' },
+          ].map((item) => (
+            item.to ? (
+              <Link key={item.label} to={item.to} className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
+                {item.label}
+                <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </Link>
+            ) : (
+              <a key={item.label} href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
+                {item.label}
+                <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </a>
+            )
           ))}
         </nav>
 
@@ -160,7 +174,8 @@ export function Home() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#0b1f40] px-4 pb-4 border-b border-white/10">
           <a href="#" className="block text-sm text-white py-2 px-3 rounded-lg bg-white/10">Home</a>
-          {['Programs', 'Services', 'Enrollment', 'About'].map((item) => (
+          <Link to="/programs" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-[#cbd5e1] hover:text-white py-2 px-3 rounded-lg hover:bg-white/10 transition-all">Programs</Link>
+          {['Services', 'Enrollment', 'About'].map((item) => (
             <a key={item} href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2 px-3 rounded-lg hover:bg-white/10 transition-all">
               {item}
             </a>
@@ -195,76 +210,6 @@ export function Home() {
             >
               Sign Up
             </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Programs Section */}
-      <section className="bg-[#0b1f40] py-[60px] px-4 text-white">
-        <div className="max-w-[1100px] mx-auto grid lg:grid-cols-2 gap-6">
-          {/* K-12 Education */}
-          <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="flex items-center gap-2 mb-5">
-              <svg className="w-5 h-5 text-[#eab308]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-              </svg>
-              <h3 className="text-lg font-bold">K-12 Education</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { title: 'Kindergarten', desc: 'The Kindergarten Department of CEC provides an excellent nurturing environment for early childhood education.' },
-                { title: 'Elementary', desc: 'The Elementary Department nurtures young minds with strong academic foundations.' },
-                { title: 'Junior High School', desc: 'Offering diverse programs designed to strengthen critical thinking, creativity, and social development.' },
-                { title: 'Senior High School', desc: 'Provides specialized academic and practical training to effectively prepare students for college and careers.' },
-              ].map((item) => (
-                <div key={item.title} className="rounded-lg overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                  <div className="h-24 bg-gradient-to-br from-[#1d4ed8]/40 to-[#0b2e83]/40 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-white/40" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                    </svg>
-                  </div>
-                  <div className="p-3">
-                    <h4 className="text-sm font-bold mb-1">{item.title}</h4>
-                    <p className="text-[10px] text-[#94a3b8] leading-snug mb-2">{item.desc}</p>
-                    <a href="#" className="inline-flex items-center gap-1 text-[10px] font-bold text-[#60a5fa] hover:underline">
-                      Learn More
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* College Programs */}
-          <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="flex items-center gap-2 mb-5">
-              <svg className="w-5 h-5 text-[#eab308]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-              </svg>
-              <h3 className="text-lg font-bold">College Programs</h3>
-            </div>
-            <div className="flex flex-col gap-2.5">
-              {[
-                { name: 'Bachelor of Science in Information Technology', icon: 'M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 7.41A2.25 2.25 0 0 1 2.25 5.495V5.25' },
-                { name: 'Bachelor of Science in Hospitality Management', icon: 'M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015A3.001 3.001 0 0 0 21 9.349' },
-                { name: 'Bachelor of Science in Criminology', icon: 'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z' },
-                { name: 'Bachelor of Science in Tourism Management', icon: 'M6.115 5.19l.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64' },
-                { name: 'Bachelor of Secondary Education', icon: 'M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5' },
-                { name: 'Bachelor of Elementary Education', icon: 'M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25' },
-              ].map((prog) => (
-                <div key={prog.name} className="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-white/10 transition-colors cursor-pointer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div className="w-8 h-8 rounded-full bg-[#1d4ed8]/20 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-[#60a5fa]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d={prog.icon} />
-                    </svg>
-                  </div>
-                  <span className="text-sm font-medium">{prog.name}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
