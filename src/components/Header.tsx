@@ -13,7 +13,6 @@ export default function Header() {
   const enrollmentRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
-  const isEnrollmentActive = location.pathname.startsWith('/enrollment/')
 
   const closePrograms = useCallback(() => setProgramsOpen(false), [])
   const closeEnrollment = useCallback(() => setEnrollmentOpen(false), [])
@@ -55,6 +54,9 @@ export default function Header() {
     setMobileOpen(false)
   }, [location.pathname])
 
+  const activeClass = 'text-white border-b-2 border-white pb-1'
+  const inactiveClass = 'text-[#cbd5e1] hover:text-white'
+
   return (
     <header className="sticky top-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
       <div className="relative flex items-center justify-between px-4 py-3 md:px-10 md:py-3.5">
@@ -67,13 +69,16 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2">
-          <Link to="/" className={`text-[13.5px] font-normal transition-colors ${isActive('/') ? 'text-white border-b-2 border-white pb-1' : 'text-[#cbd5e1] hover:text-white'}`}>Home</Link>
+          {/* Home */}
+          <Link to="/" className={`text-[13.5px] font-normal transition-colors ${isActive('/') ? activeClass : inactiveClass}`}>
+            Home
+          </Link>
 
           {/* Programs dropdown */}
           <div ref={programsRef} className="relative">
             <button
               onClick={() => { setProgramsOpen(!programsOpen); setEnrollmentOpen(false) }}
-              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${programsOpen ? 'text-white' : 'text-[#cbd5e1] hover:text-white'}`}
+              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${programsOpen ? activeClass : inactiveClass}`}
             >
               Programs
               <svg className={`w-2.5 h-2.5 opacity-60 transition-transform duration-200 ${programsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -87,7 +92,7 @@ export default function Header() {
           <div ref={enrollmentRef} className="relative">
             <button
               onClick={() => { setEnrollmentOpen(!enrollmentOpen); setProgramsOpen(false) }}
-              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${isEnrollmentActive ? 'text-white border-b-2 border-white pb-1' : enrollmentOpen ? 'text-white' : 'text-[#cbd5e1] hover:text-white'}`}
+              className={`text-[13.5px] font-normal transition-colors cursor-pointer flex items-center gap-1 ${enrollmentOpen ? activeClass : inactiveClass}`}
             >
               Enrollment
               <svg className={`w-2.5 h-2.5 opacity-60 transition-transform duration-200 ${enrollmentOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -97,14 +102,15 @@ export default function Header() {
             <EnrollmentDropdown open={enrollmentOpen} onClose={closeEnrollment} />
           </div>
 
-          {['Services', 'About'].map((item) => (
-            <a key={item} href="#" className="text-[13.5px] text-[#cbd5e1] font-normal hover:text-white transition-colors">
-              {item}
-              <svg className="inline-block w-2.5 h-2.5 ml-1 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </a>
-          ))}
+          {/* Services - plain link */}
+          <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
+            Services
+          </a>
+
+          {/* About - plain link */}
+          <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
+            About
+          </a>
         </nav>
 
         <button
@@ -124,18 +130,21 @@ export default function Header() {
 
       {mobileOpen && (
         <nav className="md:hidden bg-[#0b1f40] px-4 pb-4 border-t border-white/5">
-          <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>Home</Link>
+          <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+            Home
+          </Link>
           <button onClick={() => { setMobileOpen(false); setProgramsOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
             Programs
           </button>
-          <button onClick={() => { setMobileOpen(false); setEnrollmentOpen(true) }} className={`block w-full text-left text-sm py-2.5 px-3 rounded-lg transition-all cursor-pointer ${isEnrollmentActive ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+          <button onClick={() => { setMobileOpen(false); setEnrollmentOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
             Enrollment
           </button>
-          {['Services', 'About'].map((item) => (
-            <a key={item} href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
-              {item}
-            </a>
-          ))}
+          <a href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
+            Services
+          </a>
+          <a href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
+            About
+          </a>
         </nav>
       )}
     </header>
