@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore'
+import { isAdmin } from '../lib/admin'
 import ProgramsDropdown from './ProgramsDropdown'
 import EnrollmentDropdown from './EnrollmentDropdown'
 import ServicesDropdown from './ServicesDropdown'
@@ -29,6 +31,7 @@ export default function Header() {
   const servicesTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const location = useLocation()
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const isActive = (path: string) => location.pathname === path
 
   const isProgramsActive = isActive('/senior-high')
@@ -150,6 +153,16 @@ export default function Header() {
           <a href="#" className={`text-[13.5px] font-normal transition-colors ${inactiveClass}`}>
             About
           </a>
+
+          {/* Admin link - only visible to admin users */}
+          {isAdmin(user?.email) && (
+            <Link
+              to="/admin"
+              className={`text-[13.5px] font-normal transition-colors ${isActive('/admin') ? activeClass : 'text-amber-300/80 hover:text-amber-200'}`}
+            >
+              Admin
+            </Link>
+          )}
         </nav>
 
         <button
@@ -240,6 +253,17 @@ export default function Header() {
           <a href="#" onClick={() => setMobileOpen(false)} className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
             About
           </a>
+
+          {/* Admin link - mobile */}
+          {isAdmin(user?.email) && (
+            <Link
+              to="/admin"
+              onClick={() => setMobileOpen(false)}
+              className={`block text-sm py-2.5 px-3 rounded-lg transition-all ${isActive('/admin') ? 'text-amber-200 bg-white/10' : 'text-amber-300/80 hover:text-amber-200 hover:bg-white/10'}`}
+            >
+              Admin Panel
+            </Link>
+          )}
         </nav>
       )}
     </header>

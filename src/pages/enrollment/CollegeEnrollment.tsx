@@ -1,8 +1,14 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabase'
+import { useAuthStore } from '../../store/authStore'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 
 export default function CollegeEnrollment() {
+  const navigate = useNavigate()
+  const { user } = useAuthStore()
+  const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '', middleName: '', lastName: '', age: '', dob: '', gender: '', civilStatus: '',
     degreeProgram: '', highSchool: '', yearGraduated: '', lrn: '',
@@ -19,10 +25,24 @@ export default function CollegeEnrollment() {
     setFormData({ ...formData, requirements: { ...formData.requirements, [e.target.name]: e.target.checked } })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('College Enrollment:', formData)
-    alert('Enrollment submitted successfully!')
+    setSubmitting(true)
+    try {
+      const { error } = await supabase.from('enrollments').insert({
+        user_id: user?.id || null,
+        level: 'college',
+        student_data: formData,
+      })
+      if (error) throw error
+      alert('Enrollment submitted successfully! You will be contacted soon.')
+      navigate('/')
+    } catch (err) {
+      alert('Failed to submit enrollment. Please try again.')
+      console.error('Enrollment error:', err)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const degreePrograms = [
@@ -247,9 +267,9 @@ export default function CollegeEnrollment() {
 
           {/* Submit */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <button type="submit"
-              className="flex-1 bg-[#002366] hover:bg-[#0b1f40] text-white font-semibold py-3 px-6 rounded-xl text-sm transition-all duration-200 shadow-lg shadow-[#002366]/20">
-              Submit Enrollment
+            <button type="submit" disabled={submitting}
+              className="flex-1 bg-[#002366] hover:bg-[#0b1f40] text-white font-semibold py-3 px-6 rounded-xl text-sm transition-all duration-200 shadow-lg shadow-[#002366]/20 disabled:opacity-50 disabled:cursor-not-allowed">
+              {submitting ? 'Submitting...' : 'Submit Enrollment'}
             </button>
             <button type="button"
               className="flex-1 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold py-3 px-6 rounded-xl text-sm transition">
