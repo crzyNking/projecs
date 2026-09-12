@@ -109,7 +109,7 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden lg:flex gap-6 xl:gap-8 items-center absolute left-1/2 -translate-x-1/2">
           <Link to="/" className={`text-[13.5px] font-normal transition-colors ${isActive('/') ? activeClass : inactiveClass}`}>
             Home
           </Link>
@@ -154,7 +154,7 @@ export default function Header() {
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-all z-10"
+          className="lg:hidden p-2 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-all z-10"
           aria-label="Toggle menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -168,7 +168,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <nav className="md:hidden bg-[#0b1f40] px-4 pb-4 border-t border-white/5">
+        <nav className="lg:hidden bg-[#0b1f40] px-4 pb-4 border-t border-white/5">
           <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
             Home
           </Link>
