@@ -12,12 +12,12 @@ const k12Data = [
 ]
 
 const collegeData = [
-  { name: 'BS in Information Technology', icon: '💻' },
-  { name: 'BS in Hospitality Management', icon: '🏨' },
-  { name: 'BS in Criminology', icon: '🛡️' },
-  { name: 'BS in Tourism Management', icon: '✈️' },
-  { name: 'BS in Secondary Education', icon: '📚' },
-  { name: 'BS in Elementary Education', icon: '🎒' },
+  { name: 'BS in Information Technology' },
+  { name: 'BS in Hospitality Management' },
+  { name: 'BS in Criminology' },
+  { name: 'BS in Tourism Management' },
+  { name: 'BS in Secondary Education' },
+  { name: 'BS in Elementary Education' },
 ]
 
 const enrollK12 = [
@@ -215,11 +215,8 @@ export default function Header() {
                             <button
                               key={prog.name}
                               onClick={() => navigateAndClose('/senior-high')}
-                              className="group flex items-center gap-3 bg-[#dce4ed] rounded-lg py-1.5 pr-3 pl-2 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
+                              className="group flex items-center gap-3 bg-[#dce4ed] rounded-lg py-1.5 pr-3 pl-3 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
                             >
-                              <div className="w-[34px] h-[34px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0 text-[16px]">
-                                {prog.icon}
-                              </div>
                               <span className="text-[#0b2545] font-semibold text-[12px] leading-[1.3] flex-grow text-left">{prog.name}</span>
                               <svg className="w-3.5 h-3.5 text-[#a0aebc] group-hover:text-[#0b2545] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M9 18l6-6-6-6" />
@@ -463,11 +460,8 @@ export default function Header() {
                             <button
                               key={prog.name}
                               onClick={() => navigateAndClose('/senior-high')}
-                              className="group flex items-center gap-2.5 bg-[#dce4ed] rounded-lg py-1.5 pr-2.5 pl-1.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer w-full"
+                              className="group flex items-center gap-2.5 bg-[#dce4ed] rounded-lg py-1.5 pr-2.5 pl-2.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer w-full"
                             >
-                              <div className="w-[28px] h-[28px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0 text-[14px]">
-                                {prog.icon}
-                              </div>
                               <span className="text-[#0b2545] font-semibold text-[11px] leading-[1.2] flex-grow text-left">{prog.name}</span>
                               <svg className="w-3 h-3 text-[#a0aebc] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M9 18l6-6-6-6" />

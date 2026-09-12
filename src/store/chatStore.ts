@@ -133,25 +133,19 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   fetchUserData: async (userId: string) => {
     try {
-      const [profileRes, activityRes, prefsRes] = await Promise.all([
+      const [profileRes, activityRes, countRes, prefsRes] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', userId).single(),
         supabase.from('activity_logs').select('action, created_at').eq('user_id', userId).order('created_at', { ascending: false }).limit(10),
+        supabase.from('activity_logs').select('*', { count: 'exact', head: true }).eq('user_id', userId),
         supabase.from('user_preferences').select('theme, email_notifications, push_notifications').eq('user_id', userId).single(),
       ])
 
       const userData: UserData = {
         profile: profileRes.data,
-        activityCount: 0,
+        activityCount: countRes.count || 0,
         recentActivity: activityRes.data || [],
         preferences: prefsRes.data,
       }
-
-      const { count } = await supabase
-        .from('activity_logs')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-
-      userData.activityCount = count || 0
 
       set({ userData })
     } catch (err) {

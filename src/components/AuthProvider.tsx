@@ -22,8 +22,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
-          await fetchProfile(session.user.id)
-          await fetchPreferences(session.user.id)
+          await Promise.all([
+            fetchProfile(session.user.id),
+            fetchPreferences(session.user.id),
+          ])
         }
       } catch (error) {
         console.error('Error getting initial session:', error)
@@ -39,8 +41,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
-          await fetchProfile(session.user.id)
-          await fetchPreferences(session.user.id)
+          await Promise.all([
+            fetchProfile(session.user.id),
+            fetchPreferences(session.user.id),
+          ])
           if (event === 'SIGNED_IN') {
             await logActivity(session.user.id, 'sign_in')
           }

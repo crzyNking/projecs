@@ -1,16 +1,39 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useChatStore, getWelcomeMessages, getSystemPrompt } from '../store/chatStore'
 import { useAuthStore } from '../store/authStore'
 
 const OPENROUTER_API_KEY = ['sk-','or-v1-','430f','f79a','4b27','4f4d','7315','ca2f','10c2','7320','3f83','7f63','3157','1cc1','30e8','c286','255a','4a8e'].join('')
 
+const dotStyle1 = { animationDelay: '0ms' }
+const dotStyle2 = { animationDelay: '150ms' }
+const dotStyle3 = { animationDelay: '300ms' }
+const gridPattern = { backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }
+const textareaMinHeight = { minHeight: '40px' }
+
 export function Chatbot() {
-  const { messages, isLoading, isOpen, addMessage, setIsLoading, setIsOpen, saveChatHistory, loadChatHistory, userData, fetchUserData } = useChatStore()
-  const { user } = useAuthStore()
+  const messages = useChatStore((s) => s.messages)
+  const isLoading = useChatStore((s) => s.isLoading)
+  const isOpen = useChatStore((s) => s.isOpen)
+  const addMessage = useChatStore((s) => s.addMessage)
+  const setIsLoading = useChatStore((s) => s.setIsLoading)
+  const setIsOpen = useChatStore((s) => s.setIsOpen)
+  const saveChatHistory = useChatStore((s) => s.saveChatHistory)
+  const loadChatHistory = useChatStore((s) => s.loadChatHistory)
+  const userData = useChatStore((s) => s.userData)
+  const fetchUserData = useChatStore((s) => s.fetchUserData)
+  const user = useAuthStore((s) => s.user)
+
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const lastMessageCount = useRef(messages.length)
+  const abortRef = useRef<AbortController | null>(null)
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const displayMessages = useMemo(
+    () => messages.filter((m) => m.role !== 'system'),
+    [messages]
+  )
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -18,7 +41,10 @@ export function Chatbot() {
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100)
+      focusTimerRef.current = setTimeout(() => inputRef.current?.focus(), 100)
+    }
+    return () => {
+      if (focusTimerRef.current) clearTimeout(focusTimerRef.current)
     }
   }, [isOpen])
 
@@ -39,7 +65,13 @@ export function Chatbot() {
     lastMessageCount.current = messages.length
   }, [messages, user, saveChatHistory])
 
-  const sendMessage = async () => {
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort()
+    }
+  }, [])
+
+  const sendMessage = useCallback(async () => {
     if (!input.trim() || isLoading) return
 
     if (!OPENROUTER_API_KEY) {
@@ -52,19 +84,19 @@ export function Chatbot() {
     addMessage({ role: 'user', content: userMessage })
     setIsLoading(true)
 
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
     try {
       const systemPrompt = getSystemPrompt(userData)
       const conversationHistory = [
         { role: 'system', content: systemPrompt },
         ...messages
           .filter((m) => m.role === 'user' || m.role === 'assistant')
-          .map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          .map((m) => ({ role: m.role, content: m.content })),
+        { role: 'user' as const, content: userMessage },
       ]
-
-      conversationHistory.push({ role: 'user', content: userMessage })
 
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -78,37 +110,49 @@ export function Chatbot() {
           model: 'z-ai/glm-5.2:free',
           messages: conversationHistory,
         }),
+        signal: controller.signal,
       })
 
       const data = await response.json()
-      
+
       if (!response.ok) {
         throw new Error(data?.error?.message || `HTTP ${response.status}`)
       }
 
       const reply = data.choices?.[0]?.message?.content || 'No response generated.'
-
       addMessage({ role: 'assistant', content: reply })
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return
       const message = error instanceof Error ? error.message : 'Something went wrong'
       addMessage({ role: 'assistant', content: `Error: ${message}` })
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [input, isLoading, messages, userData, addMessage, setIsLoading])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       sendMessage()
     }
-  }
+  }, [sendMessage])
+
+  const handleToggle = useCallback(() => setIsOpen(!isOpen), [isOpen, setIsOpen])
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+  }, [])
+
+  const handleInput = useCallback((e: React.FormEvent<HTMLTextAreaElement>) => {
+    const target = e.target as HTMLTextAreaElement
+    target.style.height = 'auto'
+    target.style.height = Math.min(target.scrollHeight, 96) + 'px'
+  }, [])
 
   return (
     <>
-      {/* Floating Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl shadow-lg transition-all duration-300 flex items-center justify-center overflow-hidden ${
           isOpen
             ? 'bg-gray-800 dark:bg-gray-700 shadow-gray-800/25 dark:shadow-black/30 rotate-90'
@@ -124,13 +168,11 @@ export function Chatbot() {
         )}
       </button>
 
-      {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-20 left-4 right-4 sm:bottom-24 sm:left-auto sm:right-6 z-50 w-auto sm:w-[380px] max-w-[400px]">
           <div className="rounded-[1.5rem] border border-gray-200/50 dark:border-white/[0.06] bg-white/95 dark:bg-[#0f0f1a]/95 backdrop-blur-xl shadow-2xl shadow-black/10 dark:shadow-black/40 overflow-hidden">
-            {/* Header */}
             <div className="relative px-5 py-4 bg-gradient-to-r from-purple-500 to-cyan-500">
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+              <div className="absolute inset-0 opacity-20" style={gridPattern} />
               <div className="relative flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/20">
@@ -141,10 +183,7 @@ export function Chatbot() {
                     <p className="text-xs text-white/70">Powered by KnowsMore</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="p-2 rounded-lg hover:bg-white/20 transition-colors"
-                >
+                <button onClick={handleToggle} className="p-2 rounded-lg hover:bg-white/20 transition-colors">
                   <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -152,11 +191,10 @@ export function Chatbot() {
               </div>
             </div>
 
-            {/* Messages */}
             <div className="h-[280px] sm:h-[350px] overflow-y-auto px-4 sm:px-5 py-3 sm:py-4 space-y-3 sm:space-y-4">
-              {messages.filter((m) => m.role !== 'system').map((msg) => (
+              {displayMessages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] ${msg.role === 'user' ? 'order-1' : 'order-1'}`}>
+                  <div className="max-w-[85%]">
                     {msg.role === 'assistant' && (
                       <div className="flex items-center gap-1.5 mb-1.5">
                         <div className="w-5 h-5 rounded-md overflow-hidden">
@@ -189,9 +227,9 @@ export function Chatbot() {
                     </div>
                     <div className="px-4 py-3 rounded-2xl rounded-bl-md bg-gray-100 dark:bg-white/[0.06]">
                       <div className="flex gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={dotStyle1} />
+                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={dotStyle2} />
+                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={dotStyle3} />
                       </div>
                     </div>
                   </div>
@@ -201,23 +239,18 @@ export function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <div className="px-4 py-3 border-t border-gray-200/50 dark:border-white/[0.06] bg-gray-50/80 dark:bg-white/[0.02]">
               <div className="flex items-end gap-2">
                 <textarea
                   ref={inputRef}
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask KnowsMore anything..."
                   rows={1}
                   className="flex-1 resize-none px-4 py-2.5 text-sm rounded-xl bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 max-h-24"
-                  style={{ minHeight: '40px' }}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement
-                    target.style.height = 'auto'
-                    target.style.height = Math.min(target.scrollHeight, 96) + 'px'
-                  }}
+                  style={textareaMinHeight}
+                  onInput={handleInput}
                 />
                 <button
                   onClick={sendMessage}

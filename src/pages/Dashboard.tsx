@@ -1,11 +1,37 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useActivityStore } from '../store/activityStore'
 
+const colorMap: Record<string, { bg: string; text: string; glow: string; ring: string }> = {
+  emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-500 dark:text-emerald-400', glow: 'shadow-emerald-500/20', ring: 'ring-emerald-500/30' },
+  violet: { bg: 'bg-violet-500/10', text: 'text-violet-500 dark:text-violet-400', glow: 'shadow-violet-500/20', ring: 'ring-violet-500/30' },
+  sky: { bg: 'bg-sky-500/10', text: 'text-sky-500 dark:text-sky-400', glow: 'shadow-sky-500/20', ring: 'ring-sky-500/30' },
+}
+
+function getActivityIcon(action: string) {
+  if (action.includes('sign_in') || action.includes('login')) {
+    return { icon: 'M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z', color: 'emerald' }
+  }
+  if (action.includes('avatar')) {
+    return { icon: 'M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z', color: 'violet' }
+  }
+  if (action.includes('profile')) {
+    return { icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z', color: 'sky' }
+  }
+  return { icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', color: 'emerald' }
+}
+
+function formatActivityAction(action: string) {
+  return action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+}
+
 export function Dashboard() {
-  const { user, profile, signOut } = useAuthStore()
-  const { activities, fetchActivities } = useActivityStore()
+  const user = useAuthStore((s) => s.user)
+  const profile = useAuthStore((s) => s.profile)
+  const signOut = useAuthStore((s) => s.signOut)
+  const activities = useActivityStore((s) => s.activities)
+  const fetchActivities = useActivityStore((s) => s.fetchActivities)
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
 
@@ -15,89 +41,46 @@ export function Dashboard() {
     }
   }, [user, fetchActivities])
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut()
     navigate('/', { replace: true })
-  }
+  }, [signOut, navigate])
 
   const userMetadata = user?.user_metadata
   const displayName = profile?.full_name || userMetadata?.full_name || userMetadata?.name || user?.email?.split('@')[0] || 'User'
   const avatarUrl = profile?.avatar_url || userMetadata?.avatar_url
   const email = profile?.email || user?.email
-  const initials = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+  const initials = useMemo(() => displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2), [displayName])
 
-  const stats = [
+  const stats = useMemo(() => [
     { label: 'Account Status', value: 'Active', color: 'emerald', iconPath: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
     { label: 'Auth Provider', value: 'Google', color: 'violet', iconPath: 'M13 10V3L4 14h7v7l9-11h-7z' },
     { label: 'Member Since', value: new Date(user?.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }), color: 'sky', iconPath: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
-  ]
+  ], [user?.created_at])
 
-  const colorMap: Record<string, { bg: string; text: string; glow: string; ring: string }> = {
-    emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-500 dark:text-emerald-400', glow: 'shadow-emerald-500/20', ring: 'ring-emerald-500/30' },
-    violet: { bg: 'bg-violet-500/10', text: 'text-violet-500 dark:text-violet-400', glow: 'shadow-violet-500/20', ring: 'ring-violet-500/30' },
-    sky: { bg: 'bg-sky-500/10', text: 'text-sky-500 dark:text-sky-400', glow: 'shadow-sky-500/20', ring: 'ring-sky-500/30' },
-  }
+  const handleNavigate = useCallback((path: string) => navigate(path), [navigate])
 
-  const quickActions = [
-    {
-      label: 'Analytics',
-      iconPath: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z',
-      iconColor: 'text-purple-500 dark:text-purple-400',
-      onClick: () => navigate('/analytics')
-    },
-    {
-      label: 'Reports',
-      iconPath: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z',
-      iconColor: 'text-cyan-500 dark:text-cyan-400',
-      onClick: () => navigate('/reports')
-    },
-    {
-      label: 'Settings',
-      iconPath: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z',
-      iconColor: 'text-amber-500 dark:text-amber-400',
-      onClick: () => navigate('/settings')
-    },
-    {
-      label: 'Profile',
-      iconPath: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
-      iconColor: 'text-emerald-500 dark:text-emerald-400',
-      onClick: () => navigate('/profile')
-    },
-  ]
-
-  const getActivityIcon = (action: string) => {
-    if (action.includes('sign_in') || action.includes('login')) {
-      return { icon: 'M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z', color: 'emerald' }
-    }
-    if (action.includes('avatar')) {
-      return { icon: 'M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z', color: 'violet' }
-    }
-    if (action.includes('profile')) {
-      return { icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z', color: 'sky' }
-    }
-    return { icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', color: 'emerald' }
-  }
-
-  const formatActivityAction = (action: string) => {
-    return action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-  }
+  const quickActions = useMemo(() => [
+    { label: 'Analytics', iconPath: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z', iconColor: 'text-purple-500 dark:text-purple-400', path: '/analytics' },
+    { label: 'Reports', iconPath: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z', iconColor: 'text-cyan-500 dark:text-cyan-400', path: '/reports' },
+    { label: 'Settings', iconPath: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z', iconColor: 'text-amber-500 dark:text-amber-400', path: '/settings' },
+    { label: 'Profile', iconPath: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z', iconColor: 'text-emerald-500 dark:text-emerald-400', path: '/profile' },
+  ], [])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] relative overflow-hidden transition-colors">
-      {/* Ambient background - only visible in dark mode */}
       <div className="pointer-events-none absolute inset-0 dark:block hidden">
-        <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-600/8 blur-[120px]"></div>
-        <div className="absolute top-1/3 -right-20 h-[400px] w-[400px] rounded-full bg-cyan-500/6 blur-[100px]"></div>
-        <div className="absolute bottom-0 left-1/3 h-[300px] w-[500px] rounded-full bg-indigo-500/5 blur-[100px]"></div>
+        <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-600/8 blur-[120px]" />
+        <div className="absolute top-1/3 -right-20 h-[400px] w-[400px] rounded-full bg-cyan-500/6 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/3 h-[300px] w-[500px] rounded-full bg-indigo-500/5 blur-[100px]" />
       </div>
 
-      {/* Header */}
       <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-white/[0.06] bg-gray-50/80 dark:bg-[#0a0a0f]/80 backdrop-blur-2xl transition-colors">
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-3 sm:py-4">
             <div className="flex items-center gap-2.5 sm:gap-3">
               <div className="relative">
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 opacity-60 blur-md"></div>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 opacity-60 blur-md" />
                 <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500">
                   <svg className="h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
@@ -186,9 +169,7 @@ export function Dashboard() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-        {/* Welcome */}
         <div className="mb-8 sm:mb-10">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
             Welcome back,{' '}
@@ -199,7 +180,6 @@ export function Dashboard() {
           <p className="text-sm sm:text-base text-gray-500">Here&apos;s what&apos;s happening with your account today.</p>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10">
           {stats.map((stat, i) => (
             <div key={i} className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-4 sm:p-5 transition-all duration-300 hover:border-gray-300 dark:hover:border-white/[0.12] hover:bg-gray-50 dark:hover:bg-white/[0.04]">
@@ -219,9 +199,7 @@ export function Dashboard() {
           ))}
         </div>
 
-        {/* Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Profile Card */}
           <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 sm:p-6 lg:row-span-2">
             <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-purple-500/10 blur-3xl" />
             <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-cyan-500/10 blur-3xl" />
@@ -277,9 +255,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            {/* Quick Actions */}
             <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 sm:p-6">
               <h3 className="mb-5 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -288,10 +264,10 @@ export function Dashboard() {
                 Quick Actions
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {quickActions.map((action, i) => (
+                {quickActions.map((action) => (
                   <button
-                    key={i}
-                    onClick={action.onClick}
+                    key={action.label}
+                    onClick={() => handleNavigate(action.path)}
                     className="group relative overflow-hidden rounded-xl border border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.02] p-4 sm:p-5 text-center transition-all duration-300 hover:border-gray-300 dark:hover:border-white/[0.12] hover:bg-gray-100 dark:hover:bg-white/[0.06]"
                   >
                     <div className="relative mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 dark:bg-white/[0.04] ring-1 ring-gray-200 dark:ring-white/[0.08] transition-all duration-300 group-hover:scale-110 group-hover:ring-gray-300 dark:group-hover:ring-white/[0.16]">
@@ -305,7 +281,6 @@ export function Dashboard() {
               </div>
             </div>
 
-            {/* Activity */}
             <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 sm:p-6">
               <h3 className="mb-5 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import Header from '../components/Header'
@@ -6,10 +6,54 @@ import Footer from '../components/Footer'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
 
+const heroStyle = { background: "linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop) center/cover no-repeat" }
+const authModalBackdrop = { background: 'rgba(3, 8, 20, 0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }
+
 type AuthMode = 'login' | 'signup'
 
+const academicCards = [
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+      </svg>
+    ),
+    title: 'Basic Education',
+    desc: 'A strong foundation for lifelong learning, fostering curiosity and critical thinking.',
+  },
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+      </svg>
+    ),
+    title: 'Senior High',
+    desc: 'Specialized tracks preparing students for college and future careers.',
+  },
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+      </svg>
+    ),
+    title: 'Higher Education',
+    desc: 'Professional degree programs shaping the industry leaders of tomorrow.',
+  },
+]
+
+const features = [
+  { title: 'Affordable Tuition', desc: 'Quality education without the heavy financial burden.' },
+  { title: 'Diverse Community', desc: 'A welcoming environment for students from all backgrounds.' },
+]
+
 export function Home() {
-  const { user, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, error, setError } = useAuthStore()
+  const user = useAuthStore((s) => s.user)
+  const loading = useAuthStore((s) => s.loading)
+  const signInWithEmail = useAuthStore((s) => s.signInWithEmail)
+  const signUpWithEmail = useAuthStore((s) => s.signUpWithEmail)
+  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle)
+  const error = useAuthStore((s) => s.error)
+  const setError = useAuthStore((s) => s.setError)
   const navigate = useNavigate()
 
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({ open: false, mode: 'login' })
@@ -40,7 +84,7 @@ export function Home() {
     return () => { document.body.style.overflow = '' }
   }, [authModal.open])
 
-  const openAuth = (mode: AuthMode) => {
+  const openAuth = useCallback((mode: AuthMode) => {
     setAuthTab(mode)
     setAuthModal({ open: true, mode })
     setEmail('')
@@ -49,14 +93,14 @@ export function Home() {
     setIdNumber('')
     setShowPassword(false)
     setError(null)
-  }
+  }, [setError])
 
-  const closeAuth = () => {
+  const closeAuth = useCallback(() => {
     setAuthModal({ open: false, mode: 'login' })
     setError(null)
-  }
+  }, [setError])
 
-  const handleAuthSubmit = async (e: React.FormEvent) => {
+  const handleAuthSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
     setError(null)
@@ -75,56 +119,17 @@ export function Home() {
     }
 
     setSubmitting(false)
-  }
+  }, [authTab, email, password, fullName, signInWithEmail, signUpWithEmail, closeAuth, navigate, setError])
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = useCallback(async () => {
     await signInWithGoogle()
-  }
-
-  const academicCards = [
-    {
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-        </svg>
-      ),
-      title: 'Basic Education',
-      desc: 'A strong foundation for lifelong learning, fostering curiosity and critical thinking.',
-    },
-    {
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-        </svg>
-      ),
-      title: 'Senior High',
-      desc: 'Specialized tracks preparing students for college and future careers.',
-    },
-    {
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-        </svg>
-      ),
-      title: 'Higher Education',
-      desc: 'Professional degree programs shaping the industry leaders of tomorrow.',
-    },
-  ]
-
-  const features = [
-    { title: 'Affordable Tuition', desc: 'Quality education without the heavy financial burden.' },
-    { title: 'Diverse Community', desc: 'A welcoming environment for students from all backgrounds.' },
-  ]
+  }, [signInWithGoogle])
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#333333] overflow-x-hidden">
       <Header />
 
-      {/* Hero Section */}
-      <section
-        className="relative py-10 px-4 sm:py-16 text-center text-white"
-        style={{ background: "linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop) center/cover no-repeat" }}
-      >
+      <section className="relative py-10 px-4 sm:py-16 text-center text-white" style={heroStyle}>
         <p className="text-[#eab308] text-2xl sm:text-4xl md:text-[38px] font-semibold tracking-[4px] sm:tracking-[8px] mb-6 sm:mb-[30px]">
           宿務 東方 學院
         </p>
@@ -153,7 +158,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* Academic Excellence */}
       <section className="py-10 sm:py-[60px] px-4 sm:px-10 bg-[#f8fafc] text-center">
         <h2 className="text-xl sm:text-[26px] font-extrabold text-[#002366] mb-2">Academic Excellence</h2>
         <p className="text-xs sm:text-[13px] text-[#64748b] mb-8 sm:mb-[45px]">Comprehensive educational programs designed to nurture future leaders.</p>
@@ -180,7 +184,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* Heritage Section */}
       <section className="py-10 sm:py-[70px] px-4 sm:px-10 bg-[#f1f5f9]">
         <div className="max-w-[1050px] mx-auto flex flex-col lg:flex-row items-center gap-8 sm:gap-[60px]">
           <div className="shrink-0 flex justify-center items-center w-full lg:w-[260px]">
@@ -217,7 +220,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="bg-[#002366] text-white text-center py-10 sm:py-[60px] px-4">
         <h2 className="text-2xl sm:text-[32px] font-extrabold mb-3.5">Join the Easternian<br />Community</h2>
         <p className="text-xs sm:text-[13.5px] text-[#cbd5e1] mb-6 sm:mb-[25px]">Begin your journey towards academic excellence and personal growth today.</p>
@@ -231,9 +233,8 @@ export function Home() {
 
       <Footer />
 
-      {/* Auth Modal */}
       {authModal.open && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={closeAuth} style={{ background: 'rgba(3, 8, 20, 0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={closeAuth} style={authModalBackdrop}>
           <div
             className="relative w-full max-w-[420px] rounded-2xl p-6 sm:p-[35px_30px] text-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] bg-[rgba(13,33,84,0.92)] border border-white/20 backdrop-blur-[20px]"
             onClick={(e) => e.stopPropagation()}
@@ -291,9 +292,6 @@ export function Home() {
                   />
                 </div>
                 <div className="relative">
-                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                  </svg>
                   <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                   </svg>
