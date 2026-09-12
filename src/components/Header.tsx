@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuthModalStore } from '../store/authModalStore'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
 
@@ -37,9 +38,11 @@ const servicesData = [
 
 type Dropdown = 'programs' | 'enrollment' | 'services' | null
 type MobileAccordion = 'programs' | 'enrollment' | 'services' | null
+type MobilePage = 'main' | 'enroll-picker'
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobilePage, setMobilePage] = useState<MobilePage>('main')
   const [activeDropdown, setActiveDropdown] = useState<Dropdown>(null)
   const [mobileAccordion, setMobileAccordion] = useState<MobileAccordion>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -47,11 +50,13 @@ export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
   const isActive = (path: string) => location.pathname === path
+  const openAuth = useAuthModalStore((s) => s.openAuth)
 
   const closeAll = useCallback(() => {
     setActiveDropdown(null)
     setMobileOpen(false)
     setMobileAccordion(null)
+    setMobilePage('main')
   }, [])
 
   useEffect(() => {
@@ -393,180 +398,248 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Full Screen */}
       {mobileOpen && (
-        <div className="lg:hidden bg-[#081a38] border-t border-white/5 max-h-[calc(100vh-57px)] overflow-y-auto">
-          <div className="px-4 py-4 space-y-1">
-            {/* Home */}
-            <Link
-              to="/"
-              onClick={closeAll}
-              className={`block text-[14px] font-medium py-2.5 px-3.5 rounded-lg transition-colors ${
-                isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              Home
-            </Link>
+        <div className="lg:hidden fixed inset-0 top-[57px] z-50 bg-[#081a38] overflow-y-auto flex flex-col">
+          <div className="flex-1 px-4 py-4 space-y-1">
+            {/* Main Page */}
+            {mobilePage === 'main' && (
+              <>
+                <Link
+                  to="/"
+                  onClick={closeAll}
+                  className={`block text-[14px] font-medium py-2.5 px-3.5 rounded-lg transition-colors ${
+                    isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Home
+                </Link>
 
-            {/* Programs Accordion */}
-            <div>
-              <button
-                onClick={() => toggleMobileAccordion('programs')}
-                className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
-                aria-expanded={mobileAccordion === 'programs'}
-              >
-                Programs
-                <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'programs' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                </svg>
-              </button>
-              {mobileAccordion === 'programs' && (
-                <div className="ml-3 mt-1 mb-2 space-y-3 animate-in fade-in duration-200">
-                  <div>
-                    <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">K-12 Education</div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {k12Data.map((prog) => (
-                        <button
-                          key={prog.title}
-                          onClick={() => navigateAndClose(prog.path)}
-                          className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.12)] text-left flex flex-col"
-                        >
-                          <div className="relative h-[80px] w-full overflow-hidden">
-                            <img src={prog.img} alt={prog.title} className="w-full h-full object-cover" />
-                            <div className="absolute bottom-0 left-0 right-0 px-2 pb-1 pt-2 bg-gradient-to-t from-black/75 to-transparent">
-                              <h3 className="text-white text-[11px] font-semibold">{prog.title}</h3>
-                            </div>
-                          </div>
-                          <div className="p-2">
-                            <span className="text-[#0b2545] text-[9px] font-bold inline-flex items-center gap-0.5">
-                              Learn More
-                              <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                              </svg>
-                            </span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">College Programs</div>
-                    <div className="space-y-1.5">
-                      {collegeData.map((prog) => (
-                        <button
-                          key={prog.name}
-                          onClick={() => navigateAndClose('/senior-high')}
-                          className="group flex items-center gap-2.5 bg-[#dce4ed] rounded-lg py-1.5 pr-2.5 pl-1.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer w-full"
-                        >
-                          <div className="w-[28px] h-[28px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0 text-[14px]">
-                            {prog.icon}
-                          </div>
-                          <span className="text-[#0b2545] font-semibold text-[11px] leading-[1.2] flex-grow text-left">{prog.name}</span>
-                          <svg className="w-3 h-3 text-[#a0aebc] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M9 18l6-6-6-6" />
-                          </svg>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Enrollment Accordion */}
-            <div>
-              <button
-                onClick={() => toggleMobileAccordion('enrollment')}
-                className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
-                aria-expanded={mobileAccordion === 'enrollment'}
-              >
-                Enrollment
-                <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'enrollment' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                </svg>
-              </button>
-              {mobileAccordion === 'enrollment' && (
-                <div className="ml-3 mt-1 mb-2 space-y-3 animate-in fade-in duration-200">
-                  <div>
-                    <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">K-12 Education</div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {enrollK12.map((card) => (
-                        <button
-                          key={card.title}
-                          onClick={() => navigateAndClose(card.path)}
-                          className="group relative bg-gradient-to-b from-[#5b72cd] to-[#3a4b9c] rounded-xl border border-white/20 overflow-hidden flex flex-col justify-between items-start p-2.5 cursor-pointer min-h-[80px]"
-                        >
-                          <span className="text-white text-[11px] font-extrabold tracking-wide uppercase leading-tight z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-                            {card.title}
-                          </span>
-                          <span className="text-white/50 text-[9px] font-medium z-10 relative">
-                            {card.desc}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">College Programs</div>
-                    <button
-                      onClick={() => navigateAndClose('/enrollment/college')}
-                      className="group w-full bg-gradient-to-b from-[#8496db] to-[#4f61b3] rounded-xl border border-white/20 overflow-hidden relative flex flex-col justify-between p-3 cursor-pointer min-h-[80px]"
-                    >
-                      <span className="text-[#fef08a] text-[16px] font-black tracking-wider uppercase z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                        COLLEGE
-                      </span>
-                      <span className="text-white/45 text-[10px] font-medium z-10 relative">
-                        Bachelor's Degree Programs
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Services Accordion */}
-            <div>
-              <button
-                onClick={() => toggleMobileAccordion('services')}
-                className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
-                aria-expanded={mobileAccordion === 'services'}
-              >
-                Services
-                <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'services' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                </svg>
-              </button>
-              {mobileAccordion === 'services' && (
-                <div className="ml-3 mt-1 mb-2 animate-in fade-in duration-200">
-                  <div className="grid grid-cols-2 gap-2">
-                    {servicesData.map((service) => (
-                      <div
-                        key={service.name}
-                        className="bg-white rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer py-3 px-2"
-                      >
-                        <div className="w-[38px] h-[38px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
-                          <svg className="w-4.5 h-4.5 text-[#061830]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-                            <path d={service.icon} />
-                          </svg>
+                {/* Programs Accordion */}
+                <div>
+                  <button
+                    onClick={() => toggleMobileAccordion('programs')}
+                    className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
+                    aria-expanded={mobileAccordion === 'programs'}
+                  >
+                    Programs
+                    <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'programs' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </button>
+                  {mobileAccordion === 'programs' && (
+                    <div className="ml-3 mt-1 mb-2 space-y-3 animate-in fade-in duration-200">
+                      <div>
+                        <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">K-12 Education</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {k12Data.map((prog) => (
+                            <button
+                              key={prog.title}
+                              onClick={() => navigateAndClose(prog.path)}
+                              className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.12)] text-left flex flex-col"
+                            >
+                              <div className="relative h-[80px] w-full overflow-hidden">
+                                <img src={prog.img} alt={prog.title} className="w-full h-full object-cover" />
+                                <div className="absolute bottom-0 left-0 right-0 px-2 pb-1 pt-2 bg-gradient-to-t from-black/75 to-transparent">
+                                  <h3 className="text-white text-[11px] font-semibold">{prog.title}</h3>
+                                </div>
+                              </div>
+                              <div className="p-2">
+                                <span className="text-[#0b2545] text-[9px] font-bold inline-flex items-center gap-0.5">
+                                  Learn More
+                                  <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                  </svg>
+                                </span>
+                              </div>
+                            </button>
+                          ))}
                         </div>
-                        <span className="text-[#061830] text-[11px] font-bold tracking-wider text-center">{service.name}</span>
-                        <p className="text-[#6b7280] text-[8px] text-center leading-[1.3] px-0.5">{service.desc}</p>
                       </div>
-                    ))}
-                  </div>
+                      <div>
+                        <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">College Programs</div>
+                        <div className="space-y-1.5">
+                          {collegeData.map((prog) => (
+                            <button
+                              key={prog.name}
+                              onClick={() => navigateAndClose('/senior-high')}
+                              className="group flex items-center gap-2.5 bg-[#dce4ed] rounded-lg py-1.5 pr-2.5 pl-1.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer w-full"
+                            >
+                              <div className="w-[28px] h-[28px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0 text-[14px]">
+                                {prog.icon}
+                              </div>
+                              <span className="text-[#0b2545] font-semibold text-[11px] leading-[1.2] flex-grow text-left">{prog.name}</span>
+                              <svg className="w-3 h-3 text-[#a0aebc] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 18l6-6-6-6" />
+                              </svg>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* About */}
-            <a
-              href="#"
-              onClick={closeAll}
-              className="block text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors"
-            >
-              About
-            </a>
+                {/* Enrollment Accordion */}
+                <div>
+                  <button
+                    onClick={() => toggleMobileAccordion('enrollment')}
+                    className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
+                    aria-expanded={mobileAccordion === 'enrollment'}
+                  >
+                    Enrollment
+                    <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'enrollment' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </button>
+                  {mobileAccordion === 'enrollment' && (
+                    <div className="ml-3 mt-1 mb-2 space-y-3 animate-in fade-in duration-200">
+                      <div>
+                        <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">K-12 Education</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {enrollK12.map((card) => (
+                            <button
+                              key={card.title}
+                              onClick={() => navigateAndClose(card.path)}
+                              className="group relative bg-gradient-to-b from-[#5b72cd] to-[#3a4b9c] rounded-xl border border-white/20 overflow-hidden flex flex-col justify-between items-start p-2.5 cursor-pointer min-h-[80px]"
+                            >
+                              <span className="text-white text-[11px] font-extrabold tracking-wide uppercase leading-tight z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                                {card.title}
+                              </span>
+                              <span className="text-white/50 text-[9px] font-medium z-10 relative">
+                                {card.desc}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">College Programs</div>
+                        <button
+                          onClick={() => navigateAndClose('/enrollment/college')}
+                          className="group w-full bg-gradient-to-b from-[#8496db] to-[#4f61b3] rounded-xl border border-white/20 overflow-hidden relative flex flex-col justify-between p-3 cursor-pointer min-h-[80px]"
+                        >
+                          <span className="text-[#fef08a] text-[16px] font-black tracking-wider uppercase z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                            COLLEGE
+                          </span>
+                          <span className="text-white/45 text-[10px] font-medium z-10 relative">
+                            Bachelor's Degree Programs
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Services Accordion */}
+                <div>
+                  <button
+                    onClick={() => toggleMobileAccordion('services')}
+                    className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
+                    aria-expanded={mobileAccordion === 'services'}
+                  >
+                    Services
+                    <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'services' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </button>
+                  {mobileAccordion === 'services' && (
+                    <div className="ml-3 mt-1 mb-2 animate-in fade-in duration-200">
+                      <div className="grid grid-cols-2 gap-2">
+                        {servicesData.map((service) => (
+                          <div
+                            key={service.name}
+                            className="bg-white rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer py-3 px-2"
+                          >
+                            <div className="w-[38px] h-[38px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
+                              <svg className="w-4.5 h-4.5 text-[#061830]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                <path d={service.icon} />
+                              </svg>
+                            </div>
+                            <span className="text-[#061830] text-[11px] font-bold tracking-wider text-center">{service.name}</span>
+                            <p className="text-[#6b7280] text-[8px] text-center leading-[1.3] px-0.5">{service.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* About */}
+                <a
+                  href="#"
+                  onClick={closeAll}
+                  className="block text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  About
+                </a>
+              </>
+            )}
+
+            {/* Enroll Picker Page */}
+            {mobilePage === 'enroll-picker' && (
+              <>
+                <button onClick={() => setMobilePage('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-[13px] mb-4 transition-colors">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
+                  Back
+                </button>
+
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+                    </svg>
+                    <span className="text-white text-[14px] font-semibold">Choose Your Level</span>
+                  </div>
+                  <div className="h-[2px] bg-blue-500 w-[40%] mb-3" />
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    { label: 'Kindergarten', desc: 'Ages 3-5', path: '/enrollment/kindergarten', color: 'from-blue-500 to-blue-700' },
+                    { label: 'Elementary', desc: 'Grades 1-6', path: '/enrollment/elementary', color: 'from-indigo-500 to-indigo-700' },
+                    { label: 'Junior High School', desc: 'Grades 7-10', path: '/enrollment/junior-high', color: 'from-violet-500 to-violet-700' },
+                    { label: 'Senior High School', desc: 'Grades 11-12', path: '/enrollment/senior-high', color: 'from-purple-500 to-purple-700' },
+                    { label: 'College', desc: "Bachelor's Degree Programs", path: '/enrollment/college', color: 'from-[#8496db] to-[#4f61b3]' },
+                  ].map((item) => (
+                    <button
+                      key={item.label}
+                      onClick={() => navigateAndClose(item.path)}
+                      className={`w-full flex items-center justify-between p-3.5 rounded-xl bg-gradient-to-r ${item.color} text-white hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200`}
+                    >
+                      <div className="text-left">
+                        <div className="text-[13px] font-bold">{item.label}</div>
+                        <div className="text-[11px] text-white/60">{item.desc}</div>
+                      </div>
+                      <svg className="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+
+          {/* Bottom Buttons */}
+          {mobilePage === 'main' && (
+            <div className="shrink-0 px-4 py-4 border-t border-white/10 bg-[#081a38]">
+              <div className="space-y-2">
+                <button
+                  onClick={() => { closeAll(); openAuth('login') }}
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold border border-white/20 text-white hover:bg-white/10 transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setMobilePage('enroll-picker')}
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white hover:from-[#1d4ed8] hover:to-[#2563eb] transition-all shadow-lg shadow-blue-500/25"
+                >
+                  Enroll Now
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </header>
