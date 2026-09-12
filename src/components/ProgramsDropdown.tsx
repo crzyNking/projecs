@@ -101,86 +101,86 @@ export default function ProgramsDropdown({ open, onClose }: ProgramsDropdownProp
   }
 
   return (
-    <>
-      <div className="absolute top-full left-1/2 -translate-x-1/2 w-full h-2" />
-
-      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[1000px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 grid grid-cols-[1.1fr_0.9fr] gap-10 z-[60] overflow-hidden p-8">
+    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]">
+      <div className="relative w-[980px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-7">
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
 
-        {/* K-12 Education */}
-        <div>
-          <div className="mb-5">
-            <div className="flex items-center gap-3 mb-3">
-              <svg className="w-[26px] h-[26px]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
-              <span className="text-white text-[22px] font-semibold">K-12 Education</span>
+        <div className="grid grid-cols-[1.15fr_0.85fr] gap-8">
+          {/* K-12 Education */}
+          <div>
+            <div className="mb-4">
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+                <span className="text-white text-[18px] font-semibold">K-12 Education</span>
+              </div>
+              <div className="h-[2px] bg-[#213c63] w-[60%]" />
             </div>
-            <div className="h-[2px] bg-[#213c63] w-[70%]" />
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {k12Programs.map((prog) => (
-              <button
-                key={prog.title}
-                onClick={() => handleClick(prog.path)}
-                className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_4px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.3)] transition-all duration-200 text-left flex flex-col"
-              >
-                <div className="relative h-[145px] w-full overflow-hidden">
-                  <img src={prog.img} alt={prog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 pt-5 bg-gradient-to-t from-black/75 to-transparent">
-                    <h3 className="text-white text-[18px] font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>{prog.title}</h3>
-                  </div>
-                </div>
-                <div className="p-3 flex flex-col flex-grow justify-between">
-                  <p className="text-[#556070] text-[11px] leading-[1.45] mb-3">{prog.desc}</p>
-                  <span className="text-[#0b2545] text-[12px] font-bold inline-flex items-center gap-1.5 group-hover:text-blue-700 transition-colors">
-                    Learn More
-                    <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* College Programs */}
-        <div>
-          <div className="mb-5">
-            <div className="flex items-center gap-3 mb-3">
-              <svg className="w-[26px] h-[26px]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" />
-              </svg>
-              <span className="text-white text-[22px] font-semibold">College Programs</span>
-            </div>
-            <div className="h-[2px] bg-[#213c63] w-full" />
-          </div>
-
-          <div className="relative pl-5 mt-6">
-            <div className="absolute left-0 top-0 bottom-0 w-px bg-[#1a365d]" />
-            <div className="flex flex-col gap-3">
-              {collegePrograms.map((prog) => (
+            <div className="grid grid-cols-2 gap-3">
+              {k12Programs.map((prog) => (
                 <button
-                  key={prog.name}
-                  onClick={() => handleClick('/senior-high')}
-                  className="group flex items-center gap-3.5 bg-[#dce4ed] rounded-xl py-2 pr-4 pl-2 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
+                  key={prog.title}
+                  onClick={() => handleClick(prog.path)}
+                  className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-200 text-left flex flex-col"
                 >
-                  <div className="w-[44px] h-[44px] bg-[#c4d2e2] rounded-[10px] flex items-center justify-center shrink-0">
-                    {prog.icon}
+                  <div className="relative h-[130px] w-full overflow-hidden">
+                    <img src={prog.img} alt={prog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 px-3 pb-2 pt-4 bg-gradient-to-t from-black/75 to-transparent">
+                      <h3 className="text-white text-[15px] font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>{prog.title}</h3>
+                    </div>
                   </div>
-                  <span className="text-[#0b2545] font-semibold text-[13px] leading-[1.3] flex-grow text-left">{prog.name}</span>
-                  <svg className="w-4 h-4 text-[#a0aebc] group-hover:text-[#0b2545] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
+                  <div className="p-2.5 flex flex-col flex-grow justify-between">
+                    <p className="text-[#556070] text-[10px] leading-[1.4] mb-2">{prog.desc}</p>
+                    <span className="text-[#0b2545] text-[11px] font-bold inline-flex items-center gap-1 group-hover:text-blue-700 transition-colors">
+                      Learn More
+                      <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
           </div>
+
+          {/* College Programs */}
+          <div>
+            <div className="mb-4">
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" />
+                </svg>
+                <span className="text-white text-[18px] font-semibold">College Programs</span>
+              </div>
+              <div className="h-[2px] bg-[#213c63] w-full" />
+            </div>
+
+            <div className="relative pl-4 mt-4">
+              <div className="absolute left-0 top-0 bottom-0 w-px bg-[#1a365d]" />
+              <div className="flex flex-col gap-2">
+                {collegePrograms.map((prog) => (
+                  <button
+                    key={prog.name}
+                    onClick={() => handleClick('/senior-high')}
+                    className="group flex items-center gap-3 bg-[#dce4ed] rounded-lg py-1.5 pr-3 pl-2 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
+                  >
+                    <div className="w-[36px] h-[36px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0">
+                      {prog.icon}
+                    </div>
+                    <span className="text-[#0b2545] font-semibold text-[12px] leading-[1.3] flex-grow text-left">{prog.name}</span>
+                    <svg className="w-3.5 h-3.5 text-[#a0aebc] group-hover:text-[#0b2545] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

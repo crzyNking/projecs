@@ -15,40 +15,38 @@ export default function ServicesDropdown({ open }: ServicesDropdownProps) {
   if (!open) return null
 
   return (
-    <>
-      <div className="absolute top-full left-1/2 -translate-x-1/2 w-full h-2" />
-
-      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[560px] bg-[#0c2b5e] rounded-2xl shadow-2xl border border-white/10 p-8 z-[60] overflow-hidden">
+    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]">
+      <div className="relative w-[540px] bg-[#0c2b5e] rounded-2xl shadow-2xl border border-white/10 p-7">
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#0c2b5e] border-l border-t border-white/10 rotate-45" />
 
         {/* Header */}
-        <div className="flex items-center gap-3.5 mb-4">
-          <svg className="w-8 h-8 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
+        <div className="flex items-center gap-3 mb-3">
+          <svg className="w-7 h-7 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L1 7.5L12 13L23 7.5L12 2Z" />
             <path d="M4 9.5V15.5L12 19.5L20 15.5V9.5L12 13.5L4 9.5Z" />
           </svg>
-          <h2 className="text-[#f7e0b5] text-[22px] font-semibold tracking-wide">Services</h2>
+          <h2 className="text-[#f7e0b5] text-[18px] font-semibold tracking-wide">Services</h2>
         </div>
 
-        <hr className="h-[2px] bg-[#7b95c6] border-none mb-6" />
+        <hr className="h-[2px] bg-[#7b95c6] border-none mb-5" />
 
         {/* Grid */}
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-3 gap-4">
           {services.map((service) => (
             <div
               key={service.name}
-              className="bg-white rounded-xl h-[170px] flex flex-col items-center justify-center gap-3.5 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-white rounded-xl h-[150px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
             >
-              <div className="w-[60px] h-[60px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
-                <svg className="w-7 h-7 text-[#0c2b5e]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-[52px] h-[52px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#0c2b5e]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                   <path d={service.icon} />
                 </svg>
               </div>
-              <span className="text-[#0c2b5e] text-[14px] font-bold tracking-wider">{service.name}</span>
+              <span className="text-[#0c2b5e] text-[13px] font-bold tracking-wider">{service.name}</span>
             </div>
           ))}
         </div>
       </div>
-    </>
+    </div>
   )
 }
