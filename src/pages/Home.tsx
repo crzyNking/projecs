@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { useAuthModalStore } from '../store/authModalStore'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
@@ -11,8 +12,10 @@ type AuthMode = 'login' | 'signup'
 export function Home() {
   const { user, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, error, setError } = useAuthStore()
   const navigate = useNavigate()
+  const authModal = useAuthModalStore((s) => ({ open: s.open, mode: s.mode }))
+  const openAuthModal = useAuthModalStore((s) => s.openAuth)
+  const closeAuthModal = useAuthModalStore((s) => s.closeAuth)
 
-  const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({ open: false, mode: 'login' })
   const [authTab, setAuthTab] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -40,9 +43,13 @@ export function Home() {
     return () => { document.body.style.overflow = '' }
   }, [authModal.open])
 
+  useEffect(() => {
+    setAuthTab(authModal.mode)
+  }, [authModal.mode])
+
   const openAuth = (mode: AuthMode) => {
     setAuthTab(mode)
-    setAuthModal({ open: true, mode })
+    openAuthModal(mode)
     setEmail('')
     setPassword('')
     setFullName('')
@@ -52,7 +59,7 @@ export function Home() {
   }
 
   const closeAuth = () => {
-    setAuthModal({ open: false, mode: 'login' })
+    closeAuthModal()
     setError(null)
   }
 
