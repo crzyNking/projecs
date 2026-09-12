@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuthModalStore } from '../store/authModalStore'
 import ProgramsDropdown from './ProgramsDropdown'
 import EnrollmentDropdown from './EnrollmentDropdown'
 import ServicesDropdown from './ServicesDropdown'
@@ -39,7 +38,7 @@ const servicesList = [
   { name: 'GUIDANCE', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
 ]
 
-type MobileSection = 'main' | 'programs' | 'enrollment' | 'services' | 'enroll-picker'
+type MobileSection = 'main' | 'programs' | 'enrollment' | 'services'
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -56,7 +55,6 @@ export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
   const isActive = (path: string) => location.pathname === path
-  const openAuth = useAuthModalStore((s) => s.openAuth)
 
   const isProgramsActive = isActive('/senior-high')
 
@@ -90,26 +88,28 @@ export default function Header() {
     servicesTimer.current = setTimeout(() => setServicesOpen(false), 150)
   }, [])
 
-  const closeMobile = useCallback(() => {
-    setMobileOpen(false)
-    setMobileSection('main')
-  }, [])
-
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setProgramsOpen(false)
         setEnrollmentOpen(false)
         setServicesOpen(false)
-        closeMobile()
+        if (mobileOpen) {
+          setMobileOpen(false)
+          setMobileSection('main')
+        }
       }
     }
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [closeMobile])
+  }, [mobileOpen])
 
   useEffect(() => {
-    closeMobile()
+    setProgramsOpen(false)
+    setEnrollmentOpen(false)
+    setServicesOpen(false)
+    setMobileOpen(false)
+    setMobileSection('main')
   }, [location.pathname])
 
   useEffect(() => {
@@ -131,11 +131,6 @@ export default function Header() {
 
   const activeClass = 'text-white border-b-2 border-white pb-1'
   const inactiveClass = 'text-[#cbd5e1] hover:text-white'
-
-  const navigateAndClose = (path: string) => {
-    closeMobile()
-    navigate(path)
-  }
 
   return (
     <header className="sticky top-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
@@ -185,9 +180,9 @@ export default function Header() {
           </a>
         </nav>
 
-        {/* Hamburger toggle */}
+        {/* Hamburger */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={() => { setMobileOpen(!mobileOpen); setMobileSection('main') }}
           className="lg:hidden p-2 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-all z-[60] relative"
           aria-label="Toggle menu"
         >
@@ -201,87 +196,69 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Dropdown mobile menu */}
+      {/* Full-screen mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-[#081a38] border-t border-white/5 max-h-[calc(100vh-57px)] overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 top-[57px] z-50 bg-[#0b1f40] overflow-y-auto">
           {/* Main menu */}
           {mobileSection === 'main' && (
-            <div className="px-4 py-4 space-y-0.5">
-              <Link to="/" onClick={closeMobile} className={`block text-[14px] font-medium py-2.5 px-3.5 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+            <div className="px-5 py-6 space-y-1">
+              <Link to="/" onClick={() => setMobileSection('main')} className={`block text-[15px] font-medium py-3 px-4 rounded-xl transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
                 Home
               </Link>
-              <button onClick={() => setMobileSection('programs')} className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between">
+              <button onClick={() => setMobileSection('programs')} className="w-full text-left text-[15px] font-medium py-3 px-4 rounded-xl text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between">
                 Programs
-                <svg className="w-3.5 h-3.5 opacity-40" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                <svg className="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
               </button>
-              <button onClick={() => setMobileSection('enrollment')} className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between">
+              <button onClick={() => setMobileSection('enrollment')} className="w-full text-left text-[15px] font-medium py-3 px-4 rounded-xl text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between">
                 Enrollment
-                <svg className="w-3.5 h-3.5 opacity-40" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                <svg className="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
               </button>
-              <button onClick={() => setMobileSection('services')} className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between">
+              <button onClick={() => setMobileSection('services')} className="w-full text-left text-[15px] font-medium py-3 px-4 rounded-xl text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between">
                 Services
-                <svg className="w-3.5 h-3.5 opacity-40" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                <svg className="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
               </button>
-              <a href="#" onClick={closeMobile} className="block text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors">
+              <a href="#" className="block text-[15px] font-medium py-3 px-4 rounded-xl text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors">
                 About
               </a>
-
-              {/* Divider */}
-              <div className="!my-3 border-t border-white/10" />
-
-              {/* Login + Enroll buttons */}
-              <div className="space-y-2">
-                <button
-                  onClick={() => { closeMobile(); openAuth('login') }}
-                  className="w-full py-2.5 rounded-lg text-[13px] font-semibold border border-white/20 text-white hover:bg-white/10 transition-colors"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => setMobileSection('enroll-picker')}
-                  className="w-full py-2.5 rounded-lg text-[13px] font-semibold bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white hover:from-[#1d4ed8] hover:to-[#2563eb] transition-all shadow-lg shadow-blue-500/25"
-                >
-                  Enroll Now
-                </button>
-              </div>
             </div>
           )}
 
-          {/* Programs sub-section */}
+          {/* Programs section - full detail like desktop */}
           {mobileSection === 'programs' && (
-            <div className="px-4 py-4">
-              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-[13px] mb-4 transition-colors">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
+            <div className="px-5 py-6">
+              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-sm mb-5 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
                 Back
               </button>
 
-              <div className="mb-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
+              {/* K-12 Education */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                     <path d="M6 12v5c3 3 9 3 12 0v-5" />
                   </svg>
-                  <span className="text-white text-[14px] font-semibold">K-12 Education</span>
+                  <span className="text-white text-[16px] font-semibold">K-12 Education</span>
                 </div>
-                <div className="h-[2px] bg-[#213c63] w-[40%] mb-3" />
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="h-[2px] bg-[#213c63] w-[50%] mb-4" />
+                <div className="grid grid-cols-2 gap-3">
                   {k12Programs.map((prog) => (
                     <button
                       key={prog.title}
-                      onClick={() => navigateAndClose(prog.path)}
-                      className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.12)] text-left flex flex-col"
+                      onClick={() => { setMobileOpen(false); setMobileSection('main'); navigate(prog.path) }}
+                      className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.15)] text-left flex flex-col"
                     >
-                      <div className="relative h-[90px] w-full overflow-hidden">
+                      <div className="relative h-[110px] w-full overflow-hidden">
                         <img src={prog.img} alt={prog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-1.5 pt-3 bg-gradient-to-t from-black/75 to-transparent">
-                          <h3 className="text-white text-[12px] font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>{prog.title}</h3>
+                        <div className="absolute bottom-0 left-0 right-0 px-3 pb-2 pt-4 bg-gradient-to-t from-black/75 to-transparent">
+                          <h3 className="text-white text-[13px] font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>{prog.title}</h3>
                         </div>
                       </div>
-                      <div className="p-2 flex flex-col flex-grow justify-between">
-                        <p className="text-[#556070] text-[9px] leading-[1.3] mb-1.5 line-clamp-2">{prog.desc}</p>
-                        <span className="text-[#0b2545] text-[10px] font-bold inline-flex items-center gap-1">
+                      <div className="p-2.5 flex flex-col flex-grow justify-between">
+                        <p className="text-[#556070] text-[10px] leading-[1.4] mb-2 line-clamp-2">{prog.desc}</p>
+                        <span className="text-[#0b2545] text-[11px] font-bold inline-flex items-center gap-1 group-hover:text-blue-700 transition-colors">
                           Learn More
-                          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                          <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                           </svg>
                         </span>
@@ -291,28 +268,29 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* College Programs */}
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" />
                   </svg>
-                  <span className="text-white text-[14px] font-semibold">College Programs</span>
+                  <span className="text-white text-[16px] font-semibold">College Programs</span>
                 </div>
-                <div className="h-[2px] bg-[#213c63] w-full mb-3" />
-                <div className="relative pl-3.5">
+                <div className="h-[2px] bg-[#213c63] w-full mb-4" />
+                <div className="relative pl-4">
                   <div className="absolute left-0 top-0 bottom-0 w-px bg-[#1a365d]" />
-                  <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-2">
                     {collegePrograms.map((prog) => (
                       <button
                         key={prog.name}
-                        onClick={() => navigateAndClose('/senior-high')}
-                        className="group flex items-center gap-2.5 bg-[#dce4ed] rounded-lg py-1.5 pr-2.5 pl-1.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
+                        onClick={() => { setMobileOpen(false); setMobileSection('main'); navigate('/senior-high') }}
+                        className="group flex items-center gap-3 bg-[#dce4ed] rounded-lg py-2 pr-3 pl-2 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
                       >
-                        <div className="w-[30px] h-[30px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0">
+                        <div className="w-[36px] h-[36px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0">
                           {prog.icon}
                         </div>
-                        <span className="text-[#0b2545] font-semibold text-[11px] leading-[1.2] flex-grow text-left">{prog.name}</span>
-                        <svg className="w-3 h-3 text-[#a0aebc] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                        <span className="text-[#0b2545] font-semibold text-[12px] leading-[1.3] flex-grow text-left">{prog.name}</span>
+                        <svg className="w-3.5 h-3.5 text-[#a0aebc] group-hover:text-[#0b2545] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M9 18l6-6-6-6" />
                         </svg>
                       </button>
@@ -323,135 +301,99 @@ export default function Header() {
             </div>
           )}
 
-          {/* Enrollment sub-section */}
+          {/* Enrollment section - full detail like desktop */}
           {mobileSection === 'enrollment' && (
-            <div className="px-4 py-4">
-              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-[13px] mb-4 transition-colors">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
+            <div className="px-5 py-6">
+              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-sm mb-5 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
                 Back
               </button>
 
-              <div className="mb-5">
-                <div className="flex items-center gap-2 pb-1.5 mb-3 border-b-[1.5px] border-blue-500">
-                  <svg className="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              {/* K-12 */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2.5 pb-2 mb-4 border-b-[1.5px] border-blue-500">
+                  <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
                   </svg>
-                  <span className="text-white text-[14px] font-bold">K-12 Education</span>
+                  <span className="text-white text-[16px] font-bold">K-12 Education</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-2 gap-3">
                   {k12Enroll.map((card) => (
                     <button
                       key={card.title}
-                      onClick={() => navigateAndClose(card.path)}
-                      className="group relative bg-gradient-to-b from-[#5b72cd] to-[#3a4b9c] rounded-xl border border-white/20 overflow-hidden shadow-[inset_0_0_12px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 hover:border-white/50 transition-all duration-200 flex flex-col justify-between items-start p-2.5 cursor-pointer min-h-[90px]"
+                      onClick={() => { setMobileOpen(false); setMobileSection('main'); navigate(card.path) }}
+                      className="group relative bg-gradient-to-b from-[#5b72cd] to-[#3a4b9c] rounded-xl border border-white/20 overflow-hidden shadow-[inset_0_0_15px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 hover:border-white/50 hover:shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-all duration-200 flex flex-col justify-between items-start p-3 cursor-pointer min-h-[100px]"
                     >
-                      <span className="text-white text-[11px] font-extrabold tracking-wide uppercase leading-tight z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                      <span className="text-white text-[12px] font-extrabold tracking-wide uppercase leading-tight z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
                         {card.title}
                       </span>
-                      <span className="text-white/50 text-[9px] font-medium z-10 relative">
+                      <span className="text-white/50 text-[10px] font-medium z-10 relative">
                         {card.desc}
                       </span>
+                      <svg className="absolute bottom-3 right-3 w-3.5 h-3.5 text-white/0 group-hover:text-white/70 transition-all duration-200 translate-x-1 group-hover:translate-x-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                      </svg>
                     </button>
                   ))}
                 </div>
               </div>
 
+              {/* College */}
               <div>
-                <div className="flex items-center gap-2 pb-1.5 mb-3 border-b-[1.5px] border-blue-500">
-                  <svg className="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <div className="flex items-center gap-2.5 pb-2 mb-4 border-b-[1.5px] border-blue-500">
+                  <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21" />
                   </svg>
-                  <span className="text-white text-[14px] font-bold">College Programs</span>
+                  <span className="text-white text-[16px] font-bold">College Programs</span>
                 </div>
                 <button
-                  onClick={() => navigateAndClose('/enrollment/college')}
-                  className="group w-full bg-gradient-to-b from-[#8496db] to-[#4f61b3] rounded-xl border border-white/20 overflow-hidden relative flex flex-col justify-between p-3 cursor-pointer hover:-translate-y-0.5 hover:border-white/50 transition-all duration-200 min-h-[100px]"
+                  onClick={() => { setMobileOpen(false); setMobileSection('main'); navigate('/enrollment/college') }}
+                  className="group w-full bg-gradient-to-b from-[#8496db] to-[#4f61b3] rounded-xl border border-white/20 overflow-hidden relative flex flex-col justify-between p-4 cursor-pointer hover:-translate-y-0.5 hover:border-white/50 hover:shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-all duration-200 min-h-[120px]"
                 >
-                  <span className="text-[#fef08a] text-[16px] font-black tracking-wider uppercase z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                  <span className="text-[#fef08a] text-[18px] font-black tracking-wider uppercase z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                     COLLEGE
                   </span>
-                  <span className="text-white/45 text-[10px] font-medium z-10 relative">
+                  <span className="text-white/45 text-[11px] font-medium z-10 relative">
                     Bachelor's Degree Programs
                   </span>
+                  <svg className="absolute bottom-4 right-4 w-4 h-4 text-white/0 group-hover:text-white/70 transition-all duration-200 translate-x-1 group-hover:translate-x-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
                 </button>
               </div>
             </div>
           )}
 
-          {/* Services sub-section */}
+          {/* Services section - full detail like desktop */}
           {mobileSection === 'services' && (
-            <div className="px-4 py-4">
-              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-[13px] mb-4 transition-colors">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
+            <div className="px-5 py-6">
+              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-sm mb-5 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
                 Back
               </button>
 
-              <div className="flex items-center gap-2.5 mb-2">
-                <svg className="w-5 h-5 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
+              <div className="flex items-center gap-3 mb-3">
+                <svg className="w-6 h-6 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L1 7.5L12 13L23 7.5L12 2Z" />
                   <path d="M4 9.5V15.5L12 19.5L20 15.5V9.5L12 13.5L4 9.5Z" />
                 </svg>
-                <h2 className="text-[#f7e0b5] text-[16px] font-semibold tracking-wide">Services</h2>
+                <h2 className="text-[#f7e0b5] text-[18px] font-semibold tracking-wide">Services</h2>
               </div>
-              <hr className="h-[2px] bg-[#7b95c6] border-none mb-4" />
+              <hr className="h-[2px] bg-[#7b95c6] border-none mb-5" />
 
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-2 gap-3">
                 {servicesList.map((service) => (
                   <div
                     key={service.name}
-                    className="bg-white rounded-xl flex flex-col items-center justify-center gap-2.5 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 py-4 px-2"
+                    className="bg-white rounded-xl flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 py-5 px-3"
                   >
-                    <div className="w-[42px] h-[42px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-[#061830]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="w-[48px] h-[48px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-[#061830]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                         <path d={service.icon} />
                       </svg>
                     </div>
-                    <span className="text-[#061830] text-[11px] font-bold tracking-wider text-center">{service.name}</span>
+                    <span className="text-[#061830] text-[12px] font-bold tracking-wider text-center">{service.name}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Enroll picker sub-section */}
-          {mobileSection === 'enroll-picker' && (
-            <div className="px-4 py-4">
-              <button onClick={() => setMobileSection('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-[13px] mb-4 transition-colors">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
-                Back
-              </button>
-
-              <div className="mb-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
-                  </svg>
-                  <span className="text-white text-[14px] font-semibold">Choose Your Level</span>
-                </div>
-                <div className="h-[2px] bg-blue-500 w-[40%] mb-3" />
-              </div>
-
-              <div className="space-y-2">
-                {[
-                  { label: 'Kindergarten', desc: 'Ages 3-5', path: '/enrollment/kindergarten', color: 'from-blue-500 to-blue-700' },
-                  { label: 'Elementary', desc: 'Grades 1-6', path: '/enrollment/elementary', color: 'from-indigo-500 to-indigo-700' },
-                  { label: 'Junior High School', desc: 'Grades 7-10', path: '/enrollment/junior-high', color: 'from-violet-500 to-violet-700' },
-                  { label: 'Senior High School', desc: 'Grades 11-12', path: '/enrollment/senior-high', color: 'from-purple-500 to-purple-700' },
-                  { label: 'College', desc: "Bachelor's Degree Programs", path: '/enrollment/college', color: 'from-[#8496db] to-[#4f61b3]' },
-                ].map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => navigateAndClose(item.path)}
-                    className={`w-full flex items-center justify-between p-3.5 rounded-xl bg-gradient-to-r ${item.color} text-white hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200`}
-                  >
-                    <div className="text-left">
-                      <div className="text-[13px] font-bold">{item.label}</div>
-                      <div className="text-[11px] text-white/60">{item.desc}</div>
-                    </div>
-                    <svg className="w-4 h-4 opacity-60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
-                  </button>
                 ))}
               </div>
             </div>

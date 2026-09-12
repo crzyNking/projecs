@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { useAuthModalStore } from '../store/authModalStore'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
@@ -34,10 +33,8 @@ const academicCards = [
 export default function Programs() {
   const { user, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, error, setError } = useAuthStore()
   const navigate = useNavigate()
-  const authModal = useAuthModalStore((s) => ({ open: s.open, mode: s.mode }))
-  const openAuthModal = useAuthModalStore((s) => s.openAuth)
-  const closeAuthModal = useAuthModalStore((s) => s.closeAuth)
 
+  const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({ open: false, mode: 'login' })
   const [authTab, setAuthTab] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -65,13 +62,9 @@ export default function Programs() {
     return () => { document.body.style.overflow = '' }
   }, [authModal.open])
 
-  useEffect(() => {
-    setAuthTab(authModal.mode)
-  }, [authModal.mode])
-
   const openAuth = (mode: AuthMode) => {
     setAuthTab(mode)
-    openAuthModal(mode)
+    setAuthModal({ open: true, mode })
     setEmail('')
     setPassword('')
     setFullName('')
@@ -81,7 +74,7 @@ export default function Programs() {
   }
 
   const closeAuth = () => {
-    closeAuthModal()
+    setAuthModal({ open: false, mode: 'login' })
     setError(null)
   }
 
