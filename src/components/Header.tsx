@@ -1,10 +1,20 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import ProgramsDropdown from './ProgramsDropdown'
 import EnrollmentDropdown from './EnrollmentDropdown'
 import ServicesDropdown from './ServicesDropdown'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
+
+const k12Programs = ['Kindergarten', 'Elementary', 'Junior High School', 'Senior High School']
+const collegeItems = ['BS in Information Technology', 'BS in Hospitality Management', 'BS in Criminology', 'BS in Tourism Management', 'BS in Secondary Education', 'BS in Elementary Education']
+const enrollmentItems = [
+  { label: 'Kindergarten', path: '/enrollment/kindergarten' },
+  { label: 'Elementary', path: '/enrollment/elementary' },
+  { label: 'Junior High School', path: '/enrollment/junior-high' },
+  { label: 'Senior High School', path: '/enrollment/senior-high' },
+  { label: 'College', path: '/enrollment/college' },
+]
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -18,6 +28,7 @@ export default function Header() {
   const enrollmentTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const servicesTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const location = useLocation()
+  const navigate = useNavigate()
   const isActive = (path: string) => location.pathname === path
 
   const isProgramsActive = isActive('/senior-high')
@@ -161,16 +172,72 @@ export default function Header() {
           <Link to="/" onClick={() => setMobileOpen(false)} className={`block text-sm py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
             Home
           </Link>
-          <button onClick={() => { setMobileOpen(false); setProgramsOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
-            Programs
-          </button>
-          <button onClick={() => { setMobileOpen(false); setEnrollmentOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
-            Enrollment
-          </button>
-          <button onClick={() => { setMobileOpen(false); setServicesOpen(true) }} className="block w-full text-left text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
-            Services
-          </button>
-          <a href="#" className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
+
+          {/* Programs mobile toggle */}
+          <div>
+            <button onClick={() => { setProgramsOpen(!programsOpen); setEnrollmentOpen(false); setServicesOpen(false) }} className={`block w-full text-left text-sm py-2.5 px-3 rounded-lg transition-all cursor-pointer flex items-center justify-between ${programsOpen ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+              Programs
+              <svg className={`w-3 h-3 opacity-60 transition-transform duration-200 ${programsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            {programsOpen && (
+              <div className="ml-3 mt-1 mb-2 border-l-2 border-white/10 pl-3">
+                <div className="text-[11px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider">K-12 Education</div>
+                {k12Programs.map((p) => (
+                  <button key={p} onClick={() => { setMobileOpen(false); setProgramsOpen(false); navigate('/senior-high') }} className="block w-full text-left text-[12px] text-[#cbd5e1] hover:text-white py-1.5 px-2 rounded hover:bg-white/5 transition-colors cursor-pointer">
+                    {p}
+                  </button>
+                ))}
+                <div className="text-[11px] text-[#94a3b8] font-semibold mt-2 mb-1.5 uppercase tracking-wider">College</div>
+                {collegeItems.map((p) => (
+                  <button key={p} onClick={() => { setMobileOpen(false); setProgramsOpen(false); navigate('/senior-high') }} className="block w-full text-left text-[12px] text-[#cbd5e1] hover:text-white py-1.5 px-2 rounded hover:bg-white/5 transition-colors cursor-pointer">
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Enrollment mobile toggle */}
+          <div>
+            <button onClick={() => { setEnrollmentOpen(!enrollmentOpen); setProgramsOpen(false); setServicesOpen(false) }} className={`block w-full text-left text-sm py-2.5 px-3 rounded-lg transition-all cursor-pointer flex items-center justify-between ${enrollmentOpen ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+              Enrollment
+              <svg className={`w-3 h-3 opacity-60 transition-transform duration-200 ${enrollmentOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            {enrollmentOpen && (
+              <div className="ml-3 mt-1 mb-2 border-l-2 border-white/10 pl-3">
+                {enrollmentItems.map((item) => (
+                  <button key={item.label} onClick={() => { setMobileOpen(false); setEnrollmentOpen(false); navigate(item.path) }} className="block w-full text-left text-[12px] text-[#cbd5e1] hover:text-white py-1.5 px-2 rounded hover:bg-white/5 transition-colors cursor-pointer">
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Services mobile toggle */}
+          <div>
+            <button onClick={() => { setServicesOpen(!servicesOpen); setProgramsOpen(false); setEnrollmentOpen(false) }} className={`block w-full text-left text-sm py-2.5 px-3 rounded-lg transition-all cursor-pointer flex items-center justify-between ${servicesOpen ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}>
+              Services
+              <svg className={`w-3 h-3 opacity-60 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            {servicesOpen && (
+              <div className="ml-3 mt-1 mb-2 border-l-2 border-white/10 pl-3">
+                {['Registrar', 'EDP', 'Accounting', 'Clinic', 'Library', 'Guidance'].map((s) => (
+                  <button key={s} onClick={() => { setMobileOpen(false); setServicesOpen(false) }} className="block w-full text-left text-[12px] text-[#cbd5e1] hover:text-white py-1.5 px-2 rounded hover:bg-white/5 transition-colors cursor-pointer">
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <a href="#" onClick={() => setMobileOpen(false)} className="block text-sm text-[#cbd5e1] hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all">
             About
           </a>
         </nav>

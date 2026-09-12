@@ -16,10 +16,10 @@ export default function ServicesDropdown({ open }: ServicesDropdownProps) {
 
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]">
-      <div className="relative w-[540px] bg-[#0c2b5e] rounded-2xl shadow-2xl border border-white/10 p-7">
-        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#0c2b5e] border-l border-t border-white/10 rotate-45" />
+      {/* Desktop */}
+      <div className="hidden md:block relative w-[540px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-7">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
 
-        {/* Header */}
         <div className="flex items-center gap-3 mb-3">
           <svg className="w-7 h-7 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L1 7.5L12 13L23 7.5L12 2Z" />
@@ -30,7 +30,6 @@ export default function ServicesDropdown({ open }: ServicesDropdownProps) {
 
         <hr className="h-[2px] bg-[#7b95c6] border-none mb-5" />
 
-        {/* Grid */}
         <div className="grid grid-cols-3 gap-4">
           {services.map((service) => (
             <div
@@ -38,11 +37,42 @@ export default function ServicesDropdown({ open }: ServicesDropdownProps) {
               className="bg-white rounded-xl h-[150px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
             >
               <div className="w-[52px] h-[52px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-[#0c2b5e]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-6 h-6 text-[#061830]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                   <path d={service.icon} />
                 </svg>
               </div>
-              <span className="text-[#0c2b5e] text-[13px] font-bold tracking-wider">{service.name}</span>
+              <span className="text-[#061830] text-[13px] font-bold tracking-wider">{service.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile */}
+      <div className="md:hidden w-[calc(100vw-32px)] max-w-[400px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-5 max-h-[80vh] overflow-y-auto">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
+
+        <div className="flex items-center gap-2.5 mb-3">
+          <svg className="w-6 h-6 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L1 7.5L12 13L23 7.5L12 2Z" />
+            <path d="M4 9.5V15.5L12 19.5L20 15.5V9.5L12 13.5L4 9.5Z" />
+          </svg>
+          <h2 className="text-[#f7e0b5] text-[16px] font-semibold tracking-wide">Services</h2>
+        </div>
+
+        <hr className="h-[2px] bg-[#7b95c6] border-none mb-4" />
+
+        <div className="grid grid-cols-2 gap-3">
+          {services.map((service) => (
+            <div
+              key={service.name}
+              className="bg-white rounded-xl h-[120px] flex flex-col items-center justify-center gap-2.5 cursor-pointer"
+            >
+              <div className="w-[44px] h-[44px] bg-[#f4f4f4] rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#061830]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={service.icon} />
+                </svg>
+              </div>
+              <span className="text-[#061830] text-[12px] font-bold tracking-wider">{service.name}</span>
             </div>
           ))}
         </div>

@@ -102,7 +102,8 @@ export default function ProgramsDropdown({ open, onClose }: ProgramsDropdownProp
 
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]">
-      <div className="relative w-[980px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-7">
+      {/* Desktop */}
+      <div className="hidden md:block relative w-[980px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-7">
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
 
         <div className="grid grid-cols-[1.15fr_0.85fr] gap-8">
@@ -178,6 +179,75 @@ export default function ProgramsDropdown({ open, onClose }: ProgramsDropdownProp
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile */}
+      <div className="md:hidden w-[calc(100vw-32px)] max-w-[400px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-5 max-h-[80vh] overflow-y-auto">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
+
+        {/* K-12 */}
+        <div className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+            <span className="text-white text-[15px] font-semibold">K-12 Education</span>
+          </div>
+          <div className="h-[2px] bg-[#213c63] w-[40%] mb-3" />
+          <div className="grid grid-cols-2 gap-2.5">
+            {k12Programs.map((prog) => (
+              <button
+                key={prog.title}
+                onClick={() => handleClick(prog.path)}
+                className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.15)] text-left flex flex-col"
+              >
+                <div className="relative h-[90px] w-full overflow-hidden">
+                  <img src={prog.img} alt={prog.title} className="w-full h-full object-cover" />
+                  <div className="absolute bottom-0 left-0 right-0 px-2 pb-1.5 pt-3 bg-gradient-to-t from-black/75 to-transparent">
+                    <h3 className="text-white text-[12px] font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>{prog.title}</h3>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="text-[#0b2545] text-[10px] font-bold inline-flex items-center gap-1">
+                    Learn More
+                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* College */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" />
+            </svg>
+            <span className="text-white text-[15px] font-semibold">College Programs</span>
+          </div>
+          <div className="h-[2px] bg-[#213c63] w-full mb-3" />
+          <div className="flex flex-col gap-1.5">
+            {collegePrograms.map((prog) => (
+              <button
+                key={prog.name}
+                onClick={() => handleClick('/senior-high')}
+                className="group flex items-center gap-2.5 bg-[#dce4ed] rounded-lg py-2 pr-3 pl-2 cursor-pointer"
+              >
+                <div className="w-[32px] h-[32px] bg-[#c4d2e2] rounded-lg flex items-center justify-center shrink-0">
+                  {prog.icon}
+                </div>
+                <span className="text-[#0b2545] font-semibold text-[11px] leading-[1.3] flex-grow text-left">{prog.name}</span>
+                <svg className="w-3 h-3 text-[#a0aebc] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            ))}
           </div>
         </div>
       </div>

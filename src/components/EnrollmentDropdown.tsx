@@ -24,7 +24,8 @@ export default function EnrollmentDropdown({ open, onClose }: EnrollmentDropdown
 
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]">
-      <div className="relative w-[780px] bg-[#061830]/97 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-7">
+      {/* Desktop */}
+      <div className="hidden md:block relative w-[780px] bg-[#061830]/97 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-7">
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
 
         <div className="grid grid-cols-[1.15fr_0.85fr] gap-6">
@@ -80,6 +81,64 @@ export default function EnrollmentDropdown({ open, onClose }: EnrollmentDropdown
               </svg>
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile */}
+      <div className="md:hidden w-[calc(100vw-32px)] max-w-[400px] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-5 max-h-[80vh] overflow-y-auto">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
+
+        {/* K-12 */}
+        <div className="mb-5">
+          <div className="flex items-center gap-2 pb-1.5 mb-3 border-b-[1.5px] border-blue-500">
+            <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+            </svg>
+            <span className="text-white text-[13px] font-bold">K-12 Education</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2.5">
+            {k12Cards.map((card) => (
+              <button
+                key={card.title}
+                onClick={() => handleClick(card.path)}
+                className={`group relative bg-gradient-to-b ${card.bg} rounded-xl h-[100px] border border-white/20 overflow-hidden flex flex-col justify-between items-start p-2.5 cursor-pointer`}
+              >
+                <span className="text-white text-[11px] font-extrabold tracking-wide uppercase leading-tight z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                  {card.title}
+                </span>
+                <span className="text-white/50 text-[9px] font-medium z-10 relative">
+                  {card.desc}
+                </span>
+                <svg className="absolute bottom-2.5 right-2.5 w-3 h-3 text-white/60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* College */}
+        <div>
+          <div className="flex items-center gap-2 pb-1.5 mb-3 border-b-[1.5px] border-blue-500">
+            <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21" />
+            </svg>
+            <span className="text-white text-[13px] font-bold">College Programs</span>
+          </div>
+          <button
+            onClick={() => handleClick('/enrollment/college')}
+            className="group w-full bg-gradient-to-b from-[#8496db] to-[#4f61b3] rounded-xl border border-white/20 overflow-hidden relative flex flex-col justify-between p-3 cursor-pointer"
+          >
+            <span className="text-[#fef08a] text-[16px] font-black tracking-wider uppercase z-10 relative" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+              COLLEGE
+            </span>
+            <span className="text-white/45 text-[10px] font-medium z-10 relative">
+              Bachelor's Degree Programs
+            </span>
+            <svg className="absolute bottom-3 right-3 w-3.5 h-3.5 text-white/60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
