@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './components/AuthProvider'
 import { ProtectedRoute } from './components/ProtectedRoute'
-import AdminRoute from './components/AdminRoute'
-import AdminLayout from './components/AdminLayout'
 import { ToastContainer } from './components/Toast'
 import { Chatbot } from './components/Chatbot'
 import { Home } from './pages/Home'
@@ -18,10 +16,6 @@ import { Settings } from './pages/Settings'
 import { Profile } from './pages/Profile'
 import { Analytics } from './pages/Analytics'
 import { Reports } from './pages/Reports'
-import AdminOverview from './pages/admin/AdminOverview'
-import AdminUsers from './pages/admin/AdminUsers'
-import AdminEnrollments from './pages/admin/AdminEnrollments'
-import AdminActivity from './pages/admin/AdminActivity'
 
 function App() {
   return (
@@ -78,22 +72,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Admin Routes */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminLayout />
-              </AdminRoute>
-            }
-          >
-            <Route index element={<AdminOverview />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="enrollments" element={<AdminEnrollments />} />
-            <Route path="activity" element={<AdminActivity />} />
-          </Route>
-
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
