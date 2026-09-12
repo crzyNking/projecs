@@ -41,13 +41,13 @@ export default function AdminEnrollments() {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h2 className="text-lg font-bold text-gray-900">Enrollments</h2>
-        <p className="text-sm text-gray-500">{enrollments.length} total submissions</p>
+        <h2 className="text-base sm:text-lg font-bold text-gray-900">Enrollments</h2>
+        <p className="text-xs sm:text-sm text-gray-500">{enrollments.length} total submissions</p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-col gap-2 sm:gap-3">
+        <div className="relative">
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
@@ -56,35 +56,37 @@ export default function AdminEnrollments() {
             placeholder="Search by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40] w-full transition"
+            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40] w-full transition"
           />
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40]"
-        >
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-        <select
-          value={levelFilter}
-          onChange={(e) => setLevelFilter(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40]"
-        >
-          <option value="all">All Levels</option>
-          <option value="kindergarten">Kindergarten</option>
-          <option value="elementary">Elementary</option>
-          <option value="junior-high">Junior High</option>
-          <option value="senior-high">Senior High</option>
-          <option value="college">College</option>
-        </select>
+        <div className="flex gap-2">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40]"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <select
+            value={levelFilter}
+            onChange={(e) => setLevelFilter(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40]"
+          >
+            <option value="all">All Levels</option>
+            <option value="kindergarten">Kindergarten</option>
+            <option value="elementary">Elementary</option>
+            <option value="junior-high">Junior High</option>
+            <option value="senior-high">Senior High</option>
+            <option value="college">College</option>
+          </select>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Desktop Table */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hidden md:block">
         {loading ? (
           <div className="px-6 py-10 text-center">
             <div className="w-8 h-8 border-4 border-[#0b1f40]/20 border-t-[#0b1f40] rounded-full animate-spin mx-auto mb-3" />
@@ -110,37 +112,20 @@ export default function AdminEnrollments() {
                   return (
                     <tr key={enrollment.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-3">
-                        <button
-                          onClick={() => setSelectedEnrollment(enrollment)}
-                          className="font-medium text-[#0b1f40] hover:underline text-left"
-                        >
+                        <button onClick={() => setSelectedEnrollment(enrollment)} className="font-medium text-[#0b1f40] hover:underline text-left">
                           {getStudentName(data)}
                         </button>
                       </td>
                       <td className="px-6 py-3 text-gray-600">{levelLabels[enrollment.level] || enrollment.level}</td>
                       <td className="px-6 py-3">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[enrollment.status]}`}>
-                          {enrollment.status}
-                        </span>
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[enrollment.status]}`}>{enrollment.status}</span>
                       </td>
                       <td className="px-6 py-3 text-gray-500">{new Date(enrollment.created_at).toLocaleDateString()}</td>
                       <td className="px-6 py-3 text-right">
                         {enrollment.status === 'pending' && (
                           <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleStatusChange(enrollment.id, 'approved')}
-                              disabled={updatingId === enrollment.id}
-                              className="px-2.5 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium hover:bg-green-100 transition disabled:opacity-50"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleStatusChange(enrollment.id, 'rejected')}
-                              disabled={updatingId === enrollment.id}
-                              className="px-2.5 py-1 bg-red-50 text-red-700 rounded-md text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
-                            >
-                              Reject
-                            </button>
+                            <button onClick={() => handleStatusChange(enrollment.id, 'approved')} disabled={updatingId === enrollment.id} className="px-2.5 py-1 bg-green-50 text-green-700 rounded-md text-xs font-medium hover:bg-green-100 transition disabled:opacity-50">Approve</button>
+                            <button onClick={() => handleStatusChange(enrollment.id, 'rejected')} disabled={updatingId === enrollment.id} className="px-2.5 py-1 bg-red-50 text-red-700 rounded-md text-xs font-medium hover:bg-red-100 transition disabled:opacity-50">Reject</button>
                           </div>
                         )}
                       </td>
@@ -153,27 +138,65 @@ export default function AdminEnrollments() {
         )}
       </div>
 
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-2">
+        {loading ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-4 py-8 text-center">
+            <div className="w-8 h-8 border-4 border-[#0b1f40]/20 border-t-[#0b1f40] rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-sm text-gray-400">Loading enrollments...</p>
+          </div>
+        ) : enrollments.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-4 py-8 text-center text-sm text-gray-400">No enrollments found</div>
+        ) : (
+          enrollments.map((enrollment) => {
+            const data = enrollment.student_data as Record<string, string>
+            return (
+              <div key={enrollment.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <button onClick={() => setSelectedEnrollment(enrollment)} className="font-medium text-[#0b1f40] text-left text-sm truncate">
+                    {getStudentName(data)}
+                  </button>
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 ${statusColors[enrollment.status]}`}>{enrollment.status}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                  <span>{levelLabels[enrollment.level]}</span>
+                  <span>{new Date(enrollment.created_at).toLocaleDateString()}</span>
+                </div>
+                {enrollment.status === 'pending' && (
+                  <div className="flex gap-2 pt-2 border-t border-gray-100">
+                    <button onClick={() => handleStatusChange(enrollment.id, 'approved')} disabled={updatingId === enrollment.id} className="flex-1 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition disabled:opacity-50">Approve</button>
+                    <button onClick={() => handleStatusChange(enrollment.id, 'rejected')} disabled={updatingId === enrollment.id} className="flex-1 py-1.5 bg-red-50 text-red-700 rounded-lg text-xs font-medium hover:bg-red-100 transition disabled:opacity-50">Reject</button>
+                  </div>
+                )}
+              </div>
+            )
+          })
+        )}
+      </div>
+
       {/* Detail Modal */}
       {selectedEnrollment && (
-        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4" onClick={() => setSelectedEnrollment(null)}>
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">Enrollment Details</h3>
-              <button onClick={() => setSelectedEnrollment(null)} className="p-1 hover:bg-gray-100 rounded-lg transition">
+        <div className="fixed inset-0 bg-black/50 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedEnrollment(null)}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[80vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
+            {/* Mobile drag handle */}
+            <div className="sm:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            </div>
+            <div className="sticky top-0 bg-white border-b border-gray-100 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900">Enrollment Details</h3>
+              <button onClick={() => setSelectedEnrollment(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
                 <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="px-6 py-5 space-y-5">
+            <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-4 sm:space-y-5">
               {/* Status */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">Status:</span>
-                <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[selectedEnrollment.status]}`}>
-                  {selectedEnrollment.status}
-                </span>
-                <span className="text-sm text-gray-500">Level:</span>
-                <span className="text-sm font-medium text-gray-900">{levelLabels[selectedEnrollment.level]}</span>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span className="text-xs sm:text-sm text-gray-500">Status:</span>
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[selectedEnrollment.status]}`}>{selectedEnrollment.status}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Level:</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{levelLabels[selectedEnrollment.level]}</span>
               </div>
 
               {/* Student Data Grid */}
@@ -187,16 +210,16 @@ export default function AdminEnrollments() {
                   emergencyContact: 'Emergency Contact', emergencyPhone: 'Emergency Phone',
                   strand: 'Strand', degreeProgram: 'Degree Program',
                   highSchool: 'High School', yearGraduated: 'Year Graduated',
-                  lrn: 'LRN', civilStatus: 'Civil Status',
+                  lrn: 'LRN', civilStatus: 'Civil Status', gradeLevel: 'Grade Level',
                 }
                 return (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     {Object.entries(data).map(([key, value]) => {
                       if (key === 'requirements' || typeof value === 'boolean' || value === null || value === undefined || value === '') return null
                       return (
-                        <div key={key} className="bg-gray-50 rounded-lg p-3">
-                          <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">{fieldLabels[key] || key}</div>
-                          <div className="text-sm text-gray-900 font-medium">{String(value)}</div>
+                        <div key={key} className="bg-gray-50 rounded-lg p-2.5 sm:p-3">
+                          <div className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">{fieldLabels[key] || key}</div>
+                          <div className="text-xs sm:text-sm text-gray-900 font-medium break-words">{String(value)}</div>
                         </div>
                       )
                     })}
@@ -212,16 +235,17 @@ export default function AdminEnrollments() {
                 const reqLabels: Record<string, string> = {
                   birthCert: 'PSA Birth Certificate', Form137: 'Form 137', goodMoral: 'Good Moral',
                   medicalCert: 'Medical Certificate', idPhotos: 'ID Photos', interview: 'Interview',
-                  shsDiploma: 'SHS Diploma', ncae: 'NCAE Certificate',
+                  shsDiploma: 'SHS Diploma', ncae: 'NCAE Certificate', previousDiploma: 'Previous Diploma',
+                  incomingGrade: 'Incoming Grade', ncaeResult: 'NCAE Result',
                 }
                 const entries = Object.entries(reqs).filter(([, v]) => typeof v === 'boolean')
                 if (entries.length === 0) return null
                 return (
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Requirements</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <h4 className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Requirements</h4>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {entries.map(([key, checked]) => (
-                        <span key={key} className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${checked ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        <span key={key} className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] sm:text-xs font-medium ${checked ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                           {checked ? '✓' : '✗'} {reqLabels[key] || key}
                         </span>
                       ))}
@@ -230,15 +254,14 @@ export default function AdminEnrollments() {
                 )
               })()}
 
-              {/* Admin Notes */}
               {selectedEnrollment.admin_notes && (
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Admin Notes</div>
-                  <div className="text-sm text-gray-700">{selectedEnrollment.admin_notes}</div>
+                  <div className="text-xs sm:text-sm text-gray-700">{selectedEnrollment.admin_notes}</div>
                 </div>
               )}
 
-              <div className="text-xs text-gray-400">Submitted: {new Date(selectedEnrollment.created_at).toLocaleString()}</div>
+              <div className="text-[10px] sm:text-xs text-gray-400">Submitted: {new Date(selectedEnrollment.created_at).toLocaleString()}</div>
             </div>
           </div>
         </div>

@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { isAdmin } from '../lib/admin'
+import { isAdminEmail } from '../lib/admin'
 
 interface AdminRouteProps {
   children: ReactNode
 }
 
 export default function AdminRoute({ children }: AdminRouteProps) {
-  const { user, loading } = useAuthStore()
+  const { user, profile, loading } = useAuthStore()
 
   if (loading) {
     return (
@@ -21,7 +21,14 @@ export default function AdminRoute({ children }: AdminRouteProps) {
     )
   }
 
-  if (!user || !isAdmin(user.email)) {
+  if (!user) {
+    return <Navigate to="/" replace />
+  }
+
+  const isProfileAdmin = profile?.is_admin === true
+  const isEmailAdmin = isAdminEmail(user.email)
+
+  if (!isProfileAdmin && !isEmailAdmin) {
     return <Navigate to="/dashboard" replace />
   }
 

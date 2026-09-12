@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { isAdmin } from '../lib/admin'
+import { isAdminEmail } from '../lib/admin'
 import ProgramsDropdown from './ProgramsDropdown'
 import EnrollmentDropdown from './EnrollmentDropdown'
 import ServicesDropdown from './ServicesDropdown'
@@ -31,7 +31,7 @@ export default function Header() {
   const servicesTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const location = useLocation()
   const navigate = useNavigate()
-  const { user } = useAuthStore()
+  const { user, profile } = useAuthStore()
   const isActive = (path: string) => location.pathname === path
 
   const isProgramsActive = isActive('/senior-high')
@@ -155,7 +155,7 @@ export default function Header() {
           </a>
 
           {/* Admin link - only visible to admin users */}
-          {isAdmin(user?.email) && (
+          {(profile?.is_admin || isAdminEmail(user?.email)) && (
             <Link
               to="/admin"
               className={`text-[13.5px] font-normal transition-colors ${isActive('/admin') ? activeClass : 'text-amber-300/80 hover:text-amber-200'}`}
@@ -255,7 +255,7 @@ export default function Header() {
           </a>
 
           {/* Admin link - mobile */}
-          {isAdmin(user?.email) && (
+          {(profile?.is_admin || isAdminEmail(user?.email)) && (
             <Link
               to="/admin"
               onClick={() => setMobileOpen(false)}

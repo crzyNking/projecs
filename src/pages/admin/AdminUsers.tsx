@@ -22,8 +22,8 @@ export default function AdminUsers() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Users</h2>
-          <p className="text-sm text-gray-500">{users.length} registered users</p>
+          <h2 className="text-base sm:text-lg font-bold text-gray-900">Users</h2>
+          <p className="text-xs sm:text-sm text-gray-500">{users.length} registered users</p>
         </div>
         <div className="relative">
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -34,13 +34,13 @@ export default function AdminUsers() {
             placeholder="Search users..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40] w-full sm:w-[280px] transition"
+            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f40]/20 focus:border-[#0b1f40] w-full sm:w-[280px] transition"
           />
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Desktop Table */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hidden sm:block">
         {loading ? (
           <div className="px-6 py-10 text-center">
             <div className="w-8 h-8 border-4 border-[#0b1f40]/20 border-t-[#0b1f40] rounded-full animate-spin mx-auto mb-3" />
@@ -82,6 +82,37 @@ export default function AdminUsers() {
               </tbody>
             </table>
           </div>
+        )}
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="sm:hidden space-y-2">
+        {loading ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-4 py-8 text-center">
+            <div className="w-8 h-8 border-4 border-[#0b1f40]/20 border-t-[#0b1f40] rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-sm text-gray-400">Loading users...</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-4 py-8 text-center text-sm text-gray-400">
+            {search ? 'No users match your search' : 'No users yet'}
+          </div>
+        ) : (
+          filtered.map((user) => (
+            <div key={user.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#0b1f40] flex items-center justify-center text-sm font-bold text-white overflow-hidden shrink-0">
+                {user.avatar_url ? (
+                  <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  (user.full_name?.[0] || user.email?.[0] || '?').toUpperCase()
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-medium text-gray-900 text-sm truncate">{user.full_name || 'No name'}</div>
+                <div className="text-xs text-gray-500 truncate">{user.email || '-'}</div>
+              </div>
+              <div className="text-[10px] text-gray-400 shrink-0">{new Date(user.created_at).toLocaleDateString()}</div>
+            </div>
+          ))
         )}
       </div>
     </div>
