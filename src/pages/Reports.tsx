@@ -186,7 +186,7 @@ export function Reports() {
               return (
                 <div
                   key={report.id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.04] hover:border-gray-200 dark:hover:border-white/[0.08] transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.04] hover:border-gray-200 dark:hover:border-white/[0.08] transition-colors"
                 >
                   <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${typeStyle.bg}`}>
                     <svg className={`h-6 w-6 ${typeStyle.text}`} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -199,7 +199,7 @@ export function Reports() {
                     <p className="text-sm text-gray-500 truncate">{report.description}</p>
                   </div>
                   
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 ml-auto">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}>
                       {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                     </span>

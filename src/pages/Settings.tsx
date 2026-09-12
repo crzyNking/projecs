@@ -79,7 +79,7 @@ export function Settings() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Appearance</h2>
             <p className="text-sm text-gray-500 mb-6">Customize how the app looks on your device</p>
             
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {themes.map((theme) => (
                 <button
                   key={theme.value}

@@ -25,7 +25,7 @@ export default function EnrollmentDropdown({ open, onClose }: EnrollmentDropdown
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]">
       {/* Desktop */}
-      <div className="hidden md:block relative w-[780px] bg-[#061830]/97 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-7">
+      <div className="hidden md:block relative w-[min(780px,calc(100vw-2rem))] bg-[#061830]/97 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-5 xl:p-7">
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
 
         <div className="grid grid-cols-[1.15fr_0.85fr] gap-6">
