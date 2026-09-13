@@ -7,6 +7,7 @@ interface Profile {
   email: string | null
   full_name: string | null
   avatar_url: string | null
+  role: 'admin' | 'user'
   created_at: string
   updated_at: string
 }
@@ -17,6 +18,7 @@ interface AuthState {
   profile: Profile | null
   loading: boolean
   error: string | null
+  isAdmin: () => boolean
   setUser: (user: User | null) => void
   setSession: (session: Session | null) => void
   setProfile: (profile: Profile | null) => void
@@ -30,12 +32,13 @@ interface AuthState {
   uploadAvatar: (file: File) => Promise<string | null>
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   session: null,
   profile: null,
   loading: true,
   error: null,
+  isAdmin: () => get().profile?.role === 'admin',
   setUser: (user) => set({ user }),
   setSession: (session) => set({ session }),
   setProfile: (profile) => set({ profile }),

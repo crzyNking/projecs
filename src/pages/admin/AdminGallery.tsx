@@ -1,0 +1,102 @@
+import { useEffect, useState } from 'react'
+import { supabase } from '../../lib/supabase'
+
+interface GalleryItem { id: string; title: string; caption: string; image_url: string; category: string; is_published: boolean; sort_order: number; created_at: string }
+
+export default function AdminGallery() {
+  const [items, setItems] = useState<GalleryItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+  const [category, setCategory] = useState('general')
+  const [caption, setCaption] = useState('')
+
+  useEffect(() => { load() }, [])
+
+  async function load() {
+    setLoading(true)
+    const { data } = await supabase.from('gallery').select('*').order('sort_order')
+    setItems(data || []); setLoading(false)
+  }
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files; if (!files?.length) return
+    setUploading(true)
+    for (const file of Array.from(files)) {
+      const fileName = `gallery/${Date.now()}-${file.name}`
+      const { error } = await supabase.storage.from('gallery').upload(fileName, file)
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(fileName)
+        await supabase.from('gallery').insert([{ image_url: publicUrl, category, caption, is_published: true }])
+      }
+    }
+    setCaption(''); setUploading(false); load()
+  }
+
+  async function remove(item: GalleryItem) {
+    if (!confirm('Delete this image?')) return
+    // Extract storage path from URL
+    const urlParts = item.image_url.split('/')
+    const bucketIndex = urlParts.indexOf('gallery')
+    if (bucketIndex >= 0) {
+      const path = urlParts.slice(bucketIndex + 1).join('/').split('?')[0]
+      await supabase.storage.from('gallery').remove([path])
+    }
+    await supabase.from('gallery').delete().eq('id', item.id)
+    load()
+  }
+
+  async function togglePublish(item: GalleryItem) {
+    await supabase.from('gallery').update({ is_published: !item.is_published }).eq('id', item.id)
+    load()
+  }
+
+  const categories = ['general', 'campus', 'events', 'sports', 'graduation', 'students', 'faculty', 'activities']
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Gallery</h1>
+
+      {/* Upload */}
+      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
+        <div className="flex flex-wrap items-end gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+              {categories.map((c) => <option key={c} value={c} className="capitalize">{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Caption</label>
+            <input value={caption} onChange={(e) => setCaption(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Optional caption" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Upload Images</label>
+            <input type="file" accept="image/*" multiple onChange={handleUpload} disabled={uploading} className="text-sm file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#13275c] file:text-white file:text-sm file:cursor-pointer" />
+          </div>
+          {uploading && <span className="text-sm text-gray-500">Uploading...</span>}
+        </div>
+      </div>
+
+      {/* Grid */}
+      {loading ? <div className="flex justify-center py-12"><div className="w-8 h-8 border-2 border-[#13275c]/30 border-t-[#13275c] rounded-full animate-spin" /></div>
+      : items.length === 0 ? <div className="bg-white rounded-xl p-12 text-center text-gray-400 shadow-sm border border-gray-100">No images yet.</div>
+      : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {items.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group relative">
+              <img src={item.image_url} alt={item.caption || item.title} className="w-full aspect-square object-cover" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2">
+                <button onClick={() => togglePublish(item)} className={`px-3 py-1.5 rounded-lg text-xs font-medium text-white ${item.is_published ? 'bg-green-500' : 'bg-gray-500'}`}>{item.is_published ? 'Published' : 'Hidden'}</button>
+                <button onClick={() => remove(item)} className="px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-red-500 hover:bg-red-600">Delete</button>
+              </div>
+              <div className="p-3">
+                <div className="text-xs text-gray-500 capitalize">{item.category}</div>
+                {item.caption && <div className="text-sm text-gray-700 truncate">{item.caption}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

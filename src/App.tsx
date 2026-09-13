@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastContainer } from './components/Toast'
 import { Chatbot } from './components/Chatbot'
 import { Home } from './pages/Home'
+import AdminLayout from './pages/admin/AdminLayout'
 
 const SeniorHigh = lazy(() => import('./pages/SeniorHigh'))
 const KindergartenEnrollment = lazy(() => import('./pages/enrollment/KindergartenEnrollment'))
@@ -22,6 +23,21 @@ const Campus = lazy(() => import('./pages/Campus'))
 const About = lazy(() => import('./pages/About'))
 const News = lazy(() => import('./pages/News'))
 const Privacy = lazy(() => import('./pages/Privacy'))
+
+// Admin pages
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
+const AdminAnnouncements = lazy(() => import('./pages/admin/AdminAnnouncements'))
+const AdminNews = lazy(() => import('./pages/admin/AdminNews'))
+const AdminEvents = lazy(() => import('./pages/admin/AdminEvents'))
+const AdminEnrollment = lazy(() => import('./pages/admin/AdminEnrollment'))
+const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms'))
+const AdminServices = lazy(() => import('./pages/admin/AdminServices'))
+const AdminGallery = lazy(() => import('./pages/admin/AdminGallery'))
+const AdminSchoolInfo = lazy(() => import('./pages/admin/AdminSchoolInfo'))
+const AdminHomepage = lazy(() => import('./pages/admin/AdminHomepage'))
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'))
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
+const AdminLogs = lazy(() => import('./pages/admin/AdminLogs'))
 
 function PageSpinner() {
   return (
@@ -94,6 +110,113 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Admin Routes */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminDashboard /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/announcements"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminAnnouncements /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/news"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminNews /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/events"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminEvents /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/enrollment"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminEnrollment /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/programs"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminPrograms /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/services"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminServices /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/gallery"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminGallery /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/school-info"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminSchoolInfo /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/homepage"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminHomepage /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminSettings /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminUsers /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/logs"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout><AdminLogs /></AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
