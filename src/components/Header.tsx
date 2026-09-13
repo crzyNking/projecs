@@ -37,14 +37,14 @@ const servicesData = [
 ]
 
 const campusesData = [
-  { title: 'Main Campus', desc: 'The main campus of Cebu Eastern College on Leon Kilat Street, Cebu City, serves as the central hub for its Senior High School and College programs.', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80', path: '/campus/main' },
-  { title: 'SHS Campus', desc: "Located at D. Dionisio Jakosalem Street in Barangay Santo Niño, the Cebu Eastern College serves as a historic hub for the institution's Senior High School.", img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80', path: '/campus/shs' },
+  { title: 'Main Campus', desc: 'The main campus of Cebu Eastern College on Leon Kilat Street, Cebu City, serves as the central hub for its Senior High School and College programs.', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80' },
+  { title: 'SHS Campus', desc: "Located at D. Dionisio Jakosalem Street in Barangay Santo Niño, the Cebu Eastern College serves as a historic hub for the institution's Senior High School.", img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80' },
 ]
 
 const moreInfoData = [
-  { name: 'About Us', desc: 'Our history, mission, and vision', icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25', path: '/campus/main' },
-  { name: 'Privacy Policy', desc: 'How we protect your data', icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', path: '/campus/main' },
-  { name: 'News & Events', desc: 'Latest updates and announcements', icon: 'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z', path: '/campus/shs' },
+  { name: 'About Us', desc: 'Our history, mission, and vision', icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25' },
+  { name: 'Privacy Policy', desc: 'How we protect your data', icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z' },
+  { name: 'News & Events', desc: 'Latest updates and announcements', icon: 'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z' },
 ]
 
 type Dropdown = 'programs' | 'enrollment' | 'services' | 'about' | null
@@ -138,7 +138,7 @@ export default function Header() {
   )
 
   return (
-    <header ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
+    <header ref={navRef} className="sticky top-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
       <div className="flex items-center justify-between px-4 py-3 md:px-10 md:py-3.5">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 shrink-0 z-10">
@@ -419,7 +419,7 @@ export default function Header() {
                         {campusesData.map((campus) => (
                           <button
                             key={campus.title}
-                            onClick={() => navigateAndClose(campus.path)}
+                            onClick={() => navigateAndClose('/senior-high')}
                             className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-200 text-left flex flex-col flex-1"
                           >
                             <div className="relative h-[130px] w-full overflow-hidden">
@@ -452,7 +452,7 @@ export default function Header() {
                         {moreInfoData.map((item) => (
                           <button
                             key={item.name}
-                            onClick={() => navigateAndClose(item.path)}
+                            onClick={() => navigateAndClose('/senior-high')}
                             className="group flex items-center gap-4 bg-[#dce4ed] rounded-xl py-3 pr-3 pl-3 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
                           >
                             <div className="w-[40px] h-[40px] bg-[#c4d2e2] rounded-full flex items-center justify-center shrink-0">
@@ -679,7 +679,7 @@ export default function Header() {
                           {campusesData.map((campus) => (
                             <button
                               key={campus.title}
-                              onClick={() => navigateAndClose(campus.path)}
+                              onClick={() => navigateAndClose('/senior-high')}
                               className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.12)] text-left flex flex-col flex-1"
                             >
                               <div className="relative h-[70px] w-full overflow-hidden">
@@ -706,7 +706,7 @@ export default function Header() {
                           {moreInfoData.map((item) => (
                             <button
                               key={item.name}
-                              onClick={() => navigateAndClose(item.path)}
+                              onClick={() => navigateAndClose('/senior-high')}
                               className="group flex items-center gap-3 bg-[#dce4ed] rounded-lg py-2 pr-2.5 pl-2.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer w-full"
                             >
                               <div className="w-[30px] h-[30px] bg-[#c4d2e2] rounded-full flex items-center justify-center shrink-0">
