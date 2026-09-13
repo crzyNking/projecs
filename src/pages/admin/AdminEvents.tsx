@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface Event { id: string; title: string; slug: string; description: string; image_url: string; event_date: string | null; event_time: string; location: string; organizer: string; is_published: boolean; is_featured: boolean; created_at: string }
 
@@ -23,13 +24,30 @@ export default function AdminEvents() {
     if (!editing) return
     setSaving(true)
     const slug = editing.slug || editing.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || ''
-    if (editing.id) { await supabase.from('events').update({ ...editing, slug }).eq('id', editing.id) }
-    else { await supabase.from('events').insert([{ ...editing, slug }]) }
+    if (editing.id) {
+      await supabase.from('events').update({ ...editing, slug }).eq('id', editing.id)
+      await logAdminActivity('updated', 'event', editing.id, { title: editing.title })
+    } else {
+      const { data } = await supabase.from('events').insert([{ ...editing, slug }]).select().single()
+      if (data) await logAdminActivity('created', 'event', data.id, { title: data.title })
+    }
     setEditing(null); setSaving(false); load()
   }
 
-  async function remove(id: string) { if (!confirm('Delete?')) return; await supabase.from('events').delete().eq('id', id); load() }
-  async function togglePublish(e: Event) { await supabase.from('events').update({ is_published: !e.is_published }).eq('id', e.id); load() }
+  async function remove(id: string) {
+    if (!confirm('Delete?')) return
+    const item = items.find((e) => e.id === id)
+    await supabase.from('events').delete().eq('id', id)
+    await logAdminActivity('deleted', 'event', id, { title: item?.title })
+    load()
+  }
+
+  async function togglePublish(e: Event) {
+    const newPublished = !e.is_published
+    await supabase.from('events').update({ is_published: newPublished }).eq('id', e.id)
+    await logAdminActivity(newPublished ? 'published' : 'unpublished', 'event', e.id, { title: e.title })
+    load()
+  }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]; if (!file) return

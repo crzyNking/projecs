@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface Program { id: string; title: string; slug: string; description: string; image_url: string; category: string; is_active: boolean; sort_order: number; created_at: string }
 
@@ -23,12 +24,23 @@ export default function AdminPrograms() {
     if (!editing) return
     setSaving(true)
     const slug = editing.slug || editing.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || ''
-    if (editing.id) { await supabase.from('programs').update({ ...editing, slug }).eq('id', editing.id) }
-    else { await supabase.from('programs').insert([{ ...editing, slug }]) }
+    if (editing.id) {
+      await supabase.from('programs').update({ ...editing, slug }).eq('id', editing.id)
+      await logAdminActivity('updated', 'program', editing.id, { title: editing.title })
+    } else {
+      const { data } = await supabase.from('programs').insert([{ ...editing, slug }]).select().single()
+      if (data) await logAdminActivity('created', 'program', data.id, { title: data.title })
+    }
     setEditing(null); setSaving(false); load()
   }
 
-  async function remove(id: string) { if (!confirm('Delete?')) return; await supabase.from('programs').delete().eq('id', id); load() }
+  async function remove(id: string) {
+    if (!confirm('Delete?')) return
+    const item = items.find((p) => p.id === id)
+    await supabase.from('programs').delete().eq('id', id)
+    await logAdminActivity('deleted', 'program', id, { title: item?.title })
+    load()
+  }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]; if (!file) return

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
+import { useNotificationStore } from '../../store/notificationStore'
 
 interface SchoolInfo { id: string; school_name: string; school_description: string; address: string; phone: string; email: string; office_hours: string; facebook: string; website_logo: string; website_favicon: string; footer_text: string }
 
@@ -7,27 +9,53 @@ export default function AdminSchoolInfo() {
   const [settings, setSettings] = useState<Partial<SchoolInfo>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const addNotification = useNotificationStore((s) => s.addNotification)
 
   useEffect(() => { load() }, [])
 
   async function load() {
-    const { data } = await supabase.from('school_settings').select('*').limit(1).single()
-    if (data) setSettings(data)
-    setLoading(false)
+    try {
+      const { data } = await supabase.from('school_settings').select('*').limit(1).single()
+      if (data) setSettings(data)
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to load school settings', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function save() {
     setSaving(true)
-    if (settings.id) { await supabase.from('school_settings').update(settings).eq('id', settings.id) }
-    else { const { data } = await supabase.from('school_settings').insert([settings]).select().single(); if (data) setSettings(data) }
-    setSaving(false); alert('Saved!')
+    try {
+      if (settings.id) {
+        const { error } = await supabase.from('school_settings').update(settings).eq('id', settings.id)
+        if (error) throw error
+      } else {
+        const { data, error } = await supabase.from('school_settings').insert([settings]).select().single()
+        if (error) throw error
+        if (data) setSettings(data)
+      }
+      await logAdminActivity('saved', 'school_settings', settings.id, { school_name: settings.school_name })
+      addNotification({ type: 'success', title: 'School settings saved' })
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to save', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]; if (!file) return
-    const fileName = `logo-${Date.now()}.${file.name.split('.').pop()}`
-    const { error } = await supabase.storage.from('cms-images').upload(fileName, file)
-    if (!error) { const { data: { publicUrl } } = supabase.storage.from('cms-images').getPublicUrl(fileName); setSettings({ ...settings!, website_logo: publicUrl }) }
+    try {
+      const fileName = `logo-${Date.now()}.${file.name.split('.').pop()}`
+      const { error } = await supabase.storage.from('cms-images').upload(fileName, file)
+      if (error) throw error
+      const { data: { publicUrl } } = supabase.storage.from('cms-images').getPublicUrl(fileName)
+      setSettings({ ...settings!, website_logo: publicUrl })
+      addNotification({ type: 'success', title: 'Logo uploaded' })
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Logo upload failed', message: err instanceof Error ? err.message : 'Unknown error' })
+    }
   }
 
   if (loading) return <div className="flex justify-center py-12"><div className="w-8 h-8 border-2 border-[#13275c]/30 border-t-[#13275c] rounded-full animate-spin" /></div>

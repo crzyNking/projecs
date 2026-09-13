@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
+import { useNotificationStore } from '../../store/notificationStore'
 
 interface EnrollmentSettings { id: string; is_open: boolean; academic_year: string; announcement: string; instructions: string; requirements: string; contact_info: string; application_url: string; k12_info: string; college_info: string }
 
@@ -7,25 +9,39 @@ export default function AdminEnrollment() {
   const [settings, setSettings] = useState<Partial<EnrollmentSettings>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const addNotification = useNotificationStore((s) => s.addNotification)
 
   useEffect(() => { load() }, [])
 
   async function load() {
-    const { data } = await supabase.from('enrollment_settings').select('*').limit(1).single()
-    if (data) setSettings(data)
-    setLoading(false)
+    try {
+      const { data } = await supabase.from('enrollment_settings').select('*').limit(1).single()
+      if (data) setSettings(data)
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to load enrollment settings', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function save() {
     setSaving(true)
-    if (settings.id) {
-      await supabase.from('enrollment_settings').update(settings).eq('id', settings.id)
-    } else {
-      const { data } = await supabase.from('enrollment_settings').insert([settings]).select().single()
-      if (data) setSettings(data)
+    try {
+      if (settings.id) {
+        const { error } = await supabase.from('enrollment_settings').update(settings).eq('id', settings.id)
+        if (error) throw error
+      } else {
+        const { data, error } = await supabase.from('enrollment_settings').insert([settings]).select().single()
+        if (error) throw error
+        if (data) setSettings(data)
+      }
+      await logAdminActivity('saved', 'enrollment', settings.id, { academic_year: settings.academic_year })
+      addNotification({ type: 'success', title: 'Enrollment settings saved' })
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to save', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
-    alert('Saved!')
   }
 
   if (loading) return <div className="flex justify-center py-12"><div className="w-8 h-8 border-2 border-[#13275c]/30 border-t-[#13275c] rounded-full animate-spin" /></div>

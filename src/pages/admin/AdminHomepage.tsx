@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
+import { useNotificationStore } from '../../store/notificationStore'
 
 interface HomepageContent { id: string; hero_title: string; hero_subtitle: string; hero_description: string; hero_image: string; hero_button_text: string; hero_button_url: string; hero_secondary_text: string; hero_secondary_url: string; featured_news: boolean; featured_events: boolean; featured_enrollment: boolean }
 
@@ -7,27 +9,53 @@ export default function AdminHomepage() {
   const [settings, setSettings] = useState<Partial<HomepageContent>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const addNotification = useNotificationStore((s) => s.addNotification)
 
   useEffect(() => { load() }, [])
 
   async function load() {
-    const { data } = await supabase.from('homepage_content').select('*').limit(1).single()
-    if (data) setSettings(data)
-    setLoading(false)
+    try {
+      const { data } = await supabase.from('homepage_content').select('*').limit(1).single()
+      if (data) setSettings(data)
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to load homepage content', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function save() {
     setSaving(true)
-    if (settings.id) { await supabase.from('homepage_content').update(settings).eq('id', settings.id) }
-    else { const { data } = await supabase.from('homepage_content').insert([settings]).select().single(); if (data) setSettings(data) }
-    setSaving(false); alert('Saved!')
+    try {
+      if (settings.id) {
+        const { error } = await supabase.from('homepage_content').update(settings).eq('id', settings.id)
+        if (error) throw error
+      } else {
+        const { data, error } = await supabase.from('homepage_content').insert([settings]).select().single()
+        if (error) throw error
+        if (data) setSettings(data)
+      }
+      await logAdminActivity('saved', 'homepage', settings.id, { hero_title: settings.hero_title })
+      addNotification({ type: 'success', title: 'Homepage content saved' })
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to save', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]; if (!file) return
-    const fileName = `hero-${Date.now()}.${file.name.split('.').pop()}`
-    const { error } = await supabase.storage.from('cms-images').upload(fileName, file)
-    if (!error) { const { data: { publicUrl } } = supabase.storage.from('cms-images').getPublicUrl(fileName); setSettings({ ...settings!, hero_image: publicUrl }) }
+    try {
+      const fileName = `hero-${Date.now()}.${file.name.split('.').pop()}`
+      const { error } = await supabase.storage.from('cms-images').upload(fileName, file)
+      if (error) throw error
+      const { data: { publicUrl } } = supabase.storage.from('cms-images').getPublicUrl(fileName)
+      setSettings({ ...settings!, hero_image: publicUrl })
+      addNotification({ type: 'success', title: 'Hero image uploaded' })
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Image upload failed', message: err instanceof Error ? err.message : 'Unknown error' })
+    }
   }
 
   if (loading) return <div className="flex justify-center py-12"><div className="w-8 h-8 border-2 border-[#13275c]/30 border-t-[#13275c] rounded-full animate-spin" /></div>

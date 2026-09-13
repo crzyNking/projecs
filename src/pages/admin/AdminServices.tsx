@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface Service { id: string; title: string; description: string; icon: string; image_url: string; is_active: boolean; sort_order: number; created_at: string }
 
@@ -22,12 +23,23 @@ export default function AdminServices() {
   async function save() {
     if (!editing) return
     setSaving(true)
-    if (editing.id) { await supabase.from('services').update(editing).eq('id', editing.id) }
-    else { await supabase.from('services').insert([editing]) }
+    if (editing.id) {
+      await supabase.from('services').update(editing).eq('id', editing.id)
+      await logAdminActivity('updated', 'service', editing.id, { title: editing.title })
+    } else {
+      const { data } = await supabase.from('services').insert([editing]).select().single()
+      if (data) await logAdminActivity('created', 'service', data.id, { title: data.title })
+    }
     setEditing(null); setSaving(false); load()
   }
 
-  async function remove(id: string) { if (!confirm('Delete?')) return; await supabase.from('services').delete().eq('id', id); load() }
+  async function remove(id: string) {
+    if (!confirm('Delete?')) return
+    const item = items.find((s) => s.id === id)
+    await supabase.from('services').delete().eq('id', id)
+    await logAdminActivity('deleted', 'service', id, { title: item?.title })
+    load()
+  }
 
   if (editing) {
     return (

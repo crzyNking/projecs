@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface GalleryItem { id: string; title: string; caption: string; image_url: string; category: string; is_published: boolean; sort_order: number; created_at: string }
 
@@ -26,7 +27,8 @@ export default function AdminGallery() {
       const { error } = await supabase.storage.from('gallery').upload(fileName, file)
       if (!error) {
         const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(fileName)
-        await supabase.from('gallery').insert([{ image_url: publicUrl, category, caption, is_published: true }])
+        const { data } = await supabase.from('gallery').insert([{ image_url: publicUrl, category, caption, is_published: true }]).select().single()
+        if (data) await logAdminActivity('created', 'gallery', data.id, { title: data.caption || file.name, category })
       }
     }
     setCaption(''); setUploading(false); load()
@@ -42,11 +44,14 @@ export default function AdminGallery() {
       await supabase.storage.from('gallery').remove([path])
     }
     await supabase.from('gallery').delete().eq('id', item.id)
+    await logAdminActivity('deleted', 'gallery', item.id, { title: item.caption, category: item.category })
     load()
   }
 
   async function togglePublish(item: GalleryItem) {
-    await supabase.from('gallery').update({ is_published: !item.is_published }).eq('id', item.id)
+    const newPublished = !item.is_published
+    await supabase.from('gallery').update({ is_published: newPublished }).eq('id', item.id)
+    await logAdminActivity(newPublished ? 'published' : 'unpublished', 'gallery', item.id, { title: item.caption, category: item.category })
     load()
   }
 

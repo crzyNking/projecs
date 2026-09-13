@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
+import { useNotificationStore } from '../../store/notificationStore'
 
 interface WebsiteSettings { id: string; announcement_bar: boolean; news_section: boolean; events_section: boolean; enrollment_section: boolean; programs_section: boolean; gallery_section: boolean; services_section: boolean; contact_section: boolean; maintenance_mode: boolean; maintenance_message: string }
 
@@ -7,20 +9,39 @@ export default function AdminSettings() {
   const [settings, setSettings] = useState<Partial<WebsiteSettings>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const addNotification = useNotificationStore((s) => s.addNotification)
 
   useEffect(() => { load() }, [])
 
   async function load() {
-    const { data } = await supabase.from('website_settings').select('*').limit(1).single()
-    if (data) setSettings(data)
-    setLoading(false)
+    try {
+      const { data } = await supabase.from('website_settings').select('*').limit(1).single()
+      if (data) setSettings(data)
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to load website settings', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function save() {
     setSaving(true)
-    if (settings.id) { await supabase.from('website_settings').update(settings).eq('id', settings.id) }
-    else { const { data } = await supabase.from('website_settings').insert([settings]).select().single(); if (data) setSettings(data) }
-    setSaving(false); alert('Saved!')
+    try {
+      if (settings.id) {
+        const { error } = await supabase.from('website_settings').update(settings).eq('id', settings.id)
+        if (error) throw error
+      } else {
+        const { data, error } = await supabase.from('website_settings').insert([settings]).select().single()
+        if (error) throw error
+        if (data) setSettings(data)
+      }
+      await logAdminActivity('saved', 'website_settings', settings.id)
+      addNotification({ type: 'success', title: 'Website settings saved' })
+    } catch (err) {
+      addNotification({ type: 'error', title: 'Failed to save', message: err instanceof Error ? err.message : 'Unknown error' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (loading) return <div className="flex justify-center py-12"><div className="w-8 h-8 border-2 border-[#13275c]/30 border-t-[#13275c] rounded-full animate-spin" /></div>

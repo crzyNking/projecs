@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface UserProfile { id: string; email: string | null; full_name: string | null; avatar_url: string | null; role: string; created_at: string }
 
@@ -20,6 +21,7 @@ export default function AdminUsers() {
     const newRole = user.role === 'admin' ? 'user' : 'admin'
     if (!confirm(`Change ${user.full_name || user.email} to ${newRole}?`)) return
     await supabase.from('profiles').update({ role: newRole }).eq('id', user.id)
+    await logAdminActivity('toggled', 'user', user.id, { full_name: user.full_name, email: user.email, new_role: newRole })
     load()
   }
 

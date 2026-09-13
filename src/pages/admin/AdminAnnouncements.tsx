@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface Announcement {
   id: string
@@ -51,8 +52,10 @@ export default function AdminAnnouncements() {
     setSaving(true)
     if (editing.id) {
       await supabase.from('announcements').update(editing).eq('id', editing.id)
+      await logAdminActivity('updated', 'announcement', editing.id, { title: editing.title })
     } else {
-      await supabase.from('announcements').insert([editing])
+      const { data } = await supabase.from('announcements').insert([editing]).select().single()
+      if (data) await logAdminActivity('created', 'announcement', data.id, { title: data.title })
     }
     setEditing(null)
     setSaving(false)
@@ -61,12 +64,15 @@ export default function AdminAnnouncements() {
 
   async function remove(id: string) {
     if (!confirm('Delete this announcement?')) return
+    const item = items.find((a) => a.id === id)
     await supabase.from('announcements').delete().eq('id', id)
+    await logAdminActivity('deleted', 'announcement', id, { title: item?.title })
     load()
   }
 
   async function toggleActive(a: Announcement) {
     await supabase.from('announcements').update({ is_active: !a.is_active }).eq('id', a.id)
+    await logAdminActivity('toggled', 'announcement', a.id, { title: a.title, is_active: !a.is_active })
     load()
   }
 

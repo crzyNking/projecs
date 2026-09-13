@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logAdminActivity } from '../../lib/activityLog'
 
 interface NewsItem { id: string; title: string; slug: string; summary: string; content: string; image_url: string; category: string; is_published: boolean; is_featured: boolean; published_at: string | null; created_at: string }
 
@@ -27,19 +28,27 @@ export default function AdminNews() {
     const payload = { ...editing, slug }
     if (editing.id) {
       await supabase.from('news').update(payload).eq('id', editing.id)
+      await logAdminActivity('updated', 'news', editing.id, { title: editing.title })
     } else {
-      await supabase.from('news').insert([{ ...payload, published_at: payload.is_published ? new Date().toISOString() : null }])
+      const { data } = await supabase.from('news').insert([{ ...payload, published_at: payload.is_published ? new Date().toISOString() : null }]).select().single()
+      if (data) await logAdminActivity('created', 'news', data.id, { title: data.title })
     }
     setEditing(null); setSaving(false); load()
   }
 
   async function remove(id: string) {
     if (!confirm('Delete this news article?')) return
-    await supabase.from('news').delete().eq('id', id); load()
+    const item = items.find((n) => n.id === id)
+    await supabase.from('news').delete().eq('id', id)
+    await logAdminActivity('deleted', 'news', id, { title: item?.title })
+    load()
   }
 
   async function togglePublish(n: NewsItem) {
-    await supabase.from('news').update({ is_published: !n.is_published, published_at: !n.is_published ? new Date().toISOString() : null }).eq('id', n.id); load()
+    const newPublished = !n.is_published
+    await supabase.from('news').update({ is_published: newPublished, published_at: newPublished ? new Date().toISOString() : null }).eq('id', n.id)
+    await logAdminActivity(newPublished ? 'published' : 'unpublished', 'news', n.id, { title: n.title })
+    load()
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
