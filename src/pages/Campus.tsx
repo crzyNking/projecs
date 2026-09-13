@@ -48,7 +48,6 @@ const zones = [
 
 const campusLabels: Record<string, string> = {
   main: 'Main Campus',
-  shs: 'SHS Campus',
 }
 
 export default function Campus() {
@@ -56,7 +55,7 @@ export default function Campus() {
   const navigate = useNavigate()
   const [loaded, setLoaded] = useState<Record<number, boolean>>({})
 
-  if (!campusId || !['main', 'shs'].includes(campusId)) {
+  if (!campusId || !campusLabels[campusId]) {
     return (
       <div className="min-h-screen bg-[#06295E]">
         <Header />
