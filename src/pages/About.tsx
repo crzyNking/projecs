@@ -8,7 +8,7 @@ export default function About() {
 
       {/* Hero */}
       <div className="relative pt-[72px]">
-        <div className="bg-[#0a3182] pt-12 pb-56 text-center px-4 relative z-0">
+        <div className="relative z-10 bg-[#0a3182] pt-12 pb-56 text-center px-4">
           <h1 className="text-[2rem] sm:text-[2.5rem] md:text-[40px] font-bold text-[#fde047] mb-3 tracking-wide">About Us</h1>
           <p className="text-white max-w-3xl mx-auto text-[12px] sm:text-[13px] leading-relaxed">
             Dedicated to providing integrated quality education, honing holistic development, and shaping future leaders through a legacy of heritage and excellence.
