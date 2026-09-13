@@ -114,12 +114,12 @@ export default function Campus() {
 
   if (!campus) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] overflow-x-hidden">
+      <div className="min-h-screen bg-[#0b1f40] overflow-x-hidden">
         <Header />
         <main className="flex items-center justify-center py-20">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-[#0b1136] mb-4">Campus Not Found</h2>
-            <button onClick={() => navigate('/')} className="text-[#1b3a6b] underline">Return Home</button>
+            <h2 className="text-2xl font-bold text-white mb-4">Campus Not Found</h2>
+            <button onClick={() => navigate('/')} className="text-[#a8c4e6] underline">Return Home</button>
           </div>
         </main>
         <Footer />
@@ -128,52 +128,52 @@ export default function Campus() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] overflow-x-hidden">
+    <div className="min-h-screen bg-[#0b1f40] overflow-x-hidden">
       <Header />
 
       <main className="pt-[72px] max-w-[1000px] mx-auto px-4 sm:px-5 pb-10">
         {/* Hero Section */}
-        <section className="bg-white rounded-xl overflow-hidden mb-8 sm:mb-10 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+        <section className="bg-[#102a50] rounded-xl overflow-hidden mb-8 sm:mb-10 shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
           <div className="text-center px-5 pt-10 pb-8 sm:px-10">
-            <span className="inline-block bg-[#c6d2e8] text-[#1b225c] text-[0.65rem] sm:text-[0.7rem] font-extrabold px-4 py-1.5 rounded-full mb-5 tracking-[1px]">
+            <span className="inline-block bg-[#1b3a6b] text-[#a8c4e6] text-[0.65rem] sm:text-[0.7rem] font-extrabold px-4 py-1.5 rounded-full mb-5 tracking-[1px]">
               {campus.badge}
             </span>
-            <h2 className="text-[1.8rem] sm:text-[2.5rem] md:text-[2.8rem] font-extrabold text-[#0b1136] mb-4 sm:mb-5">
+            <h2 className="text-[1.8rem] sm:text-[2.5rem] md:text-[2.8rem] font-extrabold text-white mb-4 sm:mb-5">
               {campus.title}
             </h2>
-            <p className="text-[#555e6f] text-[0.85rem] sm:text-[0.95rem] leading-relaxed max-w-[750px] mx-auto">
+            <p className="text-[#a8b8d0] text-[0.85rem] sm:text-[0.95rem] leading-relaxed max-w-[750px] mx-auto">
               {campus.subtitle}
             </p>
           </div>
           <div className="relative">
             <img src={campus.heroImg} alt={campus.heroLabel} className="w-full h-[250px] sm:h-[350px] md:h-[400px] object-cover" />
-            <span className="absolute bottom-5 left-5 text-white font-semibold text-[0.9rem] sm:text-[15px]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+            <span className="absolute bottom-5 left-5 text-white font-semibold text-[0.9rem] sm:text-[15px]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}>
               {campus.heroLabel}
             </span>
           </div>
         </section>
 
         {/* Location Section */}
-        <section className="bg-white rounded-xl overflow-hidden mb-8 sm:mb-10 shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex flex-col md:flex-row">
+        <section className="bg-[#102a50] rounded-xl overflow-hidden mb-8 sm:mb-10 shadow-[0_4px_12px_rgba(0,0,0,0.15)] flex flex-col md:flex-row">
           <div className="flex-1 px-6 py-10 sm:px-12 sm:py-14">
-            <div className="flex items-center gap-3 text-[#0b1136] text-[1.3rem] sm:text-[1.5rem] font-extrabold mb-6">
+            <div className="flex items-center gap-3 text-white text-[1.3rem] sm:text-[1.5rem] font-extrabold mb-6">
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
               <h2>Location</h2>
             </div>
-            <h3 className="text-[#0b1136] text-[1.1rem] sm:text-[1.25rem] font-bold mb-3">{campus.address}</h3>
-            <p className="text-[#555e6f] text-[0.8rem] sm:text-[0.9rem]">{campus.addressDetail}</p>
+            <h3 className="text-white text-[1.1rem] sm:text-[1.25rem] font-bold mb-3">{campus.address}</h3>
+            <p className="text-[#a8b8d0] text-[0.8rem] sm:text-[0.9rem]">{campus.addressDetail}</p>
           </div>
-          <div className="flex-1 p-5 sm:p-8 border-t md:border-t-0 md:border-l border-[#f0f0f0]">
-            <img src={campus.mapImg} alt="Map" className="w-full h-[200px] sm:h-[250px] object-cover border border-[#e2e8f0] rounded-lg" />
+          <div className="flex-1 p-5 sm:p-8 border-t md:border-t-0 md:border-l border-white/10">
+            <img src={campus.mapImg} alt="Map" className="w-full h-[200px] sm:h-[250px] object-cover border border-white/10 rounded-lg" />
           </div>
         </section>
 
         {/* Zones Section */}
-        <section className="bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.05)] px-5 py-10 sm:px-12 sm:py-14">
-          <h2 className="text-[#0b1136] text-[1.3rem] sm:text-[1.5rem] font-extrabold pb-4 border-b border-[#e2e8f0] mb-10 sm:mb-14">
+        <section className="bg-[#102a50] rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.15)] px-5 py-10 sm:px-12 sm:py-14">
+          <h2 className="text-white text-[1.3rem] sm:text-[1.5rem] font-extrabold pb-4 border-b border-white/10 mb-10 sm:mb-14">
             Academic & Structural Zones
           </h2>
 
@@ -184,18 +184,18 @@ export default function Campus() {
                 key={zone.tag}
                 className={`flex flex-col ${isReverse ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-6 sm:gap-8 md:gap-12 mb-10 sm:mb-14 last:mb-0`}
               >
-                <div className="w-full md:w-[45%] border border-[#e2e8f0] p-1 rounded">
+                <div className="w-full md:w-[45%] border border-white/10 p-1 rounded">
                   <img src={zone.img} alt={zone.title} className="w-full h-[180px] sm:h-[220px] md:h-[250px] object-cover" />
                 </div>
                 <div className={`flex-1 ${isReverse ? 'md:text-right md:flex md:flex-col md:items-end' : ''}`}>
-                  <span className="inline-block border border-[#0b1136] text-[#0b1136] text-[0.6rem] font-bold px-2.5 py-1 tracking-[1px] mb-4">
+                  <span className="inline-block border border-[#7b95c6] text-[#7b95c6] text-[0.6rem] font-bold px-2.5 py-1 tracking-[1px] mb-4">
                     {zone.tag}
                   </span>
-                  <h3 className="text-[#0b1136] text-[1.2rem] sm:text-[1.35rem] font-bold mb-3">{zone.title}</h3>
+                  <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] font-bold mb-3">{zone.title}</h3>
                   {zone.subTxt && (
-                    <p className="text-[#555e6f] text-[0.78rem] sm:text-[0.85rem] mb-3">{zone.subTxt}</p>
+                    <p className="text-[#a8b8d0] text-[0.78rem] sm:text-[0.85rem] mb-3">{zone.subTxt}</p>
                   )}
-                  <p className="text-[#555e6f] text-[0.8rem] sm:text-[0.85rem] leading-[1.7]">{zone.desc}</p>
+                  <p className="text-[#a8b8d0] text-[0.8rem] sm:text-[0.85rem] leading-[1.7]">{zone.desc}</p>
                 </div>
               </div>
             )
