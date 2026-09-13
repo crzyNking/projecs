@@ -57,7 +57,10 @@ const sections = [
     num: '6',
     title: 'Consent',
     content: (
-      <p>When consent is required for the collection or processing of personal information, Cebu Eastern College will seek consent in an appropriate and transparent manner. Individuals may withdraw their consent when applicable, subject to legal, contractual, academic, or institutional requirements that may affect the availability of certain services.</p>
+      <>
+        <p>When consent is required for the collection or processing of personal information, Cebu Eastern College will seek consent in an appropriate and transparent manner.</p>
+        <p>Individuals may withdraw their consent when applicable, subject to legal, contractual, academic, or institutional requirements that may affect the availability of certain services.</p>
+      </>
     ),
   },
   {
@@ -78,71 +81,108 @@ const sections = [
     num: '9',
     title: 'Policy Updates',
     content: (
-      <p>This Data Privacy Policy may be reviewed and updated from time to time to reflect changes in institutional practices, legal requirements, and data protection standards. Any significant updates may be communicated through appropriate Cebu Eastern College channels.</p>
+      <>
+        <p>This Data Privacy Policy may be reviewed and updated from time to time to reflect changes in institutional practices, legal requirements, and data protection standards.</p>
+        <p>Any significant updates may be communicated through appropriate Cebu Eastern College channels.</p>
+      </>
     ),
   },
 ]
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{ background: "linear-gradient(to bottom, rgba(15,48,115,0.95), rgba(9,28,71,0.98)), url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed" }}>
+    <div className="min-h-screen" style={{ background: '#0d1b3e' }}>
       <Header />
 
       {/* Hero */}
-      <section className="pt-[120px] pb-12 sm:pb-20 text-center px-4">
-        <div className="max-w-[800px] mx-auto">
-          <h2 className="text-[2rem] sm:text-[2.5rem] md:text-[3rem] font-bold text-white mb-4 sm:mb-6">Privacy Policy</h2>
-          <p className="text-[0.9rem] sm:text-[1.05rem] text-[#e2e8f0] leading-[1.7]">
+      <section className="py-[70px] px-5 text-center" style={{ background: '#0d1b3e' }}>
+        <div className="max-w-[640px] mx-auto">
+          <h1
+            className="mb-[18px]"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: 700,
+              fontStyle: 'italic',
+              color: '#f0d675',
+              fontSize: 'clamp(32px, 5vw, 46px)',
+            }}
+          >
+            Privacy Policy
+          </h1>
+          <p className="text-[15px] leading-[1.6] max-w-[640px] mx-auto" style={{ color: '#dfe4f5' }}>
             We are committed to safeguarding the personal data of our students, parents, staff, alumni, and applicants through responsible collection, storage, and protection practices.
           </p>
         </div>
       </section>
 
-      {/* Content Card */}
-      <main className="max-w-[800px] mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
-        <div className="bg-white rounded-xl p-6 sm:p-10 md:p-[3.5rem] text-[#0f172a] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
-
+      {/* Content */}
+      <div
+        className="flex justify-center pb-[60px]"
+        style={{ background: 'linear-gradient(180deg, #0d1b3e 0%, #13275c 30%, #13275c 100%)' }}
+      >
+        <div
+          className="w-[92%] max-w-[640px] mt-[-20px] relative z-[2] rounded-[6px] px-[40px] py-[44px] max-sm:px-5 max-sm:py-8"
+          style={{
+            background: '#ffffff',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.35)',
+          }}
+        >
           {sections.map((section, i) => (
             <div key={section.num}>
-              <div className="mb-6 sm:mb-10">
-                <div className="flex items-center gap-3 mb-4 sm:mb-5">
-                  <div className="w-8 h-8 bg-[#dbeafe] text-[#1e3a8a] rounded-full flex items-center justify-center text-[0.9rem] font-bold shrink-0">
+              <div className="py-[22px]">
+                <div className="flex items-center gap-[14px] mb-[10px]">
+                  <div
+                    className="w-[26px] h-[26px] min-w-[26px] rounded-full flex items-center justify-center text-[13px] font-bold"
+                    style={{ background: '#dbe4fb', color: '#13275c' }}
+                  >
                     {section.num}
                   </div>
-                  <h3 className="text-[1.1rem] sm:text-[1.25rem] font-semibold text-[#102a63]">{section.title}</h3>
+                  <h2 className="text-[19px] font-bold" style={{ color: '#13275c' }}>
+                    {section.title}
+                  </h2>
                 </div>
-                <div className="text-[0.85rem] sm:text-[0.95rem] text-[#475569] leading-[1.7] pl-0 sm:pl-11">
+                <div className="ml-[40px] max-sm:ml-0 text-[14px] leading-[1.7]" style={{ color: '#4a5568' }}>
                   {section.content}
                 </div>
               </div>
-              {i < sections.length - 1 && <hr className="border-none border-t border-[#e2e8f0] my-6 sm:my-10" />}
+              {i < sections.length - 1 && (
+                <hr className="border-none h-px" style={{ background: '#e2e6f0' }} />
+              )}
             </div>
           ))}
 
           {/* Contact Box */}
-          <div className="bg-[#f8fafc] rounded-lg p-6 sm:p-8 mt-8">
-            <h3 className="text-[1.1rem] sm:text-[1.25rem] font-semibold text-[#102a63] mb-3">Contact Our Data Privacy Officer</h3>
-            <p className="text-[0.85rem] sm:text-[0.95rem] text-[#475569] mb-5">
+          <div
+            className="rounded-[6px] px-6 py-[22px] mt-[6px]"
+            style={{ background: '#eef1fb' }}
+          >
+            <h3 className="text-[17px] font-bold mb-2" style={{ color: '#13275c' }}>
+              Contact Our Data Privacy Officer
+            </h3>
+            <p className="text-[13.5px] leading-[1.6] mb-[14px]" style={{ color: '#4a5568' }}>
               If you have any questions, concerns, or requests regarding your data privacy rights, please contact us:
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-              <a href="mailto:cebueasterncollege1915@yahoo.com" className="flex items-center gap-2 text-[#102a63] font-medium text-[0.85rem] sm:text-[0.95rem] no-underline hover:text-[#1d4ed8] transition-colors">
-                <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-[#1d4ed8] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+            <div className="flex gap-[34px] flex-wrap max-sm:flex-col max-sm:gap-[10px]">
+              <a
+                href="mailto:cebueasterncollege1915@yahoo.com"
+                className="flex items-center gap-2 text-[13.5px] no-underline"
+                style={{ color: '#13275c' }}
+              >
+                <span>✉️</span>
                 cebueasterncollege1915@yahoo.com
               </a>
-              <a href="tel:0322562523" className="flex items-center gap-2 text-[#102a63] font-medium text-[0.85rem] sm:text-[0.95rem] no-underline hover:text-[#1d4ed8] transition-colors">
-                <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-[#1d4ed8] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
+              <a
+                href="tel:+63322562523"
+                className="flex items-center gap-2 text-[13.5px] no-underline"
+                style={{ color: '#13275c' }}
+              >
+                <span>📞</span>
                 (032) 256 2523
               </a>
             </div>
           </div>
-
         </div>
-      </main>
+      </div>
 
       <Footer />
     </div>
