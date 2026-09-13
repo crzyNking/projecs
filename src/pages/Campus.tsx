@@ -153,11 +153,11 @@ export default function Campus() {
               {zones.map((zone, i) => {
                 const isEven = i % 2 !== 0
                 return (
-                  <div key={zone.tag} className="flex flex-col md:flex-row items-center" style={{ gap: '30px' }}>
-                    <div className="flex-[1.1] border border-[#E5E5E5] p-2">
+                  <div key={zone.tag} className={`flex flex-col items-center ${isEven ? 'md:flex-row-reverse' : 'md:flex-row'}`} style={{ gap: '30px' }}>
+                    <div className="w-full md:w-[55%] border border-[#E5E5E5] p-2 shrink-0">
                       <img src={zone.img} alt={zone.title} className="w-full block object-cover" style={{ aspectRatio: '3/2' }} />
                     </div>
-                    <div className={`flex-[0.9] flex flex-col justify-center ${isEven ? 'items-end text-right' : 'items-start text-left'}`}>
+                    <div className={`flex-1 flex flex-col justify-center ${isEven ? 'items-end text-right' : 'items-start text-left'}`}>
                       <span className="inline-block border border-[#0C1A4A] text-[#0C1A4A] text-[11px] font-bold tracking-[1px] px-2 py-1 mb-4">
                         {zone.tag}
                       </span>
