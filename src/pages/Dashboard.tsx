@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useActivityStore } from '../store/activityStore'
+import { Link } from 'react-router-dom'
 
 const colorMap: Record<string, { bg: string; text: string; glow: string; ring: string }> = {
   emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-500 dark:text-emerald-400', glow: 'shadow-emerald-500/20', ring: 'ring-emerald-500/30' },
@@ -30,6 +31,7 @@ export function Dashboard() {
   const user = useAuthStore((s) => s.user)
   const profile = useAuthStore((s) => s.profile)
   const signOut = useAuthStore((s) => s.signOut)
+  const isAdmin = profile?.role === 'admin'
   const activities = useActivityStore((s) => s.activities)
   const fetchActivities = useActivityStore((s) => s.fetchActivities)
   const navigate = useNavigate()
@@ -278,6 +280,20 @@ export function Dashboard() {
                     <span className="relative text-xs sm:text-sm font-medium text-gray-500 transition-colors group-hover:text-gray-900 dark:group-hover:text-white">{action.label}</span>
                   </button>
                 ))}
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="group relative overflow-hidden rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/5 p-4 sm:p-5 text-center transition-all duration-300 hover:border-amber-300 dark:hover:border-amber-500/40 hover:bg-amber-100 dark:hover:bg-amber-500/10"
+                  >
+                    <div className="relative mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20 transition-all duration-300 group-hover:scale-110">
+                      <svg className="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <span className="relative text-xs sm:text-sm font-medium text-amber-700 dark:text-amber-300 transition-colors">Admin Panel</span>
+                  </Link>
+                )}
               </div>
             </div>
 
