@@ -36,8 +36,19 @@ const servicesData = [
   { name: 'Guidance', desc: 'Counseling, career guidance, and student support services', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
 ]
 
-type Dropdown = 'programs' | 'enrollment' | 'services' | null
-type MobileAccordion = 'programs' | 'enrollment' | 'services' | null
+const campusesData = [
+  { title: 'Main Campus', desc: 'The main campus of Cebu Eastern College on Leon Kilat Street, Cebu City, serves as the central hub for its Senior High School and College programs.', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80' },
+  { title: 'SHS Campus', desc: "Located at D. Dionisio Jakosalem Street in Barangay Santo Niño, the Cebu Eastern College serves as a historic hub for the institution's Senior High School.", img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80' },
+]
+
+const moreInfoData = [
+  { name: 'About Us', desc: 'Our history, mission, and vision', icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25' },
+  { name: 'Privacy Policy', desc: 'How we protect your data', icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z' },
+  { name: 'News & Events', desc: 'Latest updates and announcements', icon: 'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z' },
+]
+
+type Dropdown = 'programs' | 'enrollment' | 'services' | 'about' | null
+type MobileAccordion = 'programs' | 'enrollment' | 'services' | 'about' | null
 type MobilePage = 'main' | 'enroll-picker'
 
 export default function Header() {
@@ -116,6 +127,16 @@ export default function Header() {
       active ? 'text-white' : 'text-[#cbd5e1] hover:text-white'
     }`
 
+  const DropdownHeader = ({ icon, title }: { icon: React.ReactNode; title: string }) => (
+    <>
+      <div className="flex items-center gap-2.5 mb-3">
+        {icon}
+        <h2 className="text-[#f7e0b5] text-[17px] font-semibold tracking-wide">{title}</h2>
+      </div>
+      <div className="h-[2px] bg-[#7b95c6] w-[50%] mb-5" />
+    </>
+  )
+
   return (
     <header ref={navRef} className="sticky top-0 z-50 bg-[#0b1f40] text-white border-b border-white/10">
       <div className="flex items-center justify-between px-4 py-3 md:px-10 md:py-3.5">
@@ -164,14 +185,10 @@ export default function Header() {
                   <div className="grid grid-cols-[1.15fr_0.85fr] gap-8">
                     {/* K-12 */}
                     <div>
-                      <div className="flex items-center gap-2.5 mb-3">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                          <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                        </svg>
-                        <span className="text-white text-[16px] font-semibold">K-12 Education</span>
-                      </div>
-                      <div className="h-[2px] bg-[#213c63] w-[50%] mb-4" />
+                      <DropdownHeader
+                        icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" /></svg>}
+                        title="K-12 Education"
+                      />
                       <div className="grid grid-cols-2 gap-3">
                         {k12Data.map((prog) => (
                           <button
@@ -201,13 +218,10 @@ export default function Header() {
 
                     {/* College */}
                     <div>
-                      <div className="flex items-center gap-2.5 mb-3">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" />
-                        </svg>
-                        <span className="text-white text-[16px] font-semibold">College Programs</span>
-                      </div>
-                      <div className="h-[2px] bg-[#213c63] w-full mb-4" />
+                      <DropdownHeader
+                        icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" /></svg>}
+                        title="College Programs"
+                      />
                       <div className="relative pl-4 mt-4">
                         <div className="absolute left-0 top-0 bottom-0 w-px bg-[#1a365d]" />
                         <div className="flex flex-col gap-2">
@@ -343,14 +357,10 @@ export default function Header() {
               >
                 <div className="relative w-[min(560px,calc(100vw-2rem))] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-5 xl:p-7">
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
-                  <div className="flex items-center gap-3 mb-3">
-                    <svg className="w-6 h-6 text-[#f7e0b5]" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2L1 7.5L12 13L23 7.5L12 2Z" />
-                      <path d="M4 9.5V15.5L12 19.5L20 15.5V9.5L12 13.5L4 9.5Z" />
-                    </svg>
-                    <h2 className="text-[#f7e0b5] text-[18px] font-semibold tracking-wide">Services</h2>
-                  </div>
-                  <hr className="h-[2px] bg-[#7b95c6] border-none mb-5" />
+                  <DropdownHeader
+                    icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 7.5L12 13L23 7.5L12 2Z" /><path d="M4 9.5V15.5L12 19.5L20 15.5V9.5L12 13.5L4 9.5Z" /></svg>}
+                    title="Services"
+                  />
                   <div className="grid grid-cols-3 gap-4">
                     {servicesData.map((service) => (
                       <div
@@ -372,10 +382,100 @@ export default function Header() {
             )}
           </div>
 
-          {/* About */}
-          <a href="#" className={navItemClass(false)}>
-            About
-          </a>
+          {/* About Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => openDropdown('about')}
+            onMouseLeave={closeDropdownDelayed}
+          >
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === 'about' ? null : 'about')}
+              className={navItemClass(false)}
+              aria-expanded={activeDropdown === 'about'}
+              aria-haspopup="true"
+            >
+              About
+              <svg className={`w-2.5 h-2.5 opacity-50 transition-transform duration-200 ${activeDropdown === 'about' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+
+            {activeDropdown === 'about' && (
+              <div
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-[60]"
+                onMouseEnter={() => openDropdown('about')}
+                onMouseLeave={closeDropdownDelayed}
+              >
+                <div className="relative w-[min(820px,calc(100vw-2rem))] bg-[#061830] rounded-2xl shadow-2xl border border-white/10 p-5 xl:p-7">
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#061830] border-l border-t border-white/10 rotate-45" />
+                  <div className="grid grid-cols-[1.15fr_0.85fr] gap-8">
+                    {/* Our Campuses */}
+                    <div>
+                      <DropdownHeader
+                        icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3L2 10h20L12 3z" /></svg>}
+                        title="Our Campuses"
+                      />
+                      <div className="flex gap-4">
+                        {campusesData.map((campus) => (
+                          <button
+                            key={campus.title}
+                            onClick={() => navigateAndClose('/senior-high')}
+                            className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-200 text-left flex flex-col flex-1"
+                          >
+                            <div className="relative h-[130px] w-full overflow-hidden">
+                              <img src={campus.img} alt={campus.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              <div className="absolute bottom-0 left-0 right-0 px-3 pb-2 pt-4 bg-gradient-to-t from-black/75 to-transparent">
+                                <h3 className="text-white text-[15px] font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>{campus.title}</h3>
+                              </div>
+                            </div>
+                            <div className="p-3 flex flex-col flex-grow justify-between">
+                              <p className="text-[#556070] text-[11px] leading-[1.5] mb-2">{campus.desc}</p>
+                              <span className="text-[#0b2545] text-[12px] font-bold inline-flex items-center gap-1 group-hover:text-blue-700 transition-colors">
+                                Learn More
+                                <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* More Information */}
+                    <div>
+                      <DropdownHeader
+                        icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>}
+                        title="More Information"
+                      />
+                      <div className="flex flex-col gap-3">
+                        {moreInfoData.map((item) => (
+                          <button
+                            key={item.name}
+                            onClick={() => navigateAndClose('/senior-high')}
+                            className="group flex items-center gap-4 bg-[#dce4ed] rounded-xl py-3 pr-3 pl-3 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer"
+                          >
+                            <div className="w-[40px] h-[40px] bg-[#c4d2e2] rounded-full flex items-center justify-center shrink-0">
+                              <svg className="w-[18px] h-[18px] text-[#0b2545]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                <path d={item.icon} />
+                              </svg>
+                            </div>
+                            <div className="flex-grow text-left">
+                              <span className="text-[#0b2545] font-semibold text-[13px] leading-[1.3] block">{item.name}</span>
+                              <span className="text-[#6b7280] text-[10px] leading-[1.3]">{item.desc}</span>
+                            </div>
+                            <svg className="w-3.5 h-3.5 text-[#a0aebc] group-hover:text-[#0b2545] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M9 18l6-6-6-6" />
+                            </svg>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Hamburger */}
@@ -559,14 +659,72 @@ export default function Header() {
                   )}
                 </div>
 
-                {/* About */}
-                <a
-                  href="#"
-                  onClick={closeAll}
-                  className="block text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  About
-                </a>
+                {/* About Accordion */}
+                <div>
+                  <button
+                    onClick={() => toggleMobileAccordion('about')}
+                    className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
+                    aria-expanded={mobileAccordion === 'about'}
+                  >
+                    About
+                    <svg className={`w-3.5 h-3.5 opacity-40 transition-transform duration-200 ${mobileAccordion === 'about' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </button>
+                  {mobileAccordion === 'about' && (
+                    <div className="ml-3 mt-1 mb-2 space-y-3 animate-in fade-in duration-200">
+                      <div>
+                        <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">Our Campuses</div>
+                        <div className="flex gap-2">
+                          {campusesData.map((campus) => (
+                            <button
+                              key={campus.title}
+                              onClick={() => navigateAndClose('/senior-high')}
+                              className="group bg-white rounded-xl overflow-hidden cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.12)] text-left flex flex-col flex-1"
+                            >
+                              <div className="relative h-[70px] w-full overflow-hidden">
+                                <img src={campus.img} alt={campus.title} className="w-full h-full object-cover" />
+                                <div className="absolute bottom-0 left-0 right-0 px-2 pb-1 pt-2 bg-gradient-to-t from-black/75 to-transparent">
+                                  <h3 className="text-white text-[10px] font-semibold">{campus.title}</h3>
+                                </div>
+                              </div>
+                              <div className="p-2">
+                                <span className="text-[#0b2545] text-[9px] font-bold inline-flex items-center gap-0.5">
+                                  Learn More
+                                  <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                  </svg>
+                                </span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-[#94a3b8] font-semibold mb-1.5 uppercase tracking-wider px-1">More Information</div>
+                        <div className="space-y-1.5">
+                          {moreInfoData.map((item) => (
+                            <button
+                              key={item.name}
+                              onClick={() => navigateAndClose('/senior-high')}
+                              className="group flex items-center gap-3 bg-[#dce4ed] rounded-lg py-2 pr-2.5 pl-2.5 hover:bg-[#d2dce8] transition-all duration-200 cursor-pointer w-full"
+                            >
+                              <div className="w-[30px] h-[30px] bg-[#c4d2e2] rounded-full flex items-center justify-center shrink-0">
+                                <svg className="w-3.5 h-3.5 text-[#0b2545]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d={item.icon} />
+                                </svg>
+                              </div>
+                              <span className="text-[#0b2545] font-semibold text-[11px] leading-[1.2] flex-grow text-left">{item.name}</span>
+                              <svg className="w-3 h-3 text-[#a0aebc] shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 18l6-6-6-6" />
+                              </svg>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </>
             )}
 
@@ -574,7 +732,7 @@ export default function Header() {
             {mobilePage === 'enroll-picker' && (
               <>
                 <button onClick={() => setMobilePage('main')} className="flex items-center gap-2 text-[#94a3b8] hover:text-white text-[13px] mb-4 transition-colors">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="15.75 19.5 8.25 12l7.5-7.5" /></svg>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
                   Back
                 </button>
 
