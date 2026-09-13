@@ -129,8 +129,8 @@ export function Home() {
     <div className="min-h-screen bg-[#f8fafc] text-[#333333] overflow-x-hidden">
       <Header />
 
-      <section className="relative py-10 px-4 sm:py-16 text-center text-white" style={heroStyle}>
-        <p className="text-[#eab308] text-2xl sm:text-4xl md:text-[38px] font-semibold tracking-[4px] sm:tracking-[8px] mb-6 sm:mb-[30px]">
+      <section className="relative py-16 px-4 sm:py-24 text-center text-white" style={heroStyle}>
+        <p className="text-[#eab308] text-2xl sm:text-4xl md:text-[38px] font-semibold tracking-[4px] sm:tracking-[8px] mb-6 sm:mb-[30px] mt-6 sm:mt-10">
           宿務 東方 學院
         </p>
 
