@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { useSettings } from '../hooks/useSettings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
 
-const heroStyle = { background: "linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop) center/cover no-repeat" }
+const DEFAULT_HERO_IMG = 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop'
 const authModalBackdrop = { background: 'rgba(3, 8, 20, 0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }
 
 type AuthMode = 'login' | 'signup'
@@ -55,6 +56,7 @@ export function Home() {
   const error = useAuthStore((s) => s.error)
   const setError = useAuthStore((s) => s.setError)
   const navigate = useNavigate()
+  const { homepage } = useSettings()
 
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({ open: false, mode: 'login' })
   const [authTab, setAuthTab] = useState<AuthMode>('login')
@@ -129,30 +131,30 @@ export function Home() {
     <div className="min-h-screen bg-[#f8fafc] text-[#333333] overflow-x-hidden">
       <Header />
 
-      <section className="relative py-16 px-4 sm:py-24 text-center text-white" style={heroStyle}>
+      <section className="relative py-16 px-4 sm:py-24 text-center text-white" style={{ background: `linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(${homepage?.hero_image || DEFAULT_HERO_IMG}) center/cover no-repeat` }}>
         <p className="text-[#eab308] text-2xl sm:text-4xl md:text-[38px] font-semibold tracking-[4px] sm:tracking-[8px] mb-6 sm:mb-[30px] mt-6 sm:mt-10">
-          宿務 東方 學院
+          {homepage?.hero_subtitle || '宿務 東方 學院'}
         </p>
 
         <div className="max-w-[820px] mx-auto rounded-xl p-6 sm:p-10 md:p-[45px_50px] shadow-[0_20px_40px_rgba(0,0,0,0.35)] outline outline-1 outline-offset-[-8px] outline-white/15 bg-[rgba(8,30,92,0.88)] border border-white/20 backdrop-blur-[12px]">
           <h1 className="text-2xl sm:text-3xl md:text-[32px] font-extrabold leading-[1.25] mb-4 sm:mb-5">
-            Excellence in Education<br />since 1915
+            {homepage?.hero_title || 'Excellence in Education'}<br />{!homepage?.hero_title && 'since 1915'}
           </h1>
           <p className="text-xs sm:text-[13.5px] text-[#cbd5e1] max-w-[580px] mx-auto mb-6 sm:mb-[30px] leading-relaxed">
-            Be part of the Easternian Community, where quality education is less expensive. Join Cebu City's premier institution for holistic development.
+            {homepage?.hero_description || 'Be part of the Easternian Community, where quality education is less expensive. Join Cebu City\'s premier institution for holistic development.'}
           </p>
           <div className="flex justify-center gap-3 sm:gap-4">
             <button
-              onClick={() => openAuth('login')}
+              onClick={() => homepage?.hero_button_url ? navigate(homepage.hero_button_url) : openAuth('login')}
               className="px-5 sm:px-8 py-2 rounded-md text-xs sm:text-[12px] font-semibold bg-[#1d4ed8] text-white hover:bg-[#1e40af] transition-all"
             >
-              Log In
+              {homepage?.hero_button_text || 'Log In'}
             </button>
             <button
-              onClick={() => openAuth('signup')}
+              onClick={() => homepage?.hero_secondary_url ? navigate(homepage.hero_secondary_url) : openAuth('signup')}
               className="px-5 sm:px-8 py-2 rounded-md text-xs sm:text-[12px] font-semibold bg-transparent text-white border border-white/70 hover:bg-white/10 transition-all"
             >
-              Sign Up
+              {homepage?.hero_secondary_text || 'Sign Up'}
             </button>
           </div>
         </div>
