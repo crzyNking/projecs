@@ -42,9 +42,9 @@ const campusesData = [
 ]
 
 const moreInfoData = [
-  { name: 'About Us', desc: 'Our history, mission, and vision', icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25', path: '/campus/main' },
-  { name: 'Privacy Policy', desc: 'How we protect your data', icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', path: '/campus/main' },
-  { name: 'News & Events', desc: 'Latest updates and announcements', icon: 'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z', path: '/campus/shs' },
+  { name: 'About Us', desc: 'Our history, mission, and vision', icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25', path: '/about' },
+  { name: 'Privacy Policy', desc: 'How we protect your data', icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', path: '/about' },
+  { name: 'News & Events', desc: 'Latest updates and announcements', icon: 'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z', path: '/news' },
 ]
 
 type Dropdown = 'programs' | 'enrollment' | 'services' | 'about' | null
@@ -61,6 +61,7 @@ export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
   const isActive = (path: string) => location.pathname === path
+  const isAboutActive = location.pathname === '/about' || location.pathname === '/news' || location.pathname.startsWith('/campus/')
   const openAuth = useAuthModalStore((s) => s.openAuth)
 
   const closeAll = useCallback(() => {
@@ -390,7 +391,7 @@ export default function Header() {
           >
             <button
               onClick={() => setActiveDropdown(activeDropdown === 'about' ? null : 'about')}
-              className={navItemClass(false)}
+              className={navItemClass(isAboutActive)}
               aria-expanded={activeDropdown === 'about'}
               aria-haspopup="true"
             >
@@ -663,7 +664,7 @@ export default function Header() {
                 <div>
                   <button
                     onClick={() => toggleMobileAccordion('about')}
-                    className="w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-between"
+                    className={`w-full text-left text-[14px] font-medium py-2.5 px-3.5 rounded-lg transition-colors flex items-center justify-between ${isAboutActive ? 'text-white bg-white/10' : 'text-[#cbd5e1] hover:text-white hover:bg-white/10'}`}
                     aria-expanded={mobileAccordion === 'about'}
                   >
                     About

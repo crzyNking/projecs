@@ -19,6 +19,8 @@ const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Pro
 const Analytics = lazy(() => import('./pages/Analytics').then(m => ({ default: m.Analytics })))
 const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })))
 const Campus = lazy(() => import('./pages/Campus'))
+const About = lazy(() => import('./pages/About'))
+const News = lazy(() => import('./pages/News'))
 
 function PageSpinner() {
   return (
@@ -42,6 +44,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/senior-high" element={<SeniorHigh />} />
             <Route path="/campus/:campusId" element={<Campus />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/news" element={<News />} />
             <Route path="/enrollment/kindergarten" element={<KindergartenEnrollment />} />
             <Route path="/enrollment/elementary" element={<ElementaryEnrollment />} />
             <Route path="/enrollment/junior-high" element={<JuniorHighEnrollment />} />
