@@ -1,9 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthModalStore } from '../store/authModalStore'
-import { useAuthStore } from '../store/authStore'
-import { useSettings } from '../hooks/useSettings'
-import AnnouncementBar from './AnnouncementBar'
 
 const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
 
@@ -66,9 +63,6 @@ export default function Header() {
   const isActive = (path: string) => location.pathname === path
   const isAboutActive = location.pathname === '/about' || location.pathname === '/news' || location.pathname === '/privacy' || location.pathname.startsWith('/campus/')
   const openAuth = useAuthModalStore((s) => s.openAuth)
-  const { profile } = useAuthStore()
-  const isAdmin = profile?.role === 'admin'
-  const { school } = useSettings()
 
   const closeAll = useCallback(() => {
     setActiveDropdown(null)
@@ -146,19 +140,14 @@ export default function Header() {
 
   return (
     <>
-      <AnnouncementBar />
       <header ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-[#0b1f40] text-white border-b border-white/30">
       <div className="flex items-center justify-between px-4 py-3 md:px-10 md:py-3.5">
         {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 z-10">
-            {school?.website_logo ? (
-              <img src={school.website_logo} alt={school?.school_name || 'CEC'} className="w-9 h-9 md:w-[42px] md:h-[42px] rounded-full object-cover bg-white" />
-            ) : (
-              <img src={CEC_LOGO} alt="CEC Logo" className="w-9 h-9 md:w-[42px] md:h-[42px] rounded-full object-cover bg-white" />
-            )}
+            <img src={CEC_LOGO} alt="CEC Logo" className="w-9 h-9 md:w-[42px] md:h-[42px] rounded-full object-cover bg-white" />
             <div>
-              <div className="text-sm md:text-[15px] font-bold tracking-wide">{school?.school_name || 'Cebu Eastern College'}</div>
-              <div className="text-[9px] md:text-[10px] text-[#94a3b8]">{school?.address || 'Leon Kilat St., Cebu City'}</div>
+              <div className="text-sm md:text-[15px] font-bold tracking-wide">Cebu Eastern College</div>
+              <div className="text-[9px] md:text-[10px] text-[#94a3b8]">Leon Kilat St., Cebu City</div>
             </div>
           </Link>
 
@@ -491,20 +480,6 @@ export default function Header() {
           </div>
         </nav>
 
-        {/* Desktop Admin Link */}
-        {isAdmin && (
-          <Link
-            to="/admin"
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#f7b32b]/20 text-[#f7b32b] text-[12px] font-semibold hover:bg-[#f7b32b]/30 transition-colors absolute right-20"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Admin
-          </Link>
-        )}
-
         {/* Hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -804,19 +779,6 @@ export default function Header() {
           {mobilePage === 'main' && (
             <div className="shrink-0 px-4 py-4 border-t border-white/10 bg-[#081a38]">
               <div className="space-y-2">
-                {isAdmin && (
-                  <Link
-                    to="/admin"
-                    onClick={closeAll}
-                    className="w-full py-2.5 rounded-xl text-[13px] font-semibold bg-[#f7b32b]/20 text-[#f7b32b] border border-[#f7b32b]/30 hover:bg-[#f7b32b]/30 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Admin Panel
-                  </Link>
-                )}
                 <button
                   onClick={() => { closeAll(); openAuth('login') }}
                   className="w-full py-2.5 rounded-xl text-[13px] font-semibold border border-white/20 text-white hover:bg-white/10 transition-colors"

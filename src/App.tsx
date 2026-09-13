@@ -4,7 +4,6 @@ import { AuthProvider } from './components/AuthProvider'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastContainer } from './components/Toast'
 import { Chatbot } from './components/Chatbot'
-import MaintenanceMode from './components/MaintenanceMode'
 import { Home } from './pages/Home'
 import AdminLayout from './pages/admin/AdminLayout'
 
@@ -57,7 +56,6 @@ function App() {
       <AuthProvider>
         <ToastContainer />
         <Chatbot />
-        <MaintenanceMode>
         <Suspense fallback={<PageSpinner />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -222,7 +220,6 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
-        </MaintenanceMode>
       </AuthProvider>
     </BrowserRouter>
   )
