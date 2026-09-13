@@ -21,6 +21,7 @@ const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Rep
 const Campus = lazy(() => import('./pages/Campus'))
 const About = lazy(() => import('./pages/About'))
 const News = lazy(() => import('./pages/News'))
+const Privacy = lazy(() => import('./pages/Privacy'))
 
 function PageSpinner() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route path="/campus/:campusId" element={<Campus />} />
             <Route path="/about" element={<About />} />
             <Route path="/news" element={<News />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/enrollment/kindergarten" element={<KindergartenEnrollment />} />
             <Route path="/enrollment/elementary" element={<ElementaryEnrollment />} />
             <Route path="/enrollment/junior-high" element={<JuniorHighEnrollment />} />

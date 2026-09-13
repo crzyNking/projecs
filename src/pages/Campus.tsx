@@ -45,44 +45,17 @@ const zones = [
   },
 ]
 
-const campusData: Record<string, {
-  title: string
-  badge: string
-  subtitle: string
-  heroImg: string
-  heroLabel: string
-  address: string
-  addressDetail: string
-  mapImg: string
-}> = {
-  main: {
-    title: 'Main Campus Showcase',
-    badge: 'CAMPUS OVERVIEW',
-    subtitle: 'A hyper-light, precision-engineered environment designed for scholarly pursuit. Explore the structural clarity and specialized zones that define Cebu Eastern College\'s downtown hub.',
-    heroImg: placeholder,
-    heroLabel: 'Main Campus',
-    address: '40 Leon Kilat Street',
-    addressDetail: 'Pahina Central, downtown Cebu City',
-    mapImg: placeholder,
-  },
-  shs: {
-    title: 'SHS Campus Showcase',
-    badge: 'SENIOR HIGH SCHOOL',
-    subtitle: 'A dedicated campus for senior high school students, providing specialized facilities and a focused learning environment for academic excellence.',
-    heroImg: placeholder,
-    heroLabel: 'SHS Campus',
-    address: 'D. Dionisio Jakosalem Street',
-    addressDetail: 'Barangay Santo Niño, Cebu City',
-    mapImg: placeholder,
-  },
+const campusLabels: Record<string, { heroLabel: string }> = {
+  main: { heroLabel: 'Main Campus' },
+  shs: { heroLabel: 'SHS Campus' },
 }
 
 export default function Campus() {
   const { campusId } = useParams<{ campusId: string }>()
   const navigate = useNavigate()
-  const campus = campusData[campusId || 'main']
+  const label = campusLabels[campusId || 'main']
 
-  if (!campus) {
+  if (!label) {
     return (
       <div className="min-h-screen bg-[#0A214D] overflow-x-hidden">
         <Header />
@@ -108,17 +81,17 @@ export default function Campus() {
           <section className="mb-10 sm:mb-14">
             <div className="text-center mb-8 sm:mb-10">
               <span className="inline-block bg-[#c6d2e8] text-[#1b225c] text-[0.65rem] sm:text-[0.7rem] font-extrabold px-4 py-1.5 rounded-full mb-5 tracking-[1px]">
-                {campus.badge}
+                CAMPUS OVERVIEW
               </span>
               <h2 className="text-[1.8rem] sm:text-[2.5rem] md:text-[2.6rem] font-bold text-[#0C1A4A] mb-4 sm:mb-5" style={{ letterSpacing: '0.5px' }}>
-                {campus.title}
+                Main Campus Showcase
               </h2>
               <p className="text-[#666666] text-[0.85rem] sm:text-[0.95rem] leading-[1.7] max-w-[750px] mx-auto">
-                {campus.subtitle}
+                A hyper-light, precision-engineered environment designed for scholarly pursuit. Explore the structural clarity and specialized zones that define Cebu Eastern College's downtown hub.
               </p>
             </div>
             <div className="border border-[#E5E5E5] p-2">
-              <img src={campus.heroImg} alt={campus.heroLabel} className="w-full h-[250px] sm:h-[350px] md:h-[400px] object-cover block" style={{ aspectRatio: '3/2' }} />
+              <img src={placeholder} alt={label.heroLabel} className="w-full h-[250px] sm:h-[350px] md:h-[400px] object-cover block" />
             </div>
           </section>
 
@@ -133,11 +106,11 @@ export default function Campus() {
                   </svg>
                   <h2>Location</h2>
                 </div>
-                <h3 className="text-[#0C1A4A] text-[1.1rem] font-bold mb-2">{campus.address}</h3>
-                <p className="text-[#666666] text-[0.85rem]">{campus.addressDetail}</p>
+                <h3 className="text-[#0C1A4A] text-[1.1rem] font-bold mb-2">40 Leon Kilat Street</h3>
+                <p className="text-[#666666] text-[0.85rem]">Pahina Central, downtown Cebu City</p>
               </div>
               <div className="flex-1 p-5 sm:p-8 border-t md:border-t-0 md:border-l border-[#E5E5E5]">
-                <img src={campus.mapImg} alt="Map" className="w-full h-[200px] sm:h-[250px] object-cover border border-[#E5E5E5] block" />
+                <img src={placeholder} alt="Map" className="w-full h-[200px] sm:h-[250px] object-cover border border-[#E5E5E5] block" />
               </div>
             </div>
           </section>
