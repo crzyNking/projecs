@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { useSettings } from '../hooks/useSettings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
-const CEC_LOGO = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
+const CEC_LOGO_DEFAULT = 'https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/302130535_582267347020947_5642845133722350033_n.jpg?stp=dst-jpg_tt6&cstp=mx2043x2048&ctp=s2043x2048&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQ-qulZKv6ih1XSQMneMJo0E3N8tptuK7QTc3y2m24rvOZF2gXoVReo42hSnhjrOVF3VaaiIacXYLr4V0tLBnV&_nc_ohc=RA_aF6P5RwgQ7kNvwFu3Xg6&_nc_oc=AdqITaBrsXZ2_5mgT4X8oeaexeru1AH57khtFbcB-Y7ghPP8InlrVAu4Zn6tycPx_1g&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=L8FYEtP78WmxVwzWwW2ijg&_nc_ss=7b2a8&oh=00_AQKRNzwxtkCz0g_6DAaJNgj7bF9fKKDf6T1bSjvNHaSSGg&oe=6AA9B10C'
+const DEFAULT_HERO_BG = 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop'
 
-const heroStyle = { background: "linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop) center/cover no-repeat" }
 const authModalBackdrop = { background: 'rgba(3, 8, 20, 0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }
 
 type AuthMode = 'login' | 'signup'
@@ -58,6 +59,7 @@ export function Home() {
   const error = useAuthStore((s) => s.error)
   const setError = useAuthStore((s) => s.setError)
   const navigate = useNavigate()
+  const { school, homepage, website } = useSettings()
 
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({ open: false, mode: 'login' })
   const [authTab, setAuthTab] = useState<AuthMode>('login')
@@ -108,22 +110,25 @@ export function Home() {
     await signInWithGoogle()
   }, [signInWithGoogle])
 
+  const heroBgImage = homepage?.hero_image || DEFAULT_HERO_BG
+  const heroStyle = { background: `linear-gradient(rgba(11, 31, 64, 0.45), rgba(11, 31, 64, 0.45)), url(${heroBgImage}) center/cover no-repeat` }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#333333] overflow-x-hidden">
       <Header />
 
-      {/* Hero */}
+      {/* Hero — uses homepage_content from Supabase */}
       <section className="relative py-[60px] px-4 sm:py-[80px] text-center text-white" style={heroStyle}>
         <p className="text-[#eab308] text-[28px] sm:text-[38px] font-semibold tracking-[8px] mb-[30px]">
-          宿務 東方 學院
+          {homepage?.hero_subtitle || '宿務 東方 學院'}
         </p>
 
         <div className="max-w-[820px] mx-auto rounded-xl p-6 sm:p-[45px_50px] shadow-[0_20px_40px_rgba(0,0,0,0.35)] outline outline-1 outline-offset-[-8px] outline-white/15 bg-gradient-to-br from-[rgba(8,30,92,0.88)] to-[rgba(13,44,128,0.88)] border border-white/20 backdrop-blur-[12px]">
           <h1 className="text-[26px] sm:text-[32px] font-extrabold leading-[1.25] mb-5">
-            Excellence in Education<br />since 1915
+            {homepage?.hero_title || 'Excellence in Education'}<br />since 1915
           </h1>
           <p className="text-[12px] sm:text-[13.5px] text-[#cbd5e1] max-w-[580px] mx-auto mb-[30px] leading-relaxed">
-            Be part of the Easternian Community, where quality education is less expensive. Join Cebu City's premier institution for holistic development.
+            {homepage?.hero_description || 'Be part of the Easternian Community, where quality education is less expensive. Join Cebu City\'s premier institution for holistic development.'}
           </p>
           <div className="flex justify-center gap-4">
             <button
@@ -142,44 +147,46 @@ export function Home() {
         </div>
       </section>
 
-      {/* Academic Excellence */}
-      <section className="py-[60px] px-4 sm:px-10 bg-[#f8fafc] text-center">
-        <h2 className="text-[22px] sm:text-[26px] font-extrabold text-[#002366] mb-2">Academic Excellence</h2>
-        <p className="text-[12px] sm:text-[13px] text-[#64748b] mb-[45px]">Comprehensive educational programs designed to nurture future leaders.</p>
+      {/* Academic Excellence — toggleable via website_settings */}
+      {website?.programs_section !== false && (
+        <section className="py-[60px] px-4 sm:px-10 bg-[#f8fafc] text-center">
+          <h2 className="text-[22px] sm:text-[26px] font-extrabold text-[#002366] mb-2">Academic Excellence</h2>
+          <p className="text-[12px] sm:text-[13px] text-[#64748b] mb-[45px]">Comprehensive educational programs designed to nurture future leaders.</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1100px] mx-auto">
-          {academicCards.map((card) => (
-            <div
-              key={card.title}
-              className="bg-white rounded-lg p-[30px_25px] text-left border border-[#e2e8f0] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03)] flex flex-col hover:shadow-lg transition-shadow"
-            >
-              <div className="w-9 h-9 rounded-full bg-[#dbeafe] flex items-center justify-center mb-5">{card.icon}</div>
-              <h3 className="text-[16px] font-bold text-[#1e293b] mb-3">{card.title}</h3>
-              <p className="text-[12.5px] text-[#64748b] leading-[1.5] mb-5 flex-1">{card.desc}</p>
-              <button
-                onClick={() => navigate(card.link)}
-                className="text-[11.5px] font-bold text-[#1d4ed8] flex items-center gap-1.5 hover:underline"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1100px] mx-auto">
+            {academicCards.map((card) => (
+              <div
+                key={card.title}
+                className="bg-white rounded-lg p-[30px_25px] text-left border border-[#e2e8f0] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03)] flex flex-col hover:shadow-lg transition-shadow"
               >
-                Learn More
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
+                <div className="w-9 h-9 rounded-full bg-[#dbeafe] flex items-center justify-center mb-5">{card.icon}</div>
+                <h3 className="text-[16px] font-bold text-[#1e293b] mb-3">{card.title}</h3>
+                <p className="text-[12.5px] text-[#64748b] leading-[1.5] mb-5 flex-1">{card.desc}</p>
+                <button
+                  onClick={() => navigate(card.link)}
+                  className="text-[11.5px] font-bold text-[#1d4ed8] flex items-center gap-1.5 hover:underline"
+                >
+                  Learn More
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/* Our Heritage & Mission */}
+      {/* Our Heritage & Mission — uses school_settings */}
       <section className="py-[70px] px-4 sm:px-10 bg-[#f1f5f9]">
         <div className="max-w-[1050px] mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-[60px]">
           <div className="flex-shrink-0 flex justify-center">
-            <img src={CEC_LOGO} alt="Cebu Eastern College Seal" className="w-full max-w-[240px] h-auto object-contain mix-blend-multiply hover:scale-[1.03] transition-transform" />
+            <img src={school?.website_logo || CEC_LOGO_DEFAULT} alt="Cebu Eastern College Seal" className="w-full max-w-[240px] h-auto object-contain mix-blend-multiply hover:scale-[1.03] transition-transform" />
           </div>
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-[22px] sm:text-[26px] font-extrabold text-[#002366] mb-4">Our Heritage &amp; Mission</h2>
             <p className="text-[12px] sm:text-[13px] text-[#64748b] leading-relaxed mb-[30px]">
-              Founded in 1915, Cebu Eastern College has stood as a pillar of academic excellence in Cebu City. We remain committed to our founding principle: delivering top-tier, quality education that is accessible and affordable to all aspiring minds.
+              {school?.school_description || 'Founded in 1915, Cebu Eastern College has stood as a pillar of academic excellence in Cebu City. We remain committed to our founding principle: delivering top-tier, quality education that is accessible and affordable to all aspiring minds.'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {features.map((f) => (
@@ -223,13 +230,11 @@ export function Home() {
             <button onClick={closeAuth} className="absolute top-4 right-5 text-[#94a3b8] hover:text-white text-xl">&times;</button>
 
             <div className="p-[35px_30px]">
-              {/* Header */}
               <div className="text-center mb-6">
-                <img src={CEC_LOGO} alt="CEC Seal" className="w-[65px] h-[65px] rounded-full mx-auto mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.3)]" />
-                <h3 className="text-[20px] font-semibold">Cebu Eastern College</h3>
+                <img src={school?.website_logo || CEC_LOGO_DEFAULT} alt="CEC Seal" className="w-[65px] h-[65px] rounded-full mx-auto mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.3)]" />
+                <h3 className="text-[20px] font-semibold">{school?.school_name || 'Cebu Eastern College'}</h3>
               </div>
 
-              {/* Tabs */}
               <div className="flex bg-white/8 border border-white/15 rounded-lg p-[3px] mb-6">
                 <button
                   onClick={() => { setAuthTab('login'); setError(null) }}
@@ -306,13 +311,11 @@ export function Home() {
                 </button>
               </form>
 
-              {/* Divider */}
               <div className="relative my-5">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/15" /></div>
                 <div className="relative flex justify-center text-[11px]"><span className="px-3 text-[#94a3b8]">or</span></div>
               </div>
 
-              {/* Google Login */}
               <button
                 onClick={handleGoogleLogin}
                 className="w-full py-3 bg-white/10 border border-white/20 rounded-lg text-[13px] font-medium text-white hover:bg-white/15 transition-all flex items-center justify-center gap-2.5"
